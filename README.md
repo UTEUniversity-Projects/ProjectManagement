@@ -1,1 +1,1 @@
-# Thesis-Management
+# ThesisManagement
