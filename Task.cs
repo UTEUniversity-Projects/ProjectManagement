@@ -26,16 +26,16 @@ namespace ProjectManagementModel.Models
         #region TASK CONTRUCTOR
         public Task()
         {
-            this.taskId = string.Empty;
-            this.startAt = DateTime.Now;
-            this.endAt = DateTime.Now;
-            this.title = string.Empty;
-            this.description = string.Empty;
-            this.progress = 0;
-            this.priority = string.Empty;
-            this.createdAt = DateTime.Now;
-            this.createBy = string.Empty;
-            this.projectId = string.Empty;
+            taskId = string.Empty;
+            startAt = DateTime.MinValue;
+            endAt = DateTime.MinValue;
+            title = string.Empty;
+            description = string.Empty;
+            progress = 0;
+            priority = string.Empty;
+            createdAt = DateTime.MinValue;
+            createBy = string.Empty;
+            projectId = string.Empty;
         }
         public Task(string taskId, DateTime startAt, DateTime endAt, string title, string description, double progress, string priority, DateTime createdAt, string createBy, string projectId)
         {

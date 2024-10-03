@@ -14,10 +14,10 @@ namespace ProjectManagementModel.Models
         private DateTime createdAt;
         public Media() 
         {
-            this.mediaId = string.Empty;
-            this.saveCode = string.Empty;
-            this.type = string.Empty;
-            this.createdAt = DateTime.Now;
+            mediaId = string.Empty;
+            saveCode = string.Empty;
+            type = string.Empty;
+            createdAt = DateTime.Now;
         }
         public Media(string mediaId, string saveCode, string type, DateTime createdAt)
         {

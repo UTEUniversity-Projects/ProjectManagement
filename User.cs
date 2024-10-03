@@ -12,16 +12,16 @@ namespace ProjectManagementModel.Models
         public enum EGender
         {
             //[Display(Name = "Male")]
-            Male,
+            MALE,
             //[Display(Name = "Female")]
-            Female
+            FEMALE
         }
         public enum ERole
         {
             //[Display(Name = "Student")]
-            Student,
+            STUDENT,
             //[Display(Name = "Lecture")]
-            Lecture
+            LECTURE
         }
 
         #endregion
@@ -57,14 +57,14 @@ namespace ProjectManagementModel.Models
             password = string.Empty;
             email = string.Empty;
             phoneNumber = string.Empty;
-            dateOfBirth = DateTime.Now;
+            dateOfBirth = DateTime.MinValue;
             citizenCode = string.Empty;
             university = "HCM City University of Technology and Education";
             faculty = "Faculty of Information Technology";
-            gender = EGender.Male;
+            gender = EGender.MALE;
             avatar = "PicAvatarDemoUser";
-            role = ERole.Student;
-            joinAt = DateTime.Now;
+            role = ERole.STUDENT;
+            joinAt = DateTime.MinValue;
         }
 
         public User(string userId, string userName, string fullName, string password, string email, string phoneNumber, DateTime dateOfBirth, string citizenCode, string university, string faculty, EGender gender, string avatar, ERole role, DateTime joinAt)
@@ -195,11 +195,11 @@ namespace ProjectManagementModel.Models
         }
         public bool CheckGender()
         {
-            return this.gender == EGender.Male || this.gender == EGender.Female;
+            return this.gender == EGender.MALE || this.gender == EGender.FEMALE;
         }
         public bool CheckRole()
         {
-            return this.role == ERole.Lecture || this.role == ERole.Student;
+            return this.role == ERole.LECTURE || this.role == ERole.STUDENT;
         }
         
         #endregion

@@ -22,7 +22,11 @@ namespace ProjectManagementModel.Models
 
         public Comment()
         {
-
+            commentId = string.Empty;
+            content = string.Empty;
+            createdAt = DateTime.MinValue;
+            createdBy = string.Empty;
+            taskId = string.Empty;
         }
 
         public Comment(string commentId, string content, DateTime createdAt, string createdBy, string taskId)

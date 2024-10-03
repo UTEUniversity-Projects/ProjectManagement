@@ -26,7 +26,15 @@ namespace ProjectManagementModel.Models
 
         public Meeting()
         {
-
+            meetingId = string.Empty;
+            title = string.Empty;
+            description = string.Empty;
+            startAt = DateTime.MinValue;
+            location = string.Empty;
+            link = string.Empty;
+            createdAt = DateTime.MinValue;
+            createBy = string.Empty;
+            projectId = string.Empty;
         }
         public Meeting(string meetingId, string title, string description, DateTime startAt, string location, string link, DateTime createdAt, string createBy, string projectId)
         {

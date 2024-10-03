@@ -34,9 +34,9 @@ namespace ProjectManagementModel.Models
             feature = string.Empty;
             requirement = string.Empty;
             maxMember = 0;
-            publicDate = DateTime.Now;
+            publicDate = DateTime.MinValue;
             status = string.Empty;
-            createdAt = DateTime.Now;
+            createdAt = DateTime.MinValue;
             fieldId = string.Empty;
         }
         public Project(string projectId, string instructorId, string topic, string description, string feature, string requirement, int maxMember, DateTime publicDate, string status, DateTime createdAt, string fieldId)

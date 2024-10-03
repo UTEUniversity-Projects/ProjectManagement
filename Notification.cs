@@ -11,18 +11,18 @@ namespace ProjectManagementModel.Models
 
     public enum ENotificationType
     {
-        //[Display(Name = "Thesis")]
-        Thesis,
+        //[Display(Name = "Project")]
+        PROJECT,
         //[Display(Name = "Task")]
-        Task,
+        TASK,
         //[Display(Name = "Evaluatiokn")]
-        Evaluation,
+        EVALUATION,
         //[Display(Name = "Comment")]
-        Comment,
+        COMMENT,
         //[Display(Name = "Meeting")]
-        Meeting,
+        MEETING,
         //[Display(Name = "Null")]
-        Null,
+        NULL,
     }
 
     #endregion
@@ -42,7 +42,11 @@ namespace ProjectManagementModel.Models
 
         public Notification()
         {
-
+            notificationId = string.Empty;
+            title = string.Empty;
+            content = string.Empty;
+            type = ENotificationType.NULL;
+            createdAt = DateTime.MinValue;
         }
         public Notification(string notificationId, string title, string content, ENotificationType type, DateTime createdAt)
         {

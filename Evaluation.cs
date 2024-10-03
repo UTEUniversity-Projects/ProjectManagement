@@ -14,7 +14,7 @@ namespace ProjectManagementModel.Models
         private string content;
         private double completionRate;
         private double score;
-        private string status;
+        private bool evaluated;
         private DateTime createdAt;
         private string createdBy;
         private string studentId;
@@ -26,15 +26,23 @@ namespace ProjectManagementModel.Models
 
         public Evaluation()
         {
-
+            evaluationId = string.Empty;
+            content = string.Empty;
+            completionRate = 0;
+            score = 0;
+            evaluated = false;
+            createdAt = DateTime.MinValue;
+            createdBy = string.Empty;
+            studentId = string.Empty;
+            taskId = string.Empty;
         }
-        public Evaluation(string evaluationId, string content, double completionRate, double score, string status, DateTime createdAt, string createdBy, string studentId, string taskId)
+        public Evaluation(string evaluationId, string content, double completionRate, double score, bool evaluated, DateTime createdAt, string createdBy, string studentId, string taskId)
         {
             this.evaluationId = evaluationId;
             this.content = content;
             this.completionRate = completionRate;
             this.score = score;
-            this.status = status;
+            this.evaluated = evaluated;
             this.createdAt = createdAt;
             this.createdBy = createdBy;
             this.studentId = studentId;
@@ -66,10 +74,10 @@ namespace ProjectManagementModel.Models
             get { return score; }
             set { score = value; }
         }
-        public string Status
+        public bool Evaluated
         {
-            get { return status; }
-            set { status = value; }
+            get { return evaluated; }
+            set { evaluated = value; }
         }
         public DateTime CreatedAt
         {
