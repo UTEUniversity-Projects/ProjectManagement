@@ -6,6 +6,17 @@ using System.Threading.Tasks;
 
 namespace ProjectManagementModel.Models
 {
+    public enum ETeamStatus
+    {
+        //[Display(Name = "Registered")]
+        REGISTERED,
+        //[Display(Name = "Accepted")]
+        ACCEPTED,
+        //[Display(Name = "Rejected")]
+        REJECTED,
+        //[Display(Name = "Null")]
+        NULL
+    }
     internal class Team
     {
         #region TEAM ATTRIBUTES
@@ -15,6 +26,8 @@ namespace ProjectManagementModel.Models
         private string avatar;
         private DateTime createdAt;
         private string createdBy;
+        private string projectId;
+        private ETeamStatus status;
 
         #endregion
 
@@ -22,19 +35,23 @@ namespace ProjectManagementModel.Models
 
         public Team()
         {
-            this.teamId = string.Empty;
-            this.teamName = "Anonymous";
-            this.avatar = "PicAvatarDemoUser";
-            this.createdAt = DateTime.Now;
-            this.createdBy = string.Empty;
+            teamId = string.Empty;
+            teamName = "Anonymous";
+            avatar = "PicAvatarDemoUser";
+            createdAt = DateTime.Now;
+            createdBy = string.Empty;
+            projectId = string.Empty;
+            status = ETeamStatus.NULL;
         }
-        public Team(string teamId, string teamName, string avatar, DateTime createdAt, string createdBy)
+        public Team(string teamId, string teamName, string avatar, DateTime createdAt, string createdBy, string projectId, ETeamStatus status)
         {
             this.teamId = teamId;
             this.teamName = teamName;
             this.avatar = avatar;
             this.createdAt = createdAt;
             this.createdBy = createdBy;
+            this.projectId = projectId;
+            this.status = status;
         }
 
         #endregion
@@ -66,7 +83,16 @@ namespace ProjectManagementModel.Models
             get { return this.createdBy; }
             set { this.createdBy = value; }
         }
-
+        public string ProjectId
+        {
+            get { return this.projectId; }
+            set { this.projectId = value; }
+        }
+        public ETeamStatus Status
+        {
+            get { return this.status; }
+            set { this.status = value; }
+        }
         #endregion
 
     }
