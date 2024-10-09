@@ -1,0 +1,162 @@
+﻿using Guna.UI2.WinForms;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Threading;
+using ProjectManagement.Models;
+using ProjectManagement.Process;
+using Timer = System.Windows.Forms.Timer;
+
+namespace ProjectManagement
+{
+    public partial class UCDisplayUser : UserControl
+    {
+        private MyProcess myProcess = new MyProcess();
+        private User people = new User();
+
+        private UCDashboard uCDashboard = new UCDashboard();
+        private UCDashboard uCMyTheses = new UCDashboard();
+        private UCNotification uCNotification = new UCNotification();
+        private UCAccount uCAccount = new UCAccount();
+
+        private List<Guna2Button> listButton = new List<Guna2Button>();
+        private List<Image> listImage = new List<Image>();
+
+        public UCDisplayUser()
+        {
+            InitializeComponent();
+
+            pnlAddUserControl.Controls.Clear();
+            pnlAddUserControl.Controls.Add(new UCWelcome());
+            uCMyTheses.FlagStuMyTheses = true;
+            this.listButton = new List<Guna2Button> { gButtonDashboard, gButtonMyProjects, gButtonNotification, gButtonAccount };
+            this.listImage = new List<Image> { Properties.Resources.PictureTask, Properties.Resources.PictureThesis,
+                                                Properties.Resources.PictureNotification, Properties.Resources.PictureAccount };
+        }
+
+        #region PROPERTIES
+
+        public Guna2Button GButtonLogOut
+        {
+            get { return this.gButtonLogOut; }
+        }
+
+        #endregion
+
+        #region FUNCTIONS FORM
+
+        public void SetInformation(User people)
+        {
+            this.people = people;
+            UserControlLoad();
+        }
+        private void UserControlLoad()
+        {
+            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(people.AvatarName);
+            lblHandle.Text = people.Handle;
+            lblRole.Text = people.Role.ToString();
+            myProcess.AllButtonStandardColor(this.listButton, this.listImage);
+
+            pnlAddUserControl.Controls.Clear();
+            pnlAddUserControl.Controls.Add(new UCWelcome(people));
+            SetButtonBar();
+
+            uCNotification.SetInformation(people);
+            uCNotification.NotificationJump += NotificationType_Jump;
+            if (uCNotification.HasNewNotification())
+            {
+                gButtonNotification.CustomImages.Image = Properties.Resources.PicNewNotification;
+                gButtonNotification.Image = Properties.Resources.ItemDotNewNotification;
+                gButtonNotification.FillColor = Color.White;
+                gButtonNotification.ForeColor = Color.Black;
+                gButtonNotification.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            }
+        }
+        private void SetButtonBar()
+        {
+            if (people.Role == ERole.Lecture)
+            {
+                gButtonMyProjects.Hide();
+                gButtonNotification.Location = new Point(22, 234);
+                gButtonAccount.Location = new Point(22, 296);
+            }
+            else
+            {
+                gButtonMyProjects.Show();
+                gButtonNotification.Location = new Point(22, 296);
+                gButtonAccount.Location = new Point(22, 358);
+            }
+        }
+        private void SetButtonClick(Guna2Button button, Image image, UserControl userControl)
+        {
+            myProcess.AllButtonStandardColor(this.listButton, this.listImage);
+            myProcess.ButtonSettingColor(button);
+            button.CustomImages.Image = image;
+            pnlAddUserControl.Controls.Clear();
+            pnlAddUserControl.Controls.Add(userControl);
+        }
+
+        #endregion
+
+        #region CONTROLS CLICK
+
+        private void gPanelBackAvatar_Click(object sender, EventArgs e)
+        {
+            myProcess.AllButtonStandardColor(this.listButton, this.listImage);
+            pnlAddUserControl.Controls.Clear();
+            pnlAddUserControl.Controls.Add(new UCWelcome(this.people));
+        }
+        private void gButtonDashboard_Click(object sender, EventArgs e)
+        {
+            uCDashboard.SetInformation(this.people);
+            SetButtonClick(gButtonDashboard, Properties.Resources.PictureTaskGradient, uCDashboard);
+        }
+        private void gButtonMyTheses_Click(object sender, EventArgs e)
+        {
+            uCMyTheses.SetInformation(this.people);
+            SetButtonClick(gButtonMyProjects, Properties.Resources.PictureThesisGradient, uCMyTheses);
+        }
+        private void gButtonNotification_Click(object sender, EventArgs e)
+        {
+            gButtonNotification.Image = null;
+            gButtonNotification.FillColor = Color.Transparent;
+            SetButtonClick(gButtonNotification, Properties.Resources.PictureNotificationGradient, uCNotification);
+        }
+        private void gButtonAccount_Click(object sender, EventArgs e)
+        {
+            uCAccount.SetInformation(people);
+            SetButtonClick(gButtonAccount, Properties.Resources.PictureAccountGradient, uCAccount);
+        }
+
+        #endregion
+
+        #region METHOD NOTIFICATION JUMP
+
+        private void NotificationType_Jump(object sender, EventArgs e)
+        {
+            Notification notification = sender as Notification;
+            if (notification != null)
+            {
+                if (people.Role == ERole.Lecture)
+                {
+                    gButtonDashboard.PerformClick();
+                    uCDashboard.NotificationJump(notification);
+                }
+                else
+                {
+                    gButtonMyProjects.PerformClick();
+                    uCMyTheses.NotificationJump(notification);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+}

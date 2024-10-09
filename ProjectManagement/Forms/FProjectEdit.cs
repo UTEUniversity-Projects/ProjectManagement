@@ -1,0 +1,39 @@
+﻿using Guna.UI2.WinForms;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using ProjectManagement.Database;
+using ProjectManagement.Models;
+using ProjectManagement.Process;
+
+namespace ProjectManagement
+{
+    public partial class FProjectEdit : Form
+    {
+        private UCProjectCreate uCThesisCreate = new UCProjectCreate();
+
+        public FProjectEdit(User people, Project thesis)
+        {
+            InitializeComponent();
+            InitUserControl(people, thesis);
+        }
+        private void InitUserControl(User people, Project thesis)
+        {
+            gPanelEdit.Controls.Clear();
+            uCThesisCreate.SetEditState(people, thesis);
+            gPanelEdit.Controls.Add(uCThesisCreate);
+
+            uCThesisCreate.GButtonCancel.Click += ButtonCancel_Clicked;
+        }
+        private void ButtonCancel_Clicked(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
