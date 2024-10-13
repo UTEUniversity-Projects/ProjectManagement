@@ -89,7 +89,7 @@
             gGradientButtonProjects.Size = new Size(117, 40);
             gGradientButtonProjects.TabIndex = 4;
             gGradientButtonProjects.Text = "Projects";
-            gGradientButtonProjects.Click += gGradientButtonViewThesis_Click;
+            gGradientButtonProjects.Click += gGradientButtonViewProject_Click;
             // 
             // gGradientButtonStatistics
             // 

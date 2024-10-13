@@ -112,7 +112,7 @@
             gTextBoxFullname = new Guna.UI2.WinForms.Guna2TextBox();
             gButtonCancel = new Guna.UI2.WinForms.Guna2Button();
             gGradientButtonSave = new Guna.UI2.WinForms.Guna2GradientButton();
-            gPanelThesisList = new Guna.UI2.WinForms.Guna2Panel();
+            gPanelProjectList = new Guna.UI2.WinForms.Guna2Panel();
             flpTeams = new FlowLayoutPanel();
             lblTeams = new Label();
             erpFullName = new ErrorProvider(components);
@@ -131,7 +131,7 @@
             gShadowPanelHandle.SuspendLayout();
             gShadowPanelPersonalInfor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gPictureBoxGender).BeginInit();
-            gPanelThesisList.SuspendLayout();
+            gPanelProjectList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)erpFullName).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpCitizenCode).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpBirthday).BeginInit();
@@ -485,7 +485,7 @@
             gTextBoxUserName.Name = "gTextBoxUserName";
             gTextBoxUserName.PasswordChar = '\0';
             gTextBoxUserName.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxUserName.PlaceholderText = "User name";
+            gTextBoxUserName.PlaceholderText = "Users name";
             gTextBoxUserName.SelectedText = "";
             gTextBoxUserName.ShadowDecoration.CustomizableEdges = customizableEdges14;
             gTextBoxUserName.Size = new Size(411, 40);
@@ -754,18 +754,18 @@
             gGradientButtonSave.Text = "Save";
             gGradientButtonSave.Click += gGradientButtonSave_Click;
             // 
-            // gPanelThesisList
+            // gPanelProjectList
             // 
-            gPanelThesisList.BorderRadius = 20;
-            gPanelThesisList.Controls.Add(flpTeams);
-            gPanelThesisList.Controls.Add(lblTeams);
-            gPanelThesisList.CustomizableEdges = customizableEdges35;
-            gPanelThesisList.FillColor = SystemColors.ButtonFace;
-            gPanelThesisList.Location = new Point(894, 408);
-            gPanelThesisList.Name = "gPanelThesisList";
-            gPanelThesisList.ShadowDecoration.CustomizableEdges = customizableEdges36;
-            gPanelThesisList.Size = new Size(418, 406);
-            gPanelThesisList.TabIndex = 5;
+            gPanelProjectList.BorderRadius = 20;
+            gPanelProjectList.Controls.Add(flpTeams);
+            gPanelProjectList.Controls.Add(lblTeams);
+            gPanelProjectList.CustomizableEdges = customizableEdges35;
+            gPanelProjectList.FillColor = SystemColors.ButtonFace;
+            gPanelProjectList.Location = new Point(894, 408);
+            gPanelProjectList.Name = "gPanelProjectList";
+            gPanelProjectList.ShadowDecoration.CustomizableEdges = customizableEdges36;
+            gPanelProjectList.Size = new Size(418, 406);
+            gPanelProjectList.TabIndex = 5;
             // 
             // flpTeams
             // 
@@ -827,7 +827,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            Controls.Add(gPanelThesisList);
+            Controls.Add(gPanelProjectList);
             Controls.Add(gPanelInformation);
             Controls.Add(gPanelEditInfor);
             DoubleBuffered = true;
@@ -847,8 +847,8 @@
             gShadowPanelPersonalInfor.ResumeLayout(false);
             gShadowPanelPersonalInfor.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)gPictureBoxGender).EndInit();
-            gPanelThesisList.ResumeLayout(false);
-            gPanelThesisList.PerformLayout();
+            gPanelProjectList.ResumeLayout(false);
+            gPanelProjectList.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)erpFullName).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpCitizenCode).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpBirthday).EndInit();
@@ -887,7 +887,7 @@
         private Guna.UI2.WinForms.Guna2CirclePictureBox gCirclePictureBoxAvatar;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxFaculty;
         private Guna.UI2.WinForms.Guna2DateTimePicker gDateTimePickerBirthday;
-        private Guna.UI2.WinForms.Guna2Panel gPanelThesisList;
+        private Guna.UI2.WinForms.Guna2Panel gPanelProjectList;
         private Label lblTeams;
         private FlowLayoutPanel flpTeams;
         private Guna.UI2.WinForms.Guna2CircleButton gCircleButtonEdit;

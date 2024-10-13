@@ -11,19 +11,18 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCNotificationLine : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
         public event EventHandler NotificationLineClicked;
         public event EventHandler NotificationDeleteClicked;
 
-        private User people = new User();
+        private Users user = new Users();
         private Notification notification = new Notification();
-        private UserDAO peopleDAO = new UserDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
 
         private Color lineColor = Color.White;
 
@@ -39,18 +38,17 @@ namespace ProjectManagement
         }
         private void InitUserControl()
         {
-            lblNotification.Text = myProcess.FormatStringLength(notification.Content.ToString(), 130);
-            this.people = peopleDAO.SelectOnlyByID(notification.IdSender);
-            lblFrom.Text = people.FullName;
-            lblTime.Text = notification.Created.ToString("dd/MM/yyyy hh:mm:ss tt");
+            lblNotification.Text = DataTypeUtil.FormatStringLength(notification.Content.ToString(), 130);
+            lblFrom.Text = user.FullName;
+            lblTime.Text = notification.CreatedAt.ToString("dd/MM/yyyy hh:mm:ss tt");
             gTextBoxType.Text = notification.Type.ToString();
             gTextBoxType.FillColor = notification.GetTypeColor();
-            myProcess.SetItemFavorite(gButtonStar, notification.IsFavorite);
-            if (notification.IsSaw)
-            {
-                this.lineColor = Color.FromArgb(222, 224, 224);
-                this.BackColor = lineColor;
-            }
+            // GunaControlUtil.SetItemFavorite(gButtonStar, notification.IsFavorite);
+            //if (notification.IsSaw)
+            //{
+            //    this.lineColor = Color.FromArgb(222, 224, 224);
+            //    this.BackColor = lineColor;
+            //}
         }
         private void SetColor(Color color)
         {
@@ -60,11 +58,11 @@ namespace ProjectManagement
         {
             this.lineColor = Color.FromArgb(222, 224, 224);
             this.BackColor = lineColor;
-            if (notification.IsSaw != true)
-            {
-                notification.IsSaw = true;
-                notificationDAO.UpdateIsSaw(notification.IdNotification, true);
-            }
+            //if (notification.IsSaw != true)
+            //{
+            //    notification.IsSaw = true;
+            //    NotificationDAO.UpdateIsSaw(user.UserId, notification.NotificationId, true);
+            //}
         }
         private void UCNotificationLine_MouseEnter(object sender, EventArgs e)
         {
@@ -85,17 +83,17 @@ namespace ProjectManagement
         }
         private void gButtonStar_Click(object sender, EventArgs e)
         {
-            notification.IsFavorite = !notification.IsFavorite;
-            myProcess.SetItemFavorite(gButtonStar, notification.IsFavorite);
-            notificationDAO.UpdateIsFavorite(notification.IdNotification, notification.IsFavorite);
+            // notification.IsFavorite = !notification.IsFavorite;
+            // GunaControlUtil.SetItemFavorite(gButtonStar, notification.IsFavorite);
+            // NotificationDAO.UpdateIsFavorite(notification.NotificationId, notification.IsFavorite);
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure you want to delete notification " + notification.IdNotification,
+            DialogResult result = MessageBox.Show("Are you sure you want to delete notification " + notification.NotificationId,
                                                     "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                notificationDAO.Delete(notification);
+                NotificationDAO.Delete(notification);
                 OnNotificationDeleteClicked(EventArgs.Empty);
             }
         }

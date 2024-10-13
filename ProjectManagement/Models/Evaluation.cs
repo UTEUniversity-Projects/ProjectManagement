@@ -1,104 +1,113 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProjectManagement.Process;
+﻿using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
 {
     public class Evaluation
     {
-        private MyProcess myProcess = new MyProcess();
 
         #region EVALUATION ATTRIBUTES
 
-        private string idEvaluation;
-        private string idTask;
-        private string idPeople;
+        private string evaluationId;
         private string content;
-        private int contribute;
-        private float scores;
-        private DateTime created;
-        private bool isEvaluated;
+        private double completionRate;
+        private double score;
+        private bool evaluated;
+        private DateTime createdAt;
+        private string createdBy;
+        private string studentId;
+        private string taskId;
 
         #endregion
 
-        #region EVALUATION CONTRUCTOR
+        #region EVALUATION CONTRUCTORS
 
         public Evaluation()
         {
-            this.idEvaluation = string.Empty;
-            this.idTask = string.Empty;
-            this.idPeople = string.Empty;
-            this.content = string.Empty;
-            this.scores = 0;
-            this.scores = 0.0F;
-            this.created = DateTime.Now;
-            this.isEvaluated = false;
+            evaluationId = string.Empty;
+            content = string.Empty;
+            completionRate = 0;
+            score = 0;
+            evaluated = false;
+            createdAt = DateTime.MinValue;
+            createdBy = string.Empty;
+            studentId = string.Empty;
+            taskId = string.Empty;
         }
-        public Evaluation(string idEvaluation, string idTask, string idPeople, string content, int contribute, float scores, 
-                            DateTime created, bool isEvaluated)
+        public Evaluation(string evaluationId, string content, double completionRate, double score, bool evaluated, DateTime createdAt, string createdBy, string studentId, string taskId)
         {
-            this.idEvaluation = idEvaluation;
-            this.idTask = idTask;
-            this.idPeople = idPeople;
+            this.evaluationId = evaluationId;
             this.content = content;
-            this.contribute = contribute;
-            this.scores = scores;
-            this.created = created;
-            this.isEvaluated = isEvaluated;
+            this.completionRate = completionRate;
+            this.score = score;
+            this.evaluated = evaluated;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.studentId = studentId;
+            this.taskId = taskId;
         }
-        public Evaluation(string idTask, string idPeople, string content, int contribute, float scores, DateTime created, bool isEvaluated)
+        public Evaluation(string content, double completionRate, double score, bool evaluated, DateTime createdAt, string createdBy, string studentId, string taskId)
         {
-            this.idEvaluation = myProcess.GenIDClassify(EClassify.Evaluation);
-            this.idTask = idTask;
-            this.idPeople = idPeople;
+            this.evaluationId = ModelUtil.GenerateModelId(EModelClassification.EVALUATION);
             this.content = content;
-            this.contribute = contribute;
-            this.scores = scores;
-            this.created = created;
-            this.isEvaluated = isEvaluated;
+            this.completionRate = completionRate;
+            this.score = score;
+            this.evaluated = evaluated;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.studentId = studentId;
+            this.taskId = taskId;
         }
 
         #endregion
 
         #region EVALUATION PROPERTIES
 
-        public string IdEvaluation
+        public string EvaluationId
         {
-            get { return this.idEvaluation; }
-        }
-        public string IdTask
-        { 
-            get { return this.idTask; } 
-        }
-        public string IdPeople
-        { 
-            get { return this.idPeople; } 
+            get { return evaluationId; }
+            set { evaluationId = value; }
         }
         public string Content
         {
-            get { return this.content; } 
-            set { this.content = value; }
+            get { return content; }
+            set { content = value; }
         }
-        public int Contribute
-        { 
-            get { return this.contribute; }
-            set { this.contribute = value; }
-        }
-        public float Scores
-        { 
-            get { return this.scores; } 
-            set { this.scores = value; }
-        }
-        public DateTime Created
+        public double CompletionRate
         {
-            get { return this.created; }
+            get { return completionRate; }
+            set { completionRate = value; }
         }
-        public bool IsEvaluated
+        public double Score
         {
-            get { return this.isEvaluated; }
+            get { return score; }
+            set { score = value; }
+        }
+        public bool Evaluated
+        {
+            get { return evaluated; }
+            set { evaluated = value; }
+        }
+        public DateTime CreatedAt
+        {
+            get { return createdAt; }
+            set { createdAt = value; }
+        }
+        public string CreatedBy
+        {
+            get { return createdBy; }
+            set { createdBy = value; }
+        }
+        public string StudentId
+        {
+            get { return studentId; }
+            set { studentId = value; }
+        }
+        public string TaskId
+        {
+            get { return taskId; }
+            set { taskId = value; }
         }
 
         #endregion
@@ -109,13 +118,13 @@ namespace ProjectManagement.Models
         {
             return this.content != string.Empty;
         }
-        public bool CheckContribute()
+        public bool CheckCompletionRate()
         {
-            return this.contribute >= 0 && this.contribute <= 100;
+            return this.completionRate >= 0.0D && this.completionRate <= 100.0D;
         }
-        public bool CheckScores()
+        public bool CheckScore()
         {
-            return this.scores >= 0.0F && this.scores <= 10.0F;
+            return this.score >= 0.0D && this.score <= 10.0D;
         }
 
         #endregion
@@ -124,7 +133,7 @@ namespace ProjectManagement.Models
 
         public Color GetStatusColor()
         {
-            if (this.isEvaluated) return Color.FromArgb(45, 237, 55);
+            if (this.Evaluated) return Color.FromArgb(45, 237, 55);
             else return Color.Gray;
         }
 

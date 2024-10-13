@@ -18,17 +18,17 @@ namespace ProjectManagement
 {
     public partial class UCStatisticalLecture : UserControl
     {
-        private User people = new User();
-        private List<Project> listThesis;
-        private ProjectDAO thesisDAO = new ProjectDAO();
+        private Users user = new Users();
+        private List<Project> listProject;
+        private ProjectDAO ProjectDAO = new ProjectDAO();
         public UCStatisticalLecture()
         {
             InitializeComponent();
         }
-        public void SetInformation(User people)
+        public void SetInformation(Users user)
         {
-            this.people = people;
-            this.listThesis = thesisDAO.SelectListRoleLecture(this.people.IdAccount);
+            this.user = user;
+            this.listProject = ProjectDAO.SelectListRoleLecture(this.user.UserId);
             SetUserControl();
         }
         void SetUserControl() 
@@ -56,14 +56,14 @@ namespace ProjectManagement
         {
             var allMonths = Enumerable.Range(1, 12);
             int selectedYear = (int)gComboBoxSelectYear.SelectedItem;
-            var thesisGroupedByMonth = allMonths
-                .GroupJoin(this.listThesis,
+            var projectGroupedByMonth = allMonths
+                .GroupJoin(this.listProject,
                            month => month,
-                           thesis => thesis.PublishDate.Month,
+                           project => project.PublicDate.Month,
                            (month, theses) => new
                            {
                                Month = month,
-                               Count = theses.Where(thesis => thesis.PublishDate.Year == selectedYear).Count()
+                               Count = theses.Where(project => project.PublicDate.Year == selectedYear).Count()
                            })
                 .Select(result => new
                 {
@@ -76,7 +76,7 @@ namespace ProjectManagement
             this.gSplineDataset.DataPoints.Clear();
             this.gBarDataset.DataPoints.Clear();
             this.gMixedBarAndSplineChart.Datasets.Clear();
-            foreach (var group in thesisGroupedByMonth)
+            foreach (var group in projectGroupedByMonth)
             {
                 monthName = dtfi.GetMonthName(group.Month);
                 this.gSplineDataset.DataPoints.Add(monthName, group.Count);

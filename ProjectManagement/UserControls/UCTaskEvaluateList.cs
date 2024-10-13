@@ -9,50 +9,50 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.DAOs;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using ProjectManagement.Enums;
 
 namespace ProjectManagement
 {
     public partial class UCTaskEvaluateList : UserControl
     {
         public event EventHandler ClickEvaluate;
-        private Project thesis = new Project();
-        private Tasks tasks = new Tasks();
+        private Project project = new Project();
+        private Tasks task = new Tasks();
         private Team team = new Team();
         private UCUserMiniLine peopleLine = new UCUserMiniLine();
-        private EvaluationDAO evaluationDAO = new EvaluationDAO();
+        private EvaluationDAO EvaluationDAO = new EvaluationDAO();
 
         public UCTaskEvaluateList()
         {
             InitializeComponent();
         }
-        public UCUserMiniLine GetPeopleLine
+        public UCUserMiniLine GetUserLine
         {
             get { return this.peopleLine; }
         }
-        public void SetUpUserControl(Project thesis, Tasks tasks, Team team, User people)
+        public void SetUpUserControl(Project project, Tasks task, Team team, Users user)
         {
-            this.thesis = thesis;
-            this.tasks = tasks;
+            this.project = project;
+            this.task = task;
             this.team = team;
             flpMembers.Controls.Clear();
-            if (people.Role == ERole.Lecture) LoadListRoleLecture();
-            else AddPeopleMiniLine(people);
+            if (user.Role == EUserRole.LECTURE) LoadListRoleLecture();
+            else AddUserMiniLine(user);
         }
         private void LoadListRoleLecture()
         {
-            foreach (User people in team.Members)
+            foreach (Users user in TeamDAO.GetMembersByTeamId(team.TeamId))
             {
-                AddPeopleMiniLine(people);
+                AddUserMiniLine(user);
             }
         }
-        private void AddPeopleMiniLine(User student)
+        private void AddUserMiniLine(Users student)
         {
             UCUserMiniLine line = new UCUserMiniLine(student);
             line.SetSize(new Size(610, 60));
             line.SetDeleteMode(false);
 
-            Evaluation evaluation = evaluationDAO.SelectOnly(tasks.IdTask, student.IdAccount);
+            Evaluation evaluation = EvaluationDAO.SelectOnly(task.TaskId, student.UserId);
             line.SetEvaluateMode(evaluation, true);
             line.ClickEvaluate += Line_ClickEvaluate;
             flpMembers.Controls.Add(line);

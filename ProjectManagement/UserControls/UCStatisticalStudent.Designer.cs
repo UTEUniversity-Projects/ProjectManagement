@@ -49,12 +49,12 @@
             gLineDataset = new Guna.Charts.WinForms.GunaLineDataset();
             lblAcademicChart = new Label();
             gChart = new Guna.Charts.WinForms.GunaChart();
-            gShadowPanelThesis = new Guna.UI2.WinForms.Guna2ShadowPanel();
+            gShadowPanelProject = new Guna.UI2.WinForms.Guna2ShadowPanel();
             lblNoteStatisProjects = new Label();
-            gPictureBoxItemThesis = new Guna.UI2.WinForms.Guna2PictureBox();
-            lblNumThesis = new Label();
-            gShadowPanelThesis.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemThesis).BeginInit();
+            gPictureBoxItemProject = new Guna.UI2.WinForms.Guna2PictureBox();
+            lblNumProject = new Label();
+            gShadowPanelProject.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemProject).BeginInit();
             SuspendLayout();
             // 
             // gLineDataset
@@ -115,20 +115,20 @@
             tick6.Font = chartFont16;
             gChart.ZAxes.Ticks = tick6;
             // 
-            // gShadowPanelThesis
+            // gShadowPanelProject
             // 
-            gShadowPanelThesis.BackColor = Color.Transparent;
-            gShadowPanelThesis.Controls.Add(lblNoteStatisProjects);
-            gShadowPanelThesis.Controls.Add(gPictureBoxItemThesis);
-            gShadowPanelThesis.Controls.Add(lblNumThesis);
-            gShadowPanelThesis.FillColor = Color.White;
-            gShadowPanelThesis.Location = new Point(36, 10);
-            gShadowPanelThesis.Name = "gShadowPanelThesis";
-            gShadowPanelThesis.Radius = 7;
-            gShadowPanelThesis.ShadowColor = Color.Black;
-            gShadowPanelThesis.ShadowShift = 4;
-            gShadowPanelThesis.Size = new Size(227, 70);
-            gShadowPanelThesis.TabIndex = 33;
+            gShadowPanelProject.BackColor = Color.Transparent;
+            gShadowPanelProject.Controls.Add(lblNoteStatisProjects);
+            gShadowPanelProject.Controls.Add(gPictureBoxItemProject);
+            gShadowPanelProject.Controls.Add(lblNumProject);
+            gShadowPanelProject.FillColor = Color.White;
+            gShadowPanelProject.Location = new Point(36, 10);
+            gShadowPanelProject.Name = "gShadowPanelProject";
+            gShadowPanelProject.Radius = 7;
+            gShadowPanelProject.ShadowColor = Color.Black;
+            gShadowPanelProject.ShadowShift = 4;
+            gShadowPanelProject.Size = new Size(227, 70);
+            gShadowPanelProject.TabIndex = 33;
             // 
             // lblNoteStatisProjects
             // 
@@ -141,29 +141,29 @@
             lblNoteStatisProjects.TabIndex = 9;
             lblNoteStatisProjects.Text = "completed projects";
             // 
-            // gPictureBoxItemThesis
+            // gPictureBoxItemProject
             // 
-            gPictureBoxItemThesis.CustomizableEdges = customizableEdges3;
-            gPictureBoxItemThesis.FillColor = Color.Transparent;
-            gPictureBoxItemThesis.Image = (Image)resources.GetObject("gPictureBoxItemThesis.Image");
-            gPictureBoxItemThesis.ImageRotate = 0F;
-            gPictureBoxItemThesis.Location = new Point(17, 7);
-            gPictureBoxItemThesis.Name = "gPictureBoxItemThesis";
-            gPictureBoxItemThesis.ShadowDecoration.CustomizableEdges = customizableEdges4;
-            gPictureBoxItemThesis.Size = new Size(50, 50);
-            gPictureBoxItemThesis.SizeMode = PictureBoxSizeMode.StretchImage;
-            gPictureBoxItemThesis.TabIndex = 10;
-            gPictureBoxItemThesis.TabStop = false;
+            gPictureBoxItemProject.CustomizableEdges = customizableEdges3;
+            gPictureBoxItemProject.FillColor = Color.Transparent;
+            gPictureBoxItemProject.Image = (Image)resources.GetObject("gPictureBoxItemProject.Image");
+            gPictureBoxItemProject.ImageRotate = 0F;
+            gPictureBoxItemProject.Location = new Point(17, 7);
+            gPictureBoxItemProject.Name = "gPictureBoxItemProject";
+            gPictureBoxItemProject.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            gPictureBoxItemProject.Size = new Size(50, 50);
+            gPictureBoxItemProject.SizeMode = PictureBoxSizeMode.StretchImage;
+            gPictureBoxItemProject.TabIndex = 10;
+            gPictureBoxItemProject.TabStop = false;
             // 
-            // lblNumThesis
+            // lblNumProject
             // 
-            lblNumThesis.AutoSize = true;
-            lblNumThesis.Font = new Font("Trebuchet MS", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNumThesis.Location = new Point(78, 7);
-            lblNumThesis.Name = "lblNumThesis";
-            lblNumThesis.Size = new Size(44, 32);
-            lblNumThesis.TabIndex = 11;
-            lblNumThesis.Text = "24";
+            lblNumProject.AutoSize = true;
+            lblNumProject.Font = new Font("Trebuchet MS", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblNumProject.Location = new Point(78, 7);
+            lblNumProject.Name = "lblNumProject";
+            lblNumProject.Size = new Size(44, 32);
+            lblNumProject.TabIndex = 11;
+            lblNumProject.Text = "24";
             // 
             // UCStatisticalStudent
             // 
@@ -172,12 +172,12 @@
             BackColor = Color.White;
             Controls.Add(lblAcademicChart);
             Controls.Add(gChart);
-            Controls.Add(gShadowPanelThesis);
+            Controls.Add(gShadowPanelProject);
             Name = "UCStatisticalStudent";
             Size = new Size(750, 295);
-            gShadowPanelThesis.ResumeLayout(false);
-            gShadowPanelThesis.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemThesis).EndInit();
+            gShadowPanelProject.ResumeLayout(false);
+            gShadowPanelProject.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemProject).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -186,9 +186,9 @@
         private Guna.Charts.WinForms.GunaLineDataset gLineDataset;
         private Label lblAcademicChart;
         private Guna.Charts.WinForms.GunaChart gChart;
-        private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelThesis;
+        private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelProject;
         private Label lblNoteStatisProjects;
-        private Guna.UI2.WinForms.Guna2PictureBox gPictureBoxItemThesis;
-        private Label lblNumThesis;
+        private Guna.UI2.WinForms.Guna2PictureBox gPictureBoxItemProject;
+        private Label lblNumProject;
     }
 }

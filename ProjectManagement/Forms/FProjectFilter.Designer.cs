@@ -57,7 +57,7 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges26 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             gButtonCancel = new Guna.UI2.WinForms.Guna2Button();
             gGradientButtonSave = new Guna.UI2.WinForms.Guna2GradientButton();
-            gSeparatorTopicThesis = new Guna.UI2.WinForms.Guna2Separator();
+            gSeparatorTopicProject = new Guna.UI2.WinForms.Guna2Separator();
             gShadowPanelTopic = new Guna.UI2.WinForms.Guna2ShadowPanel();
             pnlTopic = new Panel();
             gTextBoxMembersTo = new Guna.UI2.WinForms.Guna2TextBox();
@@ -74,7 +74,7 @@
             gShadowPanelTopicFavorites = new Guna.UI2.WinForms.Guna2ShadowPanel();
             pnlFavorite = new Panel();
             gButtonTopicStar = new Guna.UI2.WinForms.Guna2Button();
-            lblThesisFavorites = new Label();
+            lblProjectFavorites = new Label();
             lblFavoriteSelectAll = new Label();
             gButtonFavoriteSelectAll = new Guna.UI2.WinForms.Guna2Button();
             gShadowPanelStatus = new Guna.UI2.WinForms.Guna2ShadowPanel();
@@ -151,13 +151,13 @@
             gGradientButtonSave.Text = "Save";
             gGradientButtonSave.Click += gGradientButtonSave_Click;
             // 
-            // gSeparatorTopicThesis
+            // gSeparatorTopicProject
             // 
-            gSeparatorTopicThesis.FillColor = Color.FromArgb(74, 97, 94);
-            gSeparatorTopicThesis.Location = new Point(36, 546);
-            gSeparatorTopicThesis.Name = "gSeparatorTopicThesis";
-            gSeparatorTopicThesis.Size = new Size(704, 15);
-            gSeparatorTopicThesis.TabIndex = 28;
+            gSeparatorTopicProject.FillColor = Color.FromArgb(74, 97, 94);
+            gSeparatorTopicProject.Location = new Point(36, 546);
+            gSeparatorTopicProject.Name = "gSeparatorTopicProject";
+            gSeparatorTopicProject.Size = new Size(704, 15);
+            gSeparatorTopicProject.TabIndex = 28;
             // 
             // gShadowPanelTopic
             // 
@@ -331,7 +331,7 @@
             lblTopic.Name = "lblTopic";
             lblTopic.Size = new Size(155, 28);
             lblTopic.TabIndex = 54;
-            lblTopic.Text = "THESIS TOPIC";
+            lblTopic.Text = "PROJECT TOPIC";
             // 
             // lblTopicSelectAll
             // 
@@ -387,7 +387,7 @@
             // pnlFavorite
             // 
             pnlFavorite.Controls.Add(gButtonTopicStar);
-            pnlFavorite.Controls.Add(lblThesisFavorites);
+            pnlFavorite.Controls.Add(lblProjectFavorites);
             pnlFavorite.Enabled = false;
             pnlFavorite.Location = new Point(10, 5);
             pnlFavorite.Name = "pnlFavorite";
@@ -416,16 +416,16 @@
             gButtonTopicStar.TabIndex = 13;
             gButtonTopicStar.Click += gButtonTopicStar_Click;
             // 
-            // lblThesisFavorites
+            // lblProjectFavorites
             // 
-            lblThesisFavorites.AutoSize = true;
-            lblThesisFavorites.BackColor = Color.Transparent;
-            lblThesisFavorites.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblThesisFavorites.Location = new Point(66, 11);
-            lblThesisFavorites.Name = "lblThesisFavorites";
-            lblThesisFavorites.Size = new Size(229, 28);
-            lblThesisFavorites.TabIndex = 12;
-            lblThesisFavorites.Text = "Is THESIS FAVORITES";
+            lblProjectFavorites.AutoSize = true;
+            lblProjectFavorites.BackColor = Color.Transparent;
+            lblProjectFavorites.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblProjectFavorites.Location = new Point(66, 11);
+            lblProjectFavorites.Name = "lblProjectFavorites";
+            lblProjectFavorites.Size = new Size(229, 28);
+            lblProjectFavorites.TabIndex = 12;
+            lblProjectFavorites.Text = "Is PROJECT FAVORITES";
             // 
             // lblFavoriteSelectAll
             // 
@@ -732,7 +732,7 @@
             gButtonResetFilter.TabIndex = 64;
             gButtonResetFilter.Click += gButtonResetFilter_Click;
             // 
-            // FThesisFilter
+            // FProjectFilter
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -746,15 +746,15 @@
             Controls.Add(gShadowPanelStatus);
             Controls.Add(gShadowPanelTopicFavorites);
             Controls.Add(gShadowPanelTopic);
-            Controls.Add(gSeparatorTopicThesis);
+            Controls.Add(gSeparatorTopicProject);
             Controls.Add(gButtonCancel);
             Controls.Add(gGradientButtonSave);
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            Name = "FThesisFilter";
+            Name = "FProjectFilter";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Thesis Filter";
+            Text = "Project Filter";
             gShadowPanelTopic.ResumeLayout(false);
             gShadowPanelTopic.PerformLayout();
             pnlTopic.ResumeLayout(false);
@@ -781,11 +781,11 @@
         #endregion
         private Guna.UI2.WinForms.Guna2Button gButtonCancel;
         private Guna.UI2.WinForms.Guna2GradientButton gGradientButtonSave;
-        private Guna.UI2.WinForms.Guna2Separator gSeparatorTopicThesis;
+        private Guna.UI2.WinForms.Guna2Separator gSeparatorTopicProject;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelTopic;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelTopicFavorites;
         private Guna.UI2.WinForms.Guna2Button gButtonTopicStar;
-        private Label lblThesisFavorites;
+        private Label lblProjectFavorites;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelStatus;
         private Guna.UI2.WinForms.Guna2ComboBox gComboBoxStatus;
         private Label lblStatus;

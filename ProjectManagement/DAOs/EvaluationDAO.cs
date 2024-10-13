@@ -1,99 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using ProjectManagement.Database;
+﻿using ProjectManagement.Database;
+using ProjectManagement.Mappers.Implement;
 using ProjectManagement.Models;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace ProjectManagement.DAOs
 {
     internal class EvaluationDAO : DBConnection
     {
-        public EvaluationDAO() { }
 
         #region SELECT EVALUATION
 
-        public List<Evaluation> SelectList(string command)
+        public static Evaluation SelectOnly(string taskId, string studentId)
         {
-            DataTable dataTable = Select(command);
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE taskId = @TaskId AND studentId = @StudentId",
+                DBTableNames.Evaluation);
 
-            List<Evaluation> list = new List<Evaluation>();
-            foreach (DataRow row in dataTable.Rows)
+            List<SqlParameter> parameters = new List<SqlParameter>
             {
-                Evaluation evaluation = GetFromDataRow(row);
-                list.Add(evaluation);
-            }
+                new SqlParameter("@TaskId", taskId),
+                new SqlParameter("@StudentId", studentId)
+            };
 
-            return list;
+            return DBGetModel.GetModel(sqlStr, parameters, new EvaluationMapper());
         }
-        public List<Evaluation> SelectListByTask(string idTask)
-        {
-            string command = string.Format("SELECT * FROM {0} WHERE idtask = '{1}'",
-                                            DBTableNames.DBEvaluation, idTask);
-            return SelectList(command);
-        }
-        public List<Evaluation> SelectListByPeople(string idPeople)
-        {
-            string command = string.Format("SELECT * FROM {0} WHERE idpeople = '{1}'",
-                                            DBTableNames.DBEvaluation, idPeople);
-            return SelectList(command);
-        }
-        public Evaluation SelectOnly(string idTask, string idPeople)
-        {
-            DataTable dt = Select(string.Format("SELECT * FROM {0} WHERE idtask = '{1}' and idpeople = '{2}'", 
-                                            DBTableNames.DBEvaluation, idTask, idPeople));
 
-            if (dt.Rows.Count > 0) return GetFromDataRow(dt.Rows[0]);
-            return new Evaluation();
+        public static List<Evaluation> SelectListByTask(string taskId)
+        {
+            return DBGetModel.GetModelList(DBTableNames.Evaluation, "taskId", taskId, new EvaluationMapper());
+        }
+
+        public static List<Evaluation> SelectListByUser(string studentId)
+        {
+            return DBGetModel.GetModelList(DBTableNames.Evaluation, "studentId", studentId, new EvaluationMapper());
         }
 
         #endregion
 
         #region EVALUATION DAO EXECUTION
 
-        public void Insert(Evaluation evaluation)
+        public static void InsertFollowTeam(string instructorId, string taskId, string teamId)
         {
-            ExecuteQueryEvaluation(evaluation, "INSERT INTO {0} VALUES ('{1}', '{2}', '{3}', '{4}', {5}, {6}, '{7}', {8})",
-                "Create", false);
-        }
-        public void DeleteFollowTask(Tasks tasks)
-        {
-            SQLExecuteByCommand(string.Format("DELETE FROM {0} WHERE idtask = '{1}'", DBTableNames.DBEvaluation, tasks.IdTask));
-        }
-        public void Update(Evaluation evaluation)
-        {
-            ExecuteQueryEvaluation(evaluation, "UPDATE {0} SET " +
-                "idevaluation = '{1}', idtask = '{2}', idpeople = '{3}', content = '{4}', contribute = {5}, " +
-                "scores = {6}, created = '{7}', isevaluated = {8} WHERE idevaluation = '{1}'",
-                "Evaluate", true);
-        }
-        public void InsertFollowTeam(string idTask, Team team)
-        {
-            foreach (User people in team.Members)
+            string sqlStr = string.Format("SELECT studentId FROM {0} WHERE teamId = @TeamId", DBTableNames.JoinTeam);
+
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            foreach (DataRow row in dataTable.Rows)
             {
-                Evaluation evaluation = new Evaluation(idTask, people.IdAccount, string.Empty, 0, 0.0F, DateTime.Now, false);
-                Insert(evaluation);
+                Evaluation evaluation = new Evaluation(string.Empty, 0.0D, 0.0D, false, DateTime.Now, 
+                    instructorId, row["studentId"].ToString(), taskId);
+                DBExecution.Insert(evaluation, DBTableNames.Evaluation);
             }
         }
 
-        #endregion
-
-        #region Get Evaluation From Data Row
-
-        public Evaluation GetFromDataRow(DataRow row)
+        public static void Update(Evaluation evaluation)
         {
-            string idEvaluation = row["idevaluation"].ToString();
-            string idTask = row["idtask"].ToString();
-            string idPeople = row["idpeople"].ToString();
-            string content = row["content"].ToString();
-            int contribute = int.Parse(row["contribute"].ToString());
-            float scores = float.Parse(row["scores"].ToString());
-            DateTime created = DateTime.Parse(row["created"].ToString());
-            bool isEvaluated = row["isevaluated"].ToString() == "True" ? true : false;
+            DBExecution.Update(evaluation, DBTableNames.Evaluation, "evaluationId", evaluation.EvaluationId);
+        }
 
-            Evaluation evaluation = new Evaluation(idEvaluation, idTask, idPeople, content, contribute, scores, created, isEvaluated);
-            return evaluation;
+        public static void DeleteFollowTask(Tasks task)
+        {
+            string sqlStr = string.Format("DELETE FROM {0} WHERE taskId = @TaskId", DBTableNames.Evaluation);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TaskId", task.TaskId)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
         }
 
         #endregion

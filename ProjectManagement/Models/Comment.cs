@@ -1,84 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProjectManagement.Process;
+﻿using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
 {
     public class Comment
     {
-        MyProcess myProcess = new MyProcess();
 
         #region COMMENT ATTRIBUTES
 
-        private string idComment;
-        private string idTask;
-        private string idCreator;
+        private string commentId;
         private string content;
-        private string emoji;
-        private DateTime created;
+        private DateTime createdAt;
+        private string createdBy;
+        private string taskId;
 
         #endregion
 
-        #region COMMENT CONSTRUCTOR
+        #region COMMENT CONSTRUCTORS
 
         public Comment()
         {
-            this.idComment = string.Empty;
-            this.idTask = string.Empty;
-            this.idCreator = string.Empty;
-            this.content = string.Empty;
-            this.emoji = "EmojiLike";
-            this.created = DateTime.Now;
+            commentId = string.Empty;
+            content = string.Empty;
+            createdAt = DateTime.MinValue;
+            createdBy = string.Empty;
+            taskId = string.Empty;
         }
-        public Comment(string idTask, string idCreator, string content, string emoji, DateTime created)
+        public Comment(string commentId, string content, DateTime createdAt, string createdBy, string taskId)
         {
-            this.idComment = myProcess.GenIDClassify(EClassify.Comment);
-            this.idTask = idTask;
-            this.idCreator = idCreator;
+            this.commentId = commentId;
             this.content = content;
-            this.emoji = emoji;
-            this.created = created;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.taskId = taskId;
         }
-        public Comment(string idComment, string idTask, string idCreator, string content, string emoji, DateTime created)
+        public Comment(string content, DateTime createdAt, string createdBy, string taskId)
         {
-            this.idComment = idComment;
-            this.idTask = idTask;
-            this.idCreator = idCreator;
+            this.commentId = ModelUtil.GenerateModelId(EModelClassification.COMMENT);
             this.content = content;
-            this.emoji = emoji;
-            this.created = created;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.taskId = taskId;
         }
 
         #endregion
 
         #region COMMENT PROPERTIES
 
-        public string IdComment
+        public string CommentId
         {
-            get { return this.idComment; }
-        }
-        public string IdTask
-        {
-            get { return this.idTask; }
-        }
-        public string IdCreator
-        {
-            get { return this.idCreator; }
+            get { return commentId; }
+            set { commentId = value; }
         }
         public string Content
         {
-            get { return this.content; }
+            get { return content; }
+            set { content = value; }
         }
-        public string Emoji
+        public DateTime CreatedAt
         {
-            get { return this.emoji; }
+            get { return createdAt; }
+            set { createdAt = value; }
         }
-        public DateTime Created
+        public string CreatedBy
         {
-            get { return this.created; }
+            get { return createdBy; }
+            set { createdBy = value; }
+        }
+        public string TaskId
+        {
+            get { return taskId; }
+            set { taskId = value; }
         }
 
         #endregion

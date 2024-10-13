@@ -16,28 +16,28 @@ namespace ProjectManagement
     {
         public event EventHandler NotificationJump;
 
-        private User host = new User();
+        private Users host = new Users();
         private Notification notificationClicked = new Notification();
         private List<Notification> notificationList = new List<Notification>();
-        private NotificationDAO notificationDAO = new NotificationDAO();
+        private NotificationDAO NotificationDAO = new NotificationDAO();
 
         public UCNotification()
         {
             InitializeComponent();
         }
-        public void SetInformation(User host)
+        public void SetInformation(Users host)
         {
             this.host = host;
             InitUserControl();
         }
         private void InitUserControl()
         {
-            this.notificationList = notificationDAO.SelectList(host);
+            this.notificationList = NotificationDAO.SelectList(host);
             LoadNotificationList();
         }
         public bool HasNewNotification()
         {
-            return notificationList.Count(n => n.IsSaw == false) > 0;
+            return false; // notificationList.Count(n => n.IsSaw == false) > 0;
         }
         private void LoadNotificationList()
         {

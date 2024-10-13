@@ -1,72 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProjectManagement.Process;
+﻿using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
 {
     public class Tasks
     {
-        MyProcess myProcess = new MyProcess();
 
         #region TASK ATTRIBUTES
 
-        private string idTask;
+        private string taskId;
+        private DateTime startAt;
+        private DateTime endAt;
         private string title;
         private string description;
-        private string idCreator;
-        private string idTeam;
-        private bool isFavorite;
-        private int progress;
-        private DateTime created;
+        private double progress;
+        private string priority;
+        private DateTime createdAt;
+        private string createdBy;
+        private string projectId;
 
         #endregion
 
         #region TASK CONTRUCTOR
 
-        public Tasks() 
+        public Tasks()
         {
-            this.idTask = string.Empty;
-            this.title = string.Empty;
-            this.description = string.Empty;
-            this.idCreator = string.Empty;
-            this.idTeam = string.Empty;
-            this.isFavorite = false;
-            this.progress = 0;
-            this.created = DateTime.Now;
+            taskId = string.Empty;
+            startAt = DateTime.MinValue;
+            endAt = DateTime.MinValue;
+            title = string.Empty;
+            description = string.Empty;
+            progress = 0;
+            priority = string.Empty;
+            createdAt = DateTime.MinValue;
+            createdBy = string.Empty;
+            projectId = string.Empty;
         }
-        public Tasks(string title, string description, string idCreator, string idTeam, bool isFavorite, int progress, DateTime created)
+
+        public Tasks(string taskId, DateTime startAt, DateTime endAt, string title, string description, double progress, string priority, DateTime createdAt, string createdBy, string projectId)
         {
-            this.idTask = myProcess.GenIDClassify(EClassify.Task);
+            this.taskId = taskId;
+            this.startAt = startAt;
+            this.endAt = endAt;
             this.title = title;
             this.description = description;
-            this.idCreator = idCreator;
-            this.idTeam = idTeam;
-            this.isFavorite = isFavorite;
             this.progress = progress;
-            this.created = created;
+            this.priority = priority;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.projectId = projectId;
         }
-        public Tasks(string idTask, string title, string description, string idCreator, string idTeam, bool isFavorite, int progress, DateTime created)
+
+        public Tasks(DateTime startAt, DateTime endAt, string title, string description, double progress, string priority, DateTime createdAt, string createdBy, string projectId)
         {
-            this.idTask = idTask;
+            this.taskId = ModelUtil.GenerateModelId(EModelClassification.TASK);
+            this.startAt = startAt;
+            this.endAt = endAt;
             this.title = title;
             this.description = description;
-            this.idCreator = idCreator;
-            this.idTeam = idTeam;
-            this.isFavorite = isFavorite;
             this.progress = progress;
-            this.created = created;
+            this.priority = priority;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.projectId = projectId;
         }
+
 
         #endregion
 
         #region TASK PROPERTIES
 
-        public string IdTask
+        public string TaskId
         {
-            get { return this.idTask; }
+            get { return this.taskId; }
+            set { this.taskId = value; }
+        }
+        public DateTime StartAt
+        {
+            get { return this.startAt; }
+            set { this.startAt = value; }
+        }
+        public DateTime EndAt
+        {
+            get { return this.endAt; }
+            set { this.endAt = value; }
         }
         public string Title
         {
@@ -78,27 +95,29 @@ namespace ProjectManagement.Models
             get { return this.description; }
             set { this.description = value; }
         }
-        public string IdCreator
-        {
-            get { return this.idCreator; }
-        }
-        public string IdTeam
-        {
-            get { return this.idTeam; }
-        }
-        public bool IsFavorite
-        {
-            get { return this.isFavorite; }
-            set { this.isFavorite = value; }
-        }
-        public int Progress
+        public double Progress
         {
             get { return this.progress; }
             set { this.progress = value; }
         }
-        public DateTime CreatedDate
+        public string Priority
         {
-            get { return this.created; }
+            get { return this.priority; }
+            set { this.priority = value; }
+        }
+        public DateTime CreatedAt
+        {
+            get { return this.createdAt; }
+            set { this.createdAt = value; }
+        }
+        public string CreatedBy
+        {
+            get { return this.createdBy; }
+        }
+        public string ProjectId
+        {
+            get { return projectId; }
+            set { this.projectId = value; }
         }
 
         #endregion
@@ -124,7 +143,7 @@ namespace ProjectManagement.Models
 
         public Tasks Clone()
         {
-            return new Tasks(idTask, title, description, idCreator, idTeam, isFavorite, progress, created);
+            return new Tasks(taskId, startAt, endAt, title, description, progress, priority, createdAt, createdBy, projectId);
         }
 
         #endregion

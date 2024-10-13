@@ -7,21 +7,13 @@ using ProjectManagement.Process;
 
 namespace ProjectManagement.Models
 {
-    public class Lecture : User
+    public class Lecture : Users
     {
         public Lecture() : base() { }
 
-        #region LECTURE CONTRUCTORS
-
-        public Lecture(string fullName, string citizenCode, DateTime birthday, EGender gender, string email, string phoneNumber,
-                        string handle, ERole role, string workCode, string password)
-            : base(fullName, citizenCode, birthday, gender, email, phoneNumber, handle, role, workCode, password, EClassify.Lecture) { }
-
-        public Lecture(string idAccount, string fullName, string citizenCode, DateTime birthday, EGender gender, string email, string phoneNumber,
-                        string handle, ERole role, string workCode, string password)
-            : base(idAccount, fullName, citizenCode, birthday, gender, email, phoneNumber, handle, role, workCode, password, "PicAvatarDemoUser") { }
-        
-        #endregion
-
+        public Lecture(Users user)
+        : base(user.UserId, user.UserName, user.FullName, user.Password, user.Email, user.PhoneNumber, user.DateOfBirth,
+               user.CitizenCode, user.University, user.Faculty, user.WorkCode, user.Gender, user.Avatar, user.Role, user.JoinAt)
+        { }
     }
 }

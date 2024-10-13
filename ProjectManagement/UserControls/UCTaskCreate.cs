@@ -10,24 +10,24 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCTaskCreate : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
         public event EventHandler TasksCreateClicked;
 
-        private User creator = new User();
-        private User instructor = new User();
-        private Tasks tasks = new Tasks();
+        private Users creator = new Users();
+        private Users instructor = new Users();
+        private Tasks task = new Tasks();
         private Team team = new Team();
-        private Project thesis = new Project();
+        private Project project = new Project();
 
-        private TasksDAO tasksDAO = new TasksDAO();
-        private EvaluationDAO evaluationDAO = new EvaluationDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
+        private TaskDAO TaskDAO = new TaskDAO();
+        private EvaluationDAO EvaluationDAO = new EvaluationDAO();
+        private NotificationDAO NotificationDAO = new NotificationDAO();
 
         private bool flagCheck = false;
 
@@ -44,19 +44,19 @@ namespace ProjectManagement
         }
         public Tasks GetTasks
         {
-            get { return this.tasks; }
+            get { return this.task; }
         }
 
         #endregion
 
         #region FUNCTIONS
 
-        public void SetUpUserControl(User creator, User instructor, Team team, Project thesis)
+        public void SetUpUserControl(Users creator, Users instructor, Team team, Project project)
         {
             this.creator = creator;
             this.instructor = instructor;
             this.team = team;
-            this.thesis = thesis;
+            this.project = project;
             InitUserControl();
         }
         private void InitUserControl()
@@ -66,10 +66,10 @@ namespace ProjectManagement
         }
         private bool CheckInformationValid()
         {
-            myProcess.RunCheckDataValid(tasks.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
-            myProcess.RunCheckDataValid(tasks.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
+            WinformControlUtil.RunCheckDataValid(task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
 
-            return tasks.CheckTitle() && tasks.CheckDescription();
+            return task.CheckTitle() && task.CheckDescription();
         }
 
         #endregion
@@ -81,15 +81,15 @@ namespace ProjectManagement
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                this.tasks = new Tasks(gTextBoxTitle.Text, gTextBoxDescription.Text,
-                                        this.creator.IdAccount, this.team.IdTeam, false, 0, DateTime.Now);
-                tasksDAO.Insert(tasks);
-                evaluationDAO.InsertFollowTeam(tasks.IdTask, team);
+                this.task = new Tasks(DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
+                    0.0D, "Low", DateTime.Now, this.creator.UserId, this.project.ProjectId);
+                TaskDAO.Insert(task);
+                EvaluationDAO.InsertFollowTeam(instructor.UserId, task.TaskId, team.TeamId);
 
-                List<User> peoples = team.Members.ToList();
-                peoples.Add(this.instructor);
-                string content = Notification.GetContentTypeTask(creator.FullName, tasks.Title, thesis.Topic);
-                notificationDAO.InsertFollowListPeople(creator.IdAccount, thesis.IdThesis, tasks.IdTask, content, peoples);
+                List<Student> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
+                // peoples.Add(this.instructor);
+                string content = Notification.GetContentTypeTask(creator.FullName, task.Title, project.Topic);
+                NotificationDAO.InsertFollowListUser(this.team.TeamId, content, Enums.ENotificationType.TASK);
 
                 this.flagCheck = true;
                 InitUserControl();
@@ -107,13 +107,13 @@ namespace ProjectManagement
 
         private void gTextBoxTitle_TextChanged(object sender, EventArgs e)
         {
-            this.tasks.Title = gTextBoxTitle.Text;
-            myProcess.RunCheckDataValid(tasks.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
+            this.task.Title = gTextBoxTitle.Text;
+            WinformControlUtil.RunCheckDataValid(task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
         }
         private void gTextBoxDescription_TextChanged(object sender, EventArgs e)
         {
-            this.tasks.Description = gTextBoxDescription.Text;
-            myProcess.RunCheckDataValid(tasks.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            this.task.Description = gTextBoxDescription.Text;
+            WinformControlUtil.RunCheckDataValid(task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
         }
 
         #endregion

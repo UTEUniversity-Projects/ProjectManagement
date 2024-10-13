@@ -1,43 +1,27 @@
 ﻿using Guna.UI2.WinForms;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ProjectManagement.DAOs;
+using ProjectManagement.Enums;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCProjectDetails : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
 
-        private Project thesis = new Project();
-        private User host = new User();
+        private Project project = new Project();
+        private Users host = new Users();
         private Team team = new Team();
-        private User instructor = new User();
+        private Users instructor = new Users();
         private Notification notification = new Notification();
         private List<Team> listTeam = new List<Team>();
 
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private UserDAO peopleDAO = new UserDAO();
-        private TeamDAO teamDAO = new TeamDAO();
-        private GiveUpDAO giveUpDAO = new GiveUpDAO();
-        private ProjectStatusDAO thesisStatusDAO = new ProjectStatusDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
-
         private UCProjectDetailsTeam showTeam = new UCProjectDetailsTeam();
-        private UCProjectDetailsRegistered uCThesisDetailsRegistered = new UCProjectDetailsRegistered();
-        private UCProjectDetailsCreatedTeam uCThesisDetailsCreatedTeam = new UCProjectDetailsCreatedTeam();
-        private UCProjectDetailsStatistical uCThesisDetailsStatistical = new UCProjectDetailsStatistical();
+        private UCProjectDetailsRegistered uCProjectDetailsRegistered = new UCProjectDetailsRegistered();
+        private UCProjectDetailsCreatedTeam uCProjectDetailsCreatedTeam = new UCProjectDetailsCreatedTeam();
+        private UCProjectDetailsStatistical uCProjectDetailsStatistical = new UCProjectDetailsStatistical();
 
         private bool flagEdited = false;
         private bool flagDeleted = false;
@@ -50,17 +34,17 @@ namespace ProjectManagement
 
         #region PROPERTIES
 
-        public bool ThesisEdited
+        public bool ProjectEdited
         {
             get { return this.flagEdited; }
         }
-        public bool ThesisDeleted
+        public bool ProjectDeleted
         {
             get { return this.flagDeleted; }
         }
-        public Project GetThesis
+        public Project GetProject
         {
-            get { return this.thesis; }
+            get { return this.project; }
         }
         public Guna2Button GButtonBack
         {
@@ -71,12 +55,12 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetInformation(Project thesis, User host, bool flagStuMyTheses)
+        public void SetInformation(Project project, Users host, bool flagStuMyTheses)
         {
-            this.thesis = thesis;
+            this.project = project;
             this.host = host;
             this.flagStuMyTheses = flagStuMyTheses;
-            this.instructor = peopleDAO.SelectOnlyByID(thesis.IdInstructor);
+            this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
             InitUserControl();
         }
         private void InitUserControl()
@@ -85,54 +69,54 @@ namespace ProjectManagement
             this.flagDeleted = false;
             gShadowPanelTeam.Controls.Add(showTeam);
 
-            ResetThesisInfor();
+            ResetProjectInfor();
             SetControlsReadOnly(true);
             SetInitialSate();
             SetButtonComplete();
             SetButtonEditOrDetails();
         }
-        private void ResetThesisInfor()
+        private void ResetProjectInfor()
         {
-            this.thesis = thesisDAO.SelectOnly(thesis.IdThesis);
+            this.project = ProjectDAO.SelectOnly(project.ProjectId);
 
-            myProcess.SetItemFavorite(gButtonStar, thesis.IsFavorite);
-            gTextBoxStatus.Text = thesis.Status.ToString();
-            gTextBoxStatus.FillColor = thesis.GetStatusColor();
-            gTextBoxTopic.Text = thesis.Topic;
-            gTextBoxField.Text = thesis.Field.ToString();
-            gTextBoxLevel.Text = thesis.Level.ToString();
-            gTextBoxMembers.Text = thesis.MaxMembers.ToString();
-            gTextBoxDescription.Text = thesis.Description;
+            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
+            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.FillColor = project.GetStatusColor();
+            gTextBoxTopic.Text = project.Topic;
+            gTextBoxField.Text = project.FieldId.ToString();
+            // gTextBoxLevel.Text = project.Level.ToString();
+            gTextBoxMembers.Text = project.MaxMember.ToString();
+            gTextBoxDescription.Text = project.Description;
         }
         private void SetControlsReadOnly(bool flagReadOnly)
         {
-            myProcess.SetTextBoxState(gTextBoxTopic, flagReadOnly);
-            myProcess.SetTextBoxState(gTextBoxDescription, flagReadOnly);
-            myProcess.SetTextBoxState(gTextBoxField, flagReadOnly);
-            myProcess.SetTextBoxState(gTextBoxLevel, flagReadOnly);
-            myProcess.SetTextBoxState(gTextBoxMembers, flagReadOnly);
+            GunaControlUtil.SetTextBoxState(gTextBoxTopic, flagReadOnly);
+            GunaControlUtil.SetTextBoxState(gTextBoxDescription, flagReadOnly);
+            GunaControlUtil.SetTextBoxState(gTextBoxField, flagReadOnly);
+            GunaControlUtil.SetTextBoxState(gTextBoxLevel, flagReadOnly);
+            GunaControlUtil.SetTextBoxState(gTextBoxMembers, flagReadOnly);
         }
         private void SetInitialSate()
         {
             SetTeamHere(false);
             gGradientButtonReasonDetails.Hide();
 
-            if (thesis.Status == EThesisStatus.Processing || thesis.Status == EThesisStatus.Completed)
+            if (project.Status == EProjectStatus.PROCESSING || project.Status == EProjectStatus.COMPLETED)
             {
                 SetTeamMode(true);
                 SetViewButtonMode(true);
                 return;
             }
-            if (thesis.Status == EThesisStatus.GiveUp)
+            if (project.Status == EProjectStatus.GAVEUP)
             {
                 SetTeamMode(true);
                 SetGiveUpMode(true);
                 return;
             }
-            if (thesis.Status == EThesisStatus.Registered || thesis.Status == EThesisStatus.Published)
+            if (project.Status == EProjectStatus.REGISTERED || project.Status == EProjectStatus.PUBLISHED)
             {
                 SetViewButtonMode(false);
-                if (host.Role == ERole.Lecture)
+                if (host.Role == EUserRole.LECTURE)
                 {
                     gGradientButtonRegistered.PerformClick();
                 }
@@ -161,10 +145,10 @@ namespace ProjectManagement
         {
             if (flagShow)
             {
-                this.team = teamDAO.SelectFollowThesis(this.thesis);
+                this.team = TeamDAO.SelectFollowProject(this.project.ProjectId);
                 if (team != null)
                 {
-                    showTeam.SetInformation(team, thesis);
+                    showTeam.SetInformation(team, project);
                     showTeam.Location = new Point(5, 5);
                     SetTeamHere(true);
                 }
@@ -207,7 +191,7 @@ namespace ProjectManagement
             if (flag == false) return;
 
             gPictureBoxState.Image = Properties.Resources.PictureEmptyState;
-            gTextBoxState.Text = "  The thesis cannot continue !";
+            gTextBoxState.Text = "  The project cannot continue !";
             gTextBoxState.ForeColor = Color.Gray;
             gGradientButtonReasonDetails.Show();
             SetUpDataViewState();
@@ -224,13 +208,13 @@ namespace ProjectManagement
             gGradientButtonComplete.Hide();
             gGradientButtonGiveUp.Hide();
 
-            if (host.Role == ERole.Lecture && thesis.Status == EThesisStatus.Processing)
+            if (host.Role == EUserRole.LECTURE && project.Status == EProjectStatus.PROCESSING)
             {
                 gGradientButtonComplete.Show();
                 gGradientButtonGiveUp.Show();
                 return;
             }
-            if (host.Role == ERole.Student && thesis.Status == EThesisStatus.Processing)
+            if (host.Role == EUserRole.STUDENT && project.Status == EProjectStatus.PROCESSING)
             {
                 gGradientButtonGiveUp.Show();
                 return;
@@ -238,7 +222,7 @@ namespace ProjectManagement
         }
         private void SetButtonEditOrDetails()
         {
-            if (host.Role == ERole.Student || thesis.Status == EThesisStatus.Completed)
+            if (host.Role == EUserRole.STUDENT || project.Status == EProjectStatus.COMPLETED)
             {
                 gButtonEdit.Hide();
             }
@@ -268,16 +252,16 @@ namespace ProjectManagement
             if (flag == false) return;
 
             HideAllButtonMode();
-            uCThesisDetailsCreatedTeam = new UCProjectDetailsCreatedTeam(this.host, this.thesis);
-            uCThesisDetailsCreatedTeam.GPerform.Click += GPerformState_Click;
+            uCProjectDetailsCreatedTeam = new UCProjectDetailsCreatedTeam(this.host, this.project);
+            uCProjectDetailsCreatedTeam.GPerform.Click += GPerformState_Click;
             gPanelDataView.Controls.Clear();
-            gPanelDataView.Controls.Add(uCThesisDetailsCreatedTeam);
+            gPanelDataView.Controls.Add(uCProjectDetailsCreatedTeam);
         }
-        private void SetNewState(EThesisStatus status, Image image, string notification)
+        private void SetNewState(EProjectStatus status, Image image, string notification)
         {
-            this.thesis.Status = status;
-            gTextBoxStatus.Text = thesis.Status.ToString();
-            gTextBoxStatus.FillColor = thesis.GetStatusColor();
+            this.project.Status = status;
+            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.FillColor = project.GetStatusColor();
             gButtonEdit.Hide();
             SetButtonComplete();
 
@@ -288,7 +272,7 @@ namespace ProjectManagement
             gPanelDataView.Controls.Add(gPictureBoxState);
             gPanelDataView.Controls.Add(gTextBoxState);
 
-            if (status == EThesisStatus.GiveUp)
+            if (status == EProjectStatus.GAVEUP)
             {
                 gTextBoxState.ForeColor = Color.Gray;
             }
@@ -306,26 +290,26 @@ namespace ProjectManagement
         }
         private void AllButtonStandardColor()
         {
-            myProcess.ButtonStandardColor(gGradientButtonRegistered, Color.White, Color.White);
-            myProcess.ButtonStandardColor(gGradientButtonTasks, Color.White, Color.White);
-            myProcess.ButtonStandardColor(gGradientButtonStatistics, Color.White, Color.White);
-            myProcess.ButtonStandardColor(gGradientButtonMeetings, Color.White, Color.White);
+            GunaControlUtil.ButtonStandardColor(gGradientButtonRegistered, Color.White, Color.White);
+            GunaControlUtil.ButtonStandardColor(gGradientButtonTasks, Color.White, Color.White);
+            GunaControlUtil.ButtonStandardColor(gGradientButtonStatistics, Color.White, Color.White);
+            GunaControlUtil.ButtonStandardColor(gGradientButtonMeetings, Color.White, Color.White);
         }
         public void PerformNotificationClick(Notification notification)
         {
             this.notification = notification;
-            if (this.notification.Type == ENotificationType.Meeting)
+            if (this.notification.Type == ENotificationType.MEETING)
             {
                 gGradientButtonMeetings.PerformClick();
                 return;
             }
 
-            if (this.notification.Type != ENotificationType.Thesis)
+            if (this.notification.Type != ENotificationType.PROJECT)
             {
                 gGradientButtonTasks.PerformClick();
-                UCProjectDetailsTasks uCThesisDetailsTasks = new UCProjectDetailsTasks();
-                uCThesisDetailsTasks.SetUpUserControl(host, instructor, team, thesis, thesis.Status == EThesisStatus.Processing);
-                uCThesisDetailsTasks.PerformNotificationClick(notification);
+                UCProjectDetailsTasks uCProjectDetailsTasks = new UCProjectDetailsTasks();
+                uCProjectDetailsTasks.SetUpUserControl(host, instructor, team, project, project.Status == EProjectStatus.PROCESSING);
+                // uCProjectDetailsTasks.PerformNotificationClick(notification.Type);
             }
         }
 
@@ -335,11 +319,11 @@ namespace ProjectManagement
 
         private void gButtonEdit_Click(object sender, EventArgs e)
         {
-            FProjectEdit fThesisView = new FProjectEdit(peopleDAO.SelectOnlyByID(thesis.IdCreator), thesis);
-            fThesisView.ShowDialog();
-            ResetThesisInfor();
+            FProjectEdit fProjectView = new FProjectEdit(UserDAO.SelectOnlyByID(project.CreatedBy), project);
+            fProjectView.ShowDialog();
+            ResetProjectInfor();
             this.flagEdited = true;
-            this.thesis = thesisDAO.SelectOnly(thesis.IdThesis);
+            this.project = ProjectDAO.SelectOnly(project.ProjectId);
         }
 
         #endregion
@@ -348,8 +332,8 @@ namespace ProjectManagement
 
         private void gButtonDetails_Click(object sender, EventArgs e)
         {
-            FProjectView fThesisView = new FProjectView(thesis);
-            fThesisView.ShowDialog();
+            FProjectView fProjectView = new FProjectView(project);
+            fProjectView.ShowDialog();
         }
 
         #endregion
@@ -358,15 +342,14 @@ namespace ProjectManagement
 
         private void gGradientButtonComplete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("You have definitely completed the " + thesis.Topic + " thesis",
+            DialogResult result = MessageBox.Show("You have definitely completed the " + project.Topic + " project",
                                                     "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                thesisDAO.UpdateStatus(this.thesis, EThesisStatus.Completed);
-                thesisStatusDAO.UpdateThesisStatus(this.team.IdTeam, this.thesis.IdThesis, EThesisStatus.Completed);
+                ProjectDAO.UpdateStatus(this.project, EProjectStatus.COMPLETED);
 
                 this.flagEdited = true;
-                SetNewState(EThesisStatus.Completed, Properties.Resources.GiftCompleted, "Congratulations on completion !");
+                SetNewState(EProjectStatus.COMPLETED, Properties.Resources.GiftCompleted, "Congratulations on completion !");
             }
         }
 
@@ -376,14 +359,14 @@ namespace ProjectManagement
 
         private void gGradientButtonGiveUp_Click(object sender, EventArgs e)
         {
-            FGiveUp fGiveUp = new FGiveUp(this.thesis, this.host, this.team);
+            FGiveUp fGiveUp = new FGiveUp(this.project, this.host, this.team);
             fGiveUp.ConfirmedGivingUp += FGiveUp_ConfirnedGivingUp;
             fGiveUp.ShowDialog();
         }
         private void FGiveUp_ConfirnedGivingUp(object? sender, EventArgs e)
         {
             this.flagEdited = true;
-            SetNewState(EThesisStatus.GiveUp, Properties.Resources.PictureEmptyState, "The thesis cannot continue !");
+            SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
         }
 
         #endregion
@@ -392,8 +375,8 @@ namespace ProjectManagement
 
         private void gGradientButtonReasonDetails_Click(object sender, EventArgs e)
         {
-            FGiveUp fGiveUp = new FGiveUp(this.thesis, this.host, this.team);
-            GiveUp giveUp = giveUpDAO.SelectFollowThesis(thesis.IdThesis);
+            FGiveUp fGiveUp = new FGiveUp(this.project, this.host, this.team);
+            GiveUp giveUp = GiveUpDAO.SelectFollowProject(project.ProjectId);
             fGiveUp.SetReadOnly(giveUp);
             fGiveUp.ShowDialog();
         }
@@ -405,11 +388,11 @@ namespace ProjectManagement
         private void gGradientButtonTasks_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();
-            myProcess.ButtonSettingColor(gGradientButtonTasks);
-            UCProjectDetailsTasks uCThesisDetailsTasks = new UCProjectDetailsTasks();
-            uCThesisDetailsTasks.SetUpUserControl(host, instructor, team, thesis, thesis.Status == EThesisStatus.Processing);
+            GunaControlUtil.ButtonSettingColor(gGradientButtonTasks);
+            UCProjectDetailsTasks uCProjectDetailsTasks = new UCProjectDetailsTasks();
+            uCProjectDetailsTasks.SetUpUserControl(host, instructor, team, project, project.Status == EProjectStatus.PROCESSING);
             gPanelDataView.Controls.Clear();
-            gPanelDataView.Controls.Add(uCThesisDetailsTasks);
+            gPanelDataView.Controls.Add(uCProjectDetailsTasks);
         }
 
         #endregion
@@ -419,10 +402,10 @@ namespace ProjectManagement
         private void gGradientButtonStatistical_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();
-            myProcess.ButtonSettingColor(gGradientButtonStatistics);
-            uCThesisDetailsStatistical.SetUpUserControl(this.team);
+            GunaControlUtil.ButtonSettingColor(gGradientButtonStatistics);
+            uCProjectDetailsStatistical.SetUpUserControl(this.team);
             gPanelDataView.Controls.Clear();
-            gPanelDataView.Controls.Add(uCThesisDetailsStatistical);
+            gPanelDataView.Controls.Add(uCProjectDetailsStatistical);
         }
 
         #endregion
@@ -432,11 +415,11 @@ namespace ProjectManagement
         private void gGradientButtonMeeting_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();
-            myProcess.ButtonSettingColor(gGradientButtonMeetings);
-            UCProjectDetailsMeeting uCThesisDetailsMeeting = new UCProjectDetailsMeeting();
-            uCThesisDetailsMeeting.SetUpUserControl(host, thesis, team);
+            GunaControlUtil.ButtonSettingColor(gGradientButtonMeetings);
+            UCProjectDetailsMeeting uCProjectDetailsMeeting = new UCProjectDetailsMeeting();
+            uCProjectDetailsMeeting.SetUpUserControl(host, project, team);
             gPanelDataView.Controls.Clear();
-            gPanelDataView.Controls.Add(uCThesisDetailsMeeting);
+            gPanelDataView.Controls.Add(uCProjectDetailsMeeting);
         }
 
         #endregion
@@ -446,22 +429,22 @@ namespace ProjectManagement
         private void gGradientButtonRegistered_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();
-            myProcess.ButtonSettingColor(gGradientButtonRegistered);
+            GunaControlUtil.ButtonSettingColor(gGradientButtonRegistered);
             gPanelDataView.Controls.Clear();
 
-            this.listTeam = teamDAO.SelectList(this.thesis.IdThesis);
+            this.listTeam = TeamDAO.SelectList(this.project.ProjectId);
 
-            uCThesisDetailsRegistered.Clear();
+            uCProjectDetailsRegistered.Clear();
             foreach (Team team in listTeam)
             {
                 UCTeamMiniLine line = new UCTeamMiniLine(team);
-                line.ThesisAddAccepted += ThesisAddAccepted_Clicked;
-                uCThesisDetailsRegistered.AddTeam(line);
+                line.ProjectAddAccepted += ProjectAddAccepted_Clicked;
+                uCProjectDetailsRegistered.AddTeam(line);
             }
 
-            gPanelDataView.Controls.Add(uCThesisDetailsRegistered);
+            gPanelDataView.Controls.Add(uCProjectDetailsRegistered);
         }
-        private void ThesisAddAccepted_Clicked(object sender, EventArgs e)
+        private void ProjectAddAccepted_Clicked(object sender, EventArgs e)
         {
             UCTeamMiniLine line = sender as UCTeamMiniLine;
 
@@ -473,21 +456,19 @@ namespace ProjectManagement
                 if (result == DialogResult.OK)
                 {
                     this.flagEdited = true;
-                    this.thesis.Status = EThesisStatus.Processing;
-                    teamDAO.DeleteListTeam(this.listTeam);
-                    teamDAO.Insert(team);
-                    thesisStatusDAO.DeleteListTeam(this.listTeam, this.thesis.IdThesis);
-                    thesisStatusDAO.Insert(this.thesis, team);
-                    thesisDAO.UpdateStatus(this.thesis, EThesisStatus.Processing);
+                    this.project.Status = EProjectStatus.PROCESSING;
+                    TeamDAO.DeleteListTeam(this.listTeam);
+                    TeamDAO.Insert(team);
+                    ProjectDAO.UpdateStatus(this.project, EProjectStatus.PROCESSING);
 
-                    string content = Notification.GetContentTypeAccepted(host.FullName, thesis.Topic);
-                    notificationDAO.InsertFollowListPeople(host.IdAccount, thesis.IdThesis, thesis.IdThesis, content, team.Members);
+                    string content = Notification.GetContentTypeAccepted(host.FullName, project.Topic);
+                    NotificationDAO.InsertFollowListUser(team.TeamId, content, ENotificationType.PROJECT);
 
                     SetInitialSate();
                     SetButtonComplete();
                     SetButtonEditOrDetails();
-                    gTextBoxStatus.Text = thesis.Status.ToString();
-                    gTextBoxStatus.FillColor = thesis.GetStatusColor();
+                    gTextBoxStatus.Text = project.Status.ToString();
+                    gTextBoxStatus.FillColor = project.GetStatusColor();
                 }
             }
         }
@@ -500,9 +481,9 @@ namespace ProjectManagement
         {
             SetSuccessfullyRegistered();
             this.flagDeleted = true;
-            this.thesis = thesisDAO.SelectOnly(thesis.IdThesis);
-            gTextBoxStatus.Text = thesis.Status.ToString();
-            gTextBoxStatus.FillColor = thesis.GetStatusColor();
+            this.project = ProjectDAO.SelectOnly(project.ProjectId);
+            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.FillColor = project.GetStatusColor();
         }
 
         #endregion

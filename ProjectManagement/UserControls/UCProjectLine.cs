@@ -11,25 +11,21 @@ using Guna.UI2.WinForms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCProjectLine : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
         public event EventHandler NotificationJump;
-        public event EventHandler ThesisLineClicked;
-        public event EventHandler ThesisDeleteClicked;
+        public event EventHandler ProjectLineClicked;
+        public event EventHandler ProjectDeleteClicked;
 
-        private Project thesis = new Project();
-        private User creator = new User();
-        private User instructor = new User();
+        private Project project = new Project();
+        private Users creator = new Users();
+        private Users instructor = new Users();
         private Notification notification = new Notification();
-
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private UserDAO peopleDAO = new UserDAO();
-        private TeamDAO teamDAO = new TeamDAO();
-        private ProjectStatusDAO thesisStatusDAO = new ProjectStatusDAO();
 
         public UCProjectLine()
         {
@@ -38,9 +34,9 @@ namespace ProjectManagement
 
         #region PROPERTIES
 
-        public string GetIdThesis
+        public string GetIdProject
         {
-            get { return this.thesis.IdThesis; }
+            get { return this.project.ProjectId; }
         }
         public Notification GetNotification
         {
@@ -51,20 +47,20 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetInformation(Project thesis)
+        public void SetInformation(Project project)
         {
-            this.thesis = thesis;
-            this.creator = peopleDAO.SelectOnlyByID(thesis.IdCreator);
-            this.instructor = peopleDAO.SelectOnlyByID(thesis.IdInstructor);
+            this.project = project;
+            this.creator = UserDAO.SelectOnlyByID(project.CreatedBy);
+            this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
             InitUserControl();
         }
         private void InitUserControl()
         {
-            myProcess.SetItemFavorite(gButtonStar, thesis.IsFavorite);
+            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
 
-            lblProjectTopic.Text = myProcess.FormatStringLength(thesis.Topic, 130);
-            gTextBoxStatus.Text = thesis.Status.ToString();
-            gTextBoxStatus.FillColor = thesis.GetStatusColor();
+            lblProjectTopic.Text = DataTypeUtil.FormatStringLength(project.Topic, 130);
+            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.FillColor = project.GetStatusColor();
             lblCreator.Text = creator.FullName;
             lblInstructor.Text = instructor.FullName;
         }
@@ -77,13 +73,13 @@ namespace ProjectManagement
             gButtonEdit.Hide();
             gButtonDelete.Hide();
         }
-        public void RemoveThesis()
+        public void RemoveProject()
         {
-            thesisDAO.Delete(thesisDAO.SelectOnly(thesis.IdThesis));
-            List<Team> listTeam = teamDAO.SelectList(this.thesis.IdThesis);
-            thesisStatusDAO.DeleteListTeam(listTeam, this.thesis.IdThesis);
+            ProjectDAO.Delete(ProjectDAO.SelectOnly(project.ProjectId));
+            List<Team> listTeam = TeamDAO.SelectList(this.project.ProjectId);
+            TeamDAO.DeleteListTeam(listTeam);
 
-            OnThesisDeleteClicked(EventArgs.Empty);
+            OnProjectDeleteClicked(EventArgs.Empty);
         }
         public void PerformNotificationClick(Notification notification)
         {
@@ -99,21 +95,21 @@ namespace ProjectManagement
 
         #region EVENT USER CONTROL
 
-        private void UCThesisLine_MouseEnter(object sender, EventArgs e)
+        private void UCProjectLine_MouseEnter(object sender, EventArgs e)
         {
             SetColor(Color.Gainsboro);
         }
-        private void UCThesisLine_MouseLeave(object sender, EventArgs e)
+        private void UCProjectLine_MouseLeave(object sender, EventArgs e)
         {
             SetColor(Color.White);
         }
-        private void UCThesisLine_Click(object sender, EventArgs e)
+        private void UCProjectLine_Click(object sender, EventArgs e)
         {
-            OnThesisLineClicked(EventArgs.Empty);
+            OnProjectLineClicked(EventArgs.Empty);
         }
-        private void OnThesisLineClicked(EventArgs e)
+        private void OnProjectLineClicked(EventArgs e)
         {
-            ThesisLineClicked?.Invoke(this, e);
+            ProjectLineClicked?.Invoke(this, e);
         }
 
         #endregion
@@ -122,23 +118,23 @@ namespace ProjectManagement
 
         private void gButtonEdit_Click(object sender, EventArgs e)
         {
-            FProjectEdit fThesisEdit = new FProjectEdit(instructor, thesis);
-            fThesisEdit.ShowDialog();
-            this.thesis = thesisDAO.SelectOnly(thesis.IdThesis);
+            FProjectEdit fProjectEdit = new FProjectEdit(instructor, project);
+            fProjectEdit.ShowDialog();
+            this.project = ProjectDAO.SelectOnly(project.ProjectId);
             InitUserControl();
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure you want to delete thesis " + thesis.Topic,
+            DialogResult result = MessageBox.Show("Are you sure you want to delete project " + project.Topic,
                                                     "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                RemoveThesis();
+                RemoveProject();
             }
         }
-        public virtual void OnThesisDeleteClicked(EventArgs e)
+        public virtual void OnProjectDeleteClicked(EventArgs e)
         {
-            ThesisDeleteClicked?.Invoke(this, e);
+            ProjectDeleteClicked?.Invoke(this, e);
         }
 
         #endregion
@@ -147,10 +143,10 @@ namespace ProjectManagement
 
         private void gButtonStar_Click(object sender, EventArgs e)
         {
-            thesis.IsFavorite = !thesis.IsFavorite;
+            // project.IsFavorite = !project.IsFavorite;
 
-            myProcess.SetItemFavorite(gButtonStar, thesis.IsFavorite);
-            thesisDAO.UpdateFavorite(this.thesis);
+            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
+            ProjectDAO.UpdateFavorite(this.project);
         }
 
         #endregion

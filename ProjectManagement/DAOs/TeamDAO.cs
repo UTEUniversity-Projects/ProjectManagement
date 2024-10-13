@@ -2,61 +2,86 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Mappers.Implement;
+using System.Data.SqlClient;
+using ProjectManagement.Utils;
+using ProjectManagement.Enums;
 
 namespace ProjectManagement.DAOs
 {
     internal class TeamDAO : DBConnection
     {
-        public TeamDAO() { }
 
         #region SELECT TEAM
 
-        public List<Team> SelectList(string idThesis)
+        public static Team SelectOnly(string teamId)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE idthesis = '{1}'", DBTableNames.DBThesisStatus, idThesis);
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE teamId = @TeamId", DBTableNames.Member);
 
-            DataTable dataTable = Select(command);
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TeamId", teamId)
+            };
 
+            return DBGetModel.GetModel(sqlStr, parameters, new TeamMapper());
+        }
+        public static List<Team> SelectList(string projectId)
+        {
+            string sqlStr = $"SELECT * FROM {DBTableNames.Team} WHERE projectId = @ProjectId";
+
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@ProjectId", projectId) };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
             List<Team> list = new List<Team>();
+
             foreach (DataRow row in dataTable.Rows)
             {
-                Team team = SelectOnly(row["idteam"].ToString());
+                Team team = SelectOnly(row["teamId"].ToString());
                 list.Add(team);
             }
 
             return list;
         }
-        public Team SelectOnly(string idTeam)
+        public static Team SelectFollowProject(string projectId)
         {
-            DataTable dt = Select(string.Format("SELECT * FROM {0} WHERE idteam = '{1}'", DBTableNames.DBMember, idTeam));
+            string sqlStr = $"SELECT * FROM {DBTableNames.Team} WHERE projectId = @ProjectId AND status = @Accepted";
 
-            if (dt.Rows.Count > 0) return GetFromDataRow(dt.Rows[0]);
-            return new Team();
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", projectId),
+                new SqlParameter("@Accepted", EnumUtil.GetDisplayName(ETeamStatus.ACCEPTED))
+            };
+
+            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
+            return SelectOnly(dt.Rows[0]["teamId"].ToString());
         }
-        public Team SelectFollowThesis(Project thesis)
+        public static string SelectTeamByIdProject(string projectId)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE idthesis = '{1}' and status = '{2}'",
-                                            DBTableNames.DBThesisStatus, thesis.IdThesis, thesis.Status.ToString());
+            string sqlStr = $"SELECT teamId FROM {DBTableNames.ProjectStatus} WHERE projectId = @ProjectId";
 
-            DataTable table = Select(command);
-            return SelectOnly(table.Rows[0]["idteam"].ToString());
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@projectId", projectId) };
+
+            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
+            return dt.Rows[0]["teamId"].ToString();
         }
-        public List<Team> SelectFollowPeople(User people)
+        public static List<Team> SelectFollowUser(Users user)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE idaccount = '{1}'", DBTableNames.DBMember, people.IdAccount);
+            string sqlStr = $"SELECT teamId FROM {DBTableNames.JoinTeam} WHERE studentId = @StudentId";
 
-            DataTable dataTable = Select(command);
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@StudentId", user.UserId) };
 
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
             List<Team> list = new List<Team>();
+
             foreach (DataRow row in dataTable.Rows)
             {
-                Team team = SelectOnly(row["idteam"].ToString());
+                Team team = SelectOnly(row["teamId"].ToString());
                 list.Add(team);
             }
 
@@ -67,43 +92,75 @@ namespace ProjectManagement.DAOs
 
         #region TEAM DAO EXECUTION
 
-        public void Insert(Team team)
+        public static void Insert(Team team)
         {
-            foreach (User member in team.Members)
+            DBExecution.Insert(team, DBTableNames.Team);
+        }
+
+        public static void Delete(Team team)
+        {
+            DeleteMember(team.TeamId);
+
+            string sqlStr = string.Format("DELETE FROM {0} WHERE teamId = @TeamId", DBTableNames.Team);
+
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", team.TeamId) };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }
+        private static void DeleteMember(string teamId)
+        {
+            string sqlStr = string.Format("DELETE FROM {0} WHERE teamId = @TeamId", DBTableNames.JoinTeam);
+
+            List<SqlParameter> parameters = new List<SqlParameter>{ new SqlParameter("@TeamId", teamId) };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }
+        public static void DeleteListTeam(List<Team> listTeam)
+        {
+            foreach (Team team in listTeam)
             {
-                string command = string.Format("INSERT INTO {0} VALUES('{1}', '{2}', '{3}', '{4}', '{5}')",
-                                            DBTableNames.DBMember, team.IdTeam, member.IdAccount, team.TeamName, team.Created, team.AvatarName);
-                SQLExecuteByCommand(command);
+                string sqlStr = string.Format("UPDATE {0} SET status = @Rejected WHERE teamId = @TeamId", DBTableNames.Team);
+
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@TeamId", team.TeamId),
+                    new SqlParameter("@Rejected", EnumUtil.GetDisplayName(ETeamStatus.REJECTED))
+                };
+
+                DBExecution.ExecuteNonQuery(sqlStr, parameters);
             }
         }
-        public void Delete(Team team)
+
+        public static void UpdateStatus(string teamId, string status)
         {
-            foreach (User member in team.Members)
+            string sqlStr = string.Format("UPDATE {0} SET status = @Status WHERE teamId = @TeamId", DBTableNames.Team);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
             {
-                string command = string.Format("DELETE FROM {0} WHERE idteam = '{1}' and idaccount = '{2}'", DBTableNames.DBMember, team.IdTeam, member.IdAccount);
-                SQLExecuteByCommand(command);
-            }
-        }
-        public void DeleteListTeam(List<Team> teams)
-        {
-            foreach (Team team in teams) Delete(team);
-        }
+                new SqlParameter("@Status", status),
+                new SqlParameter("@TeamId", teamId)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }       
 
         #endregion
 
-        #region Get Members by ID Team
+        #region GET MEMBERS
 
-        private List<User> GetMembersByIDTeam(string idTeam)
+        public static List<Student> GetMembersByTeamId(string teamId)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE idteam = '{1}'", DBTableNames.DBMember, idTeam);
-            DataTable dataTable = Select(command);
+            string sqlStr = $"SELECT * FROM {DBTableNames.JoinTeam} WHERE teamId = @TeamId";
 
-            UserDAO peopleDAO = new UserDAO();
-            List<User> list = new List<User>();
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            List<Student> list = new List<Student>();
+
             foreach (DataRow row in dataTable.Rows)
             {
-                User people = peopleDAO.SelectOnlyByID(row["idaccount"].ToString());
-                list.Add(people);
+                Student student = StudentDAO.SelectOnlyByID(row["studentId"].ToString());
+                list.Add(student);
             }
 
             return list;
@@ -111,18 +168,23 @@ namespace ProjectManagement.DAOs
 
         #endregion
 
-        #region Get Team From Data Row
+        #region TEAM UTILS
 
-        public Team GetFromDataRow(DataRow row)
+        public static int CountTeamFollowState(Project project)
         {
-            string idTeam = row["idteam"].ToString();
-            string teamName = row["name"].ToString();
-            DateTime created = DateTime.Parse(row["created"].ToString());
-            string avatarName = row["avatarname"].ToString();
-            List<User> members = GetMembersByIDTeam(idTeam);
+            string sqlStr = $"SELECT COUNT(*) AS NumTeams FROM {DBTableNames.ProjectStatus} " +
+                $"WHERE projectId = @ProjectId and status = @Status";
 
-            Team team = new Team(idTeam, teamName, avatarName, created, members);
-            return team;
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", project.ProjectId),
+                new SqlParameter("@Status", EnumUtil.GetDisplayName(project.Status))
+            };
+
+            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
+            int num = 0;
+            int.TryParse(dt.Rows[0]["NumTeams"].ToString(), out num);
+            return num;
         }
 
         #endregion

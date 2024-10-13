@@ -4,25 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
 {
     public class Meeting
     {
-        private MyProcess myProcess = new MyProcess();
 
         #region MEETING ATTRIBUTES
 
-        private string idMeeting;
-        private string idThesis;
+        private string meetingId;
         private string title;
         private string description;
-        private DateTime start;
-        private DateTime theEnd;
+        private DateTime startAt;
         private string location;
         private string link;
-        private string idCreator;
-        private DateTime created;
+        private DateTime createdAt;
+        private string createdBy;
+        private string projectId;
 
         #endregion
 
@@ -30,56 +30,51 @@ namespace ProjectManagement.Models
 
         public Meeting()
         {
-            this.idMeeting = string.Empty;
-            this.idThesis = string.Empty;
+            this.meetingId = string.Empty;
             this.title = string.Empty;
             this.description = string.Empty;
-            this.start = DateTime.MinValue;
-            this.theEnd = DateTime.MinValue;
+            this.startAt = DateTime.MinValue;
             this.location = string.Empty;
             this.link = string.Empty;
-            this.idCreator = string.Empty;
-            this.created = DateTime.MinValue;
+            this.createdAt = DateTime.MinValue;
+            this.createdBy = string.Empty;
+            this.projectId = string.Empty;
         }
-        public Meeting(string idThesis, string title, string description, DateTime start, DateTime theEnd, string location, string link, string idCreator)
+
+        public Meeting(string meetingId, string title, string description, DateTime startAt, string location, string link, DateTime createdAt, string createdBy, string projectId)
         {
-            this.idMeeting = myProcess.GenIDClassify(EClassify.Meeting);
-            this.idThesis = idThesis;
+            this.meetingId = meetingId;
             this.title = title;
             this.description = description;
-            this.start = start;
-            this.theEnd = theEnd;
+            this.startAt = startAt;
             this.location = location;
             this.link = link;
-            this.idCreator = idCreator;
-            this.created = DateTime.Now;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.projectId = projectId;
         }
-        public Meeting(string idMeeting, string idThesis, string title, string description, DateTime start, DateTime theEnd, 
-                        string location, string link, string idCreator, DateTime created)
+
+        public Meeting(string title, string description, DateTime startAt, string location, string link, DateTime createdAt, string createdBy, string projectId)
         {
-            this.idMeeting = idMeeting;
-            this.idThesis = idThesis;
+            this.meetingId = ModelUtil.GenerateModelId(EModelClassification.MEETING);
             this.title = title;
             this.description = description;
-            this.start = start;
-            this.theEnd = theEnd;
+            this.startAt = startAt;
             this.location = location;
             this.link = link;
-            this.idCreator = idCreator;
-            this.created = created;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.projectId = projectId;
         }
 
         #endregion
 
         #region MEETING PROPERTIES
 
-        public string IdMeeting 
+        public string MeetingId
         {
-            get { return this.idMeeting; } 
-        }
-        public string IdThesis
-        {
-            get { return this.idThesis; }
+            get { return meetingId; }
+            set { meetingId = value; }
         }
         public string Title
         {
@@ -91,15 +86,10 @@ namespace ProjectManagement.Models
             get { return this.description; }
             set { this.description = value; }
         }
-        public DateTime Start
-        { 
-            get { return this.start; } 
-            set { this.start = value; }
-        }
-        public DateTime TheEnd
+        public DateTime StartAt
         {
-            get { return this.theEnd; }
-            set { this.theEnd = value; }
+            get { return startAt; }
+            set { startAt = value; }
         }
         public string Location
         { 
@@ -111,13 +101,25 @@ namespace ProjectManagement.Models
             get { return this.link; } 
             set { this.link = value; }
         }
-        public string IdCreator
+        public DateTime CreatedAt
         {
-            get { return this.idCreator; }
+            get { return createdAt; }
+            set { createdAt = value; }
         }
-        public DateTime Created
+        public string CreatedBy
         {
-            get { return this.created; }
+            get { return createdBy; }
+            set { createdBy = value; }
+        }
+        public string ProjectId
+        {
+            get { return projectId; }
+            set { projectId = value; }
+        }
+        public DateTime TheEnd
+        {
+            get { return DateTime.MinValue; }
+            set { }
         }
 
         #endregion
@@ -134,11 +136,11 @@ namespace ProjectManagement.Models
         }
         public bool CheckStart()
         {
-            return this.start >= DateTime.Now;
+            return this.startAt >= DateTime.Now;
         }
         public bool CheckTheEnd()
         {
-            return this.theEnd >= this.start;
+            return true;
         }
         public bool CheckLocation()
         {

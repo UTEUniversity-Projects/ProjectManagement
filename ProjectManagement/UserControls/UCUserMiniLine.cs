@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
@@ -20,8 +21,8 @@ namespace ProjectManagement
         public event EventHandler ButtonDeleteClicked;
         public event EventHandler ClickEvaluate;
 
-        private MyProcess myProcess = new MyProcess();
-        private User people = new User();
+        
+        private Users user = new Users();
         private Evaluation evaluation = new Evaluation();
         private bool isEvaluate = false;
         private Color uCBackColor = Color.White;
@@ -31,10 +32,10 @@ namespace ProjectManagement
         {
             InitializeComponent();
         }
-        public UCUserMiniLine(User people)
+        public UCUserMiniLine(Users user)
         {
             InitializeComponent();
-            SetInformation(people);
+            SetInformation(user);
         }
 
         #region PROPERTIES
@@ -43,9 +44,9 @@ namespace ProjectManagement
         {
             get { return this.gButtonAdd; }
         }
-        public User GetPeople
+        public Users GetUser
         {
-            get { return this.people; }
+            get { return this.user; }
         }
         public Evaluation GetEvaluation
         {
@@ -56,16 +57,16 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetInformation(User people)
+        public void SetInformation(Users user)
         {
-            this.people = people;
+            this.user = user;
             InitUserControl();
         }
         private void InitUserControl()
         {
-            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(people.AvatarName);
-            lblUserName.Text = people.Handle;
-            lblPeopleCode.Text = people.IdAccount;
+            gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(user.Avatar);
+            lblUserName.Text = user.UserName;
+            lblUserCode.Text = user.UserId;
             gButtonComplete.Hide();
             gProgressBarToLine.Hide();
         }
@@ -80,11 +81,11 @@ namespace ProjectManagement
             {
                 this.isEvaluate = true;
                 this.evaluation = evaluation;
-                lblUserName.Text = myProcess.FormatStringLength(people.FullName, 25);
-                gProgressBarToLine.Value = evaluation.Contribute;
-                if (evaluation.IsEvaluated) gButtonComplete.Image = Properties.Resources.PicItemComplete;
+                lblUserName.Text = DataTypeUtil.FormatStringLength(user.FullName, 25);
+                gProgressBarToLine.Value = (int)evaluation.CompletionRate;
+                if (evaluation.Evaluated) gButtonComplete.Image = Properties.Resources.PicItemComplete;
                 else gButtonComplete.Image = Properties.Resources.PicItemNonComplete;
-                if (evaluation.IsEvaluated) gButtonComplete.Image = Properties.Resources.PicItemComplete;
+                if (evaluation.Evaluated) gButtonComplete.Image = Properties.Resources.PicItemComplete;
                 else gButtonComplete.Image = Properties.Resources.PicItemNonComplete;
 
                 gButtonComplete.Show();
@@ -98,7 +99,7 @@ namespace ProjectManagement
         }
         public void SetStatisticalMode(int statistical, double score)
         {
-            lblUserName.Text = myProcess.FormatStringLength(people.FullName, 20);
+            lblUserName.Text = DataTypeUtil.FormatStringLength(user.FullName, 20);
             gProgressBarToLine.Value = statistical;
             gProgressBarToLine.Size = new Size(270, 20);
             gProgressBarToLine.Location = new Point(170, 33);
@@ -143,7 +144,7 @@ namespace ProjectManagement
             gShadowPanelBack.FillColor = color;
             gCirclePictureBoxAvatar.BackColor = color;
             lblUserName.BackColor = color;
-            lblPeopleCode.BackColor = color;
+            lblUserCode.BackColor = color;
             gButtonAdd.FillColor = color;
             gButtonAdd.BackColor = color;
             gButtonAdd.PressedColor = color;
@@ -151,9 +152,9 @@ namespace ProjectManagement
             gButtonComplete.BackColor = color;
             gButtonComplete.PressedColor = color;
         }
-        private void ShowPeopleInformation()
+        private void ShowUserInformation()
         {
-            FPeopleDetails fStudentDetails = new FPeopleDetails(people);
+            FUserDetails fStudentDetails = new FUserDetails(user);
             fStudentDetails.ShowDialog();
         }
 
@@ -163,7 +164,7 @@ namespace ProjectManagement
 
         private void gCirclePictureBoxAvatar_Click(object sender, EventArgs e)
         {
-            ShowPeopleInformation();
+            ShowUserInformation();
         }
         private void gShadowPanelBack_Click(object sender, EventArgs e)
         {
@@ -173,7 +174,7 @@ namespace ProjectManagement
             }
             else
             {
-                ShowPeopleInformation();
+                ShowUserInformation();
             }
         }
         private void gButtonAdd_Click(object sender, EventArgs e)

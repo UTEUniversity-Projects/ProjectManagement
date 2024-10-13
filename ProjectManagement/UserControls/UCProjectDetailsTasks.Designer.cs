@@ -149,7 +149,7 @@
             lblSearch.TabIndex = 48;
             lblSearch.Text = "Search";
             // 
-            // UCThesisDetailsTasks
+            // UCProjectDetailsTasks
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -161,7 +161,7 @@
             Controls.Add(lblTaskList);
             Controls.Add(gShadowPanelBack);
             DoubleBuffered = true;
-            Name = "UCThesisDetailsTasks";
+            Name = "UCProjectDetailsTasks";
             Size = new Size(715, 635);
             gShadowPanelBack.ResumeLayout(false);
             ResumeLayout(false);

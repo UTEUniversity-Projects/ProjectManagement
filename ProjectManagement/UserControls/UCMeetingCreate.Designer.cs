@@ -227,7 +227,7 @@
             lblStart.Name = "lblStart";
             lblStart.Size = new Size(64, 28);
             lblStart.TabIndex = 78;
-            lblStart.Text = "Start";
+            lblStart.Text = "StartAt";
             // 
             // lblLocation
             // 
@@ -350,7 +350,7 @@
             lblCre.Name = "lblCre";
             lblCre.Size = new Size(345, 20);
             lblCre.TabIndex = 3;
-            lblCre.Text = "Created by Anonymous at 03/05/2024 10:30:45 AM";
+            lblCre.Text = "CreatedAt by Anonymous at 03/05/2024 10:30:45 AM";
             lblCre.TextAlign = ContentAlignment.MiddleRight;
             // 
             // erpTitle

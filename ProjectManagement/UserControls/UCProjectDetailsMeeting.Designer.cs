@@ -104,7 +104,7 @@
             lblMeetingList.TabIndex = 50;
             lblMeetingList.Text = "MEETING LIST";
             // 
-            // UCThesisDetailsMeeting
+            // UCProjectDetailsMeeting
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -113,7 +113,7 @@
             Controls.Add(gGradientButtonAddMeeting);
             Controls.Add(gSeparatorUnderHeader);
             Controls.Add(lblMeetingList);
-            Name = "UCThesisDetailsMeeting";
+            Name = "UCProjectDetailsMeeting";
             Size = new Size(715, 635);
             gShadowPanelBack.ResumeLayout(false);
             ResumeLayout(false);

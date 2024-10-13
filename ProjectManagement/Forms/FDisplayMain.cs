@@ -15,8 +15,6 @@ namespace ProjectManagement
 {
     public partial class FDisplayMain : Form
     {
-        private UserDAO peopleDAO = new UserDAO();
-
         private UCDisplayWelcome uCDisplayWelcome = new UCDisplayWelcome();
         private UCDisplayLogin uCDisplayLogin = new UCDisplayLogin();
         private UCDisplayRegister uCDisplayRegister = new UCDisplayRegister();
@@ -57,12 +55,12 @@ namespace ProjectManagement
             gPanelDisplay.Controls.Clear();
             gPanelDisplay.Controls.Add(userControl);
         }
-        private void SetNewDisplayPeople(User people)
+        private void SetNewDisplayUser(Users user)
         {
-            UCDisplayUser uCDisplayPeople = new UCDisplayUser();
-            uCDisplayPeople.SetInformation(people);
-            uCDisplayPeople.GButtonLogOut.Click += DButtonLogOut_Click;
-            SetDisplay(uCDisplayPeople);
+            UCDisplayUser uCDisplayUser = new UCDisplayUser();
+            uCDisplayUser.SetInformation(user);
+            uCDisplayUser.GButtonLogOut.Click += DButtonLogOut_Click;
+            SetDisplay(uCDisplayUser);
         }
 
         #endregion
@@ -71,13 +69,13 @@ namespace ProjectManagement
 
         private void DWelcomeButtonLecture_Click(object sender, EventArgs e)
         {
-            User people = peopleDAO.SelectOnlyByID("242200001");
-            SetNewDisplayPeople(people);
+            Users user = UserDAO.SelectOnlyByID("242200001");
+            SetNewDisplayUser(user);
         }
         private void DWelcomeButtonStudent_Click(object sender, EventArgs e)
         {
-            User people = peopleDAO.SelectOnlyByID("243300002");
-            SetNewDisplayPeople(people);
+            Users user = UserDAO.SelectOnlyByID("243300002");
+            SetNewDisplayUser(user);
         }
         private void DWelcomeButtonRegister_Click(object sender, EventArgs e)
         {
@@ -95,20 +93,20 @@ namespace ProjectManagement
         }
         private void DLoginButtonLogin_Click(object sender, EventArgs e)
         {
-            UserDAO peopleDAO = new UserDAO();
+            
             string email = uCDisplayLogin.GTextBoxEmail.Text;
             string password = uCDisplayLogin.GTextBoxPassword.Text;
             string reminder = "email or password is incorrect !";
 
-            User people = peopleDAO.SelectOnlyByEmailAndPassword(email, password);
-            if (people == null)
+            Users user = UserDAO.SelectOnlyByEmailAndPassword(email, password);
+            if (user == null)
             {
                 uCDisplayLogin.GTextBoxReminder.Text = reminder;
             }
             else
             {
                 uCDisplayLogin.GTextBoxReminder.Text = string.Empty;
-                SetNewDisplayPeople(people);
+                SetNewDisplayUser(user);
             }
         }
         private void DLoginButtonBack_Click(object sender, EventArgs e)

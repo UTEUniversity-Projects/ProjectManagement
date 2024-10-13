@@ -18,13 +18,9 @@ namespace ProjectManagement
 {
     public partial class UCStatisticalStudent : UserControl
     {
-        private User people = new User();
-        private List<Project> listThesis;
-        private double avgContribute;
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private ProjectStatusDAO thesisStatusDAO = new ProjectStatusDAO();
-        private TasksDAO tasksDAO = new TasksDAO();
-        private MyProcess myProcess = new MyProcess();
+        private Users user = new Users();
+        private List<Project> listProject;
+        private double avgContribute;        
 
         public UCStatisticalStudent()
         {
@@ -33,15 +29,15 @@ namespace ProjectManagement
 
         #region FUNTIONS
         public double AvgContribute { get => this.avgContribute; }
-        public void SetInformation(User people)
+        public void SetInformation(Users user)
         {
-            this.people = people;
+            this.user = user;
             SetupUserControl();
         }
         void SetupUserControl() 
         {
-            this.listThesis = thesisDAO.SelectListModeMyCompletedTheses(people.IdAccount);
-            this.lblNumThesis.Text = this.listThesis.Count.ToString();
+            this.listProject = ProjectDAO.SelectListModeMyCompletedTheses(user.UserId);
+            this.lblNumProject.Text = this.listProject.Count.ToString();
             this.avgContribute = 0;
 
             SetupChart();
@@ -49,20 +45,19 @@ namespace ProjectManagement
         void SetupChart()
         {
             List<Tasks> listTasks;
-            string idTeam;
             this.gLineDataset.DataPoints.Clear();
             this.gChart.Datasets.Clear();
-            foreach (Project thesis in this.listThesis)
+            foreach (Project project in this.listProject)
             {
-                idTeam = thesisStatusDAO.SelectTeamByIdThesis(thesis.IdThesis);
-                listTasks = tasksDAO.SelectListByTeam(idTeam);
+                Team team = TeamDAO.SelectFollowProject(project.ProjectId);
+                listTasks = TaskDAO.SelectListByTeam(team.TeamId);
 
-                double score = myProcess.CalEvaluations(listTasks, 1, evaluation => evaluation.Scores)[0];
-                double contibutute = myProcess.CalEvaluations(listTasks, 1, evaluation => evaluation.Contribute)[0];
+                double score = CalculationUtil.CalEvaluations(listTasks, 1, evaluation => evaluation.Score)[0];
+                double contribute = CalculationUtil.CalEvaluations(listTasks, 1, evaluation => evaluation.CompletionRate)[0];
 
-                this.avgContribute += contibutute;
+                this.avgContribute += contribute;
 
-                this.gLineDataset.DataPoints.Add(thesis.IdThesis, score);
+                this.gLineDataset.DataPoints.Add(project.ProjectId, score);
             }
 
             this.gChart.Datasets.Add(this.gLineDataset);

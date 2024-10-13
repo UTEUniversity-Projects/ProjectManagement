@@ -121,7 +121,7 @@
             gTextBoxTeamCode.TabIndex = 63;
             gTextBoxTeamCode.TextAlign = HorizontalAlignment.Center;
             // 
-            // UCThesisDetailsTeam
+            // UCProjectDetailsTeam
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -130,9 +130,9 @@
             Controls.Add(gTextBoxTeamMemebrs);
             Controls.Add(lblTeamName);
             Controls.Add(gCirclePictureBoxAvatar);
-            Name = "UCThesisDetailsTeam";
+            Name = "UCProjectDetailsTeam";
             Size = new Size(480, 100);
-            Click += UCThesisDetailsTeam_Click;
+            Click += UCProjectDetailsTeam_Click;
             ((System.ComponentModel.ISupportInitialize)gCirclePictureBoxAvatar).EndInit();
             ResumeLayout(false);
             PerformLayout();

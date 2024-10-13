@@ -52,7 +52,7 @@
             gPanelTeam = new Guna.UI2.WinForms.Guna2Panel();
             lblRepresent = new Label();
             gPanelRepresent = new Guna.UI2.WinForms.Guna2Panel();
-            gPanelThesis = new Guna.UI2.WinForms.Guna2Panel();
+            gPanelProject = new Guna.UI2.WinForms.Guna2Panel();
             erpReason = new ErrorProvider(components);
             gShadowPanelReason.SuspendLayout();
             gShadowPanelInformations.SuspendLayout();
@@ -165,7 +165,7 @@
             gShadowPanelInformations.Controls.Add(gPanelTeam);
             gShadowPanelInformations.Controls.Add(lblRepresent);
             gShadowPanelInformations.Controls.Add(gPanelRepresent);
-            gShadowPanelInformations.Controls.Add(gPanelThesis);
+            gShadowPanelInformations.Controls.Add(gPanelProject);
             gShadowPanelInformations.FillColor = Color.White;
             gShadowPanelInformations.Location = new Point(29, 24);
             gShadowPanelInformations.Name = "gShadowPanelInformations";
@@ -216,14 +216,14 @@
             gPanelRepresent.Size = new Size(275, 60);
             gPanelRepresent.TabIndex = 50;
             // 
-            // gPanelThesis
+            // gPanelProject
             // 
-            gPanelThesis.CustomizableEdges = customizableEdges11;
-            gPanelThesis.Location = new Point(25, 25);
-            gPanelThesis.Name = "gPanelThesis";
-            gPanelThesis.ShadowDecoration.CustomizableEdges = customizableEdges12;
-            gPanelThesis.Size = new Size(399, 266);
-            gPanelThesis.TabIndex = 72;
+            gPanelProject.CustomizableEdges = customizableEdges11;
+            gPanelProject.Location = new Point(25, 25);
+            gPanelProject.Name = "gPanelProject";
+            gPanelProject.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            gPanelProject.Size = new Size(399, 266);
+            gPanelProject.TabIndex = 72;
             // 
             // erpReason
             // 
@@ -260,7 +260,7 @@
         private Guna.UI2.WinForms.Guna2GradientButton gButtonConfirm;
         private Guna.UI2.WinForms.Guna2Button gButtonCancel;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelInformations;
-        private Guna.UI2.WinForms.Guna2Panel gPanelThesis;
+        private Guna.UI2.WinForms.Guna2Panel gPanelProject;
         private Guna.UI2.WinForms.Guna2Panel gPanelRepresent;
         private Label lblRepresent;
         private Label lblTeam;

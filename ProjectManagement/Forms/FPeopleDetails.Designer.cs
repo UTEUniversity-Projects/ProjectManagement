@@ -1,6 +1,6 @@
 ﻿namespace ProjectManagement
 {
-    partial class FPeopleDetails
+    partial class FUserDetails
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FPeopleDetails));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FUserDetails));
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
@@ -303,7 +303,7 @@
             gTextBoxBirthday.Name = "gTextBoxBirthday";
             gTextBoxBirthday.PasswordChar = '\0';
             gTextBoxBirthday.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxBirthday.PlaceholderText = "Birthday";
+            gTextBoxBirthday.PlaceholderText = "DateOfBirth";
             gTextBoxBirthday.ReadOnly = true;
             gTextBoxBirthday.SelectedText = "";
             gTextBoxBirthday.ShadowDecoration.CustomizableEdges = customizableEdges9;
@@ -607,7 +607,7 @@
             gCircleProgressBar.Text = "CircleProgressBar";
             gCircleProgressBar.Value = 75;
             // 
-            // FPeopleDetails
+            // FUserDetails
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -622,7 +622,7 @@
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            Name = "FPeopleDetails";
+            Name = "FUserDetails";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Account Details";
             gShadowPanelAccountAvatar.ResumeLayout(false);

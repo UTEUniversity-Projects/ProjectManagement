@@ -10,16 +10,17 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCTeamMiniLine : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
-        public event EventHandler ThesisAddAccepted;
+        
+        public event EventHandler ProjectAddAccepted;
         private Team team = new Team();
-        private Project thesis = new Project();
-        private ProjectDAO thesisDAO = new ProjectDAO();
+        private Project project = new Project();
+        private ProjectDAO ProjectDAO = new ProjectDAO();
 
         public UCTeamMiniLine(Team team)
         {
@@ -41,15 +42,15 @@ namespace ProjectManagement
         public void SetInformation(Team team)
         {
             this.team = team;
-            this.thesis = thesisDAO.SelectFollowTeam(team.IdTeam);
+            this.project = ProjectDAO.SelectFollowTeam(team.TeamId);
             InitUserControl();
         }
         private void InitUserControl()
         {
-            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(team.AvatarName);
-            lblTeamName.Text = myProcess.FormatStringLength(team.TeamName, 30);
-            lblTeamCode.Text = team.IdTeam;
-            gTextBoxTeamMemebrs.Text = team.Members.Count.ToString() + " members";
+            gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(team.Avatar);
+            lblTeamName.Text = DataTypeUtil.FormatStringLength(team.TeamName, 30);
+            lblTeamCode.Text = team.TeamId;
+            gTextBoxTeamMemebrs.Text = TeamDAO.GetMembersByTeamId(team.TeamId).Count.ToString() + " members";
         }
         public void SetSize(Size size)
         {
@@ -83,16 +84,16 @@ namespace ProjectManagement
 
         private void gShadowPanelBack_Click(object sender, EventArgs e)
         {
-            FTeamDetails fTeamDetails = new FTeamDetails(team, thesis);
+            FTeamDetails fTeamDetails = new FTeamDetails(team, project);
             fTeamDetails.ShowDialog();
         }
         private void gButtonAdd_Click(object sender, EventArgs e)
         {
-            ThesisAddAcceptedClicked(EventArgs.Empty);
+            ProjectAddAcceptedClicked(EventArgs.Empty);
         }
-        public virtual void ThesisAddAcceptedClicked(EventArgs e)
+        public virtual void ProjectAddAcceptedClicked(EventArgs e)
         {
-            ThesisAddAccepted?.Invoke(this, e);
+            ProjectAddAccepted?.Invoke(this, e);
         }
 
         #endregion

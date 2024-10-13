@@ -205,7 +205,7 @@
             gTextBoxEmail.Name = "gTextBoxEmail";
             gTextBoxEmail.PasswordChar = '\0';
             gTextBoxEmail.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxEmail.PlaceholderText = "Email";
+            gTextBoxEmail.PlaceholderText = "Email address";
             gTextBoxEmail.ReadOnly = true;
             gTextBoxEmail.SelectedText = "";
             gTextBoxEmail.ShadowDecoration.CustomizableEdges = customizableEdges8;

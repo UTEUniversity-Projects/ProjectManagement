@@ -18,11 +18,12 @@ namespace ProjectManagement
     {
         private Team team = new Team();
         private List<Tasks> listTasks = new List<Tasks>();
+        private List<Student> members = new List<Student>();
         private List<double> evaluationOfMembers;
         private List<double> scoreOfMembers;
 
-        private TasksDAO tasksDAO = new TasksDAO();
-        private MyProcess myProcess = new MyProcess();
+        private TaskDAO TaskDAO = new TaskDAO();
+        
 
         public UCProjectDetailsStatistical()
         {
@@ -31,11 +32,12 @@ namespace ProjectManagement
         public void SetUpUserControl(Team team)
         {
             this.team = team;
-            this.team.Members.OrderBy(member => member.IdAccount);
-            this.listTasks = tasksDAO.SelectListByTeam(this.team.IdTeam);
+            this.members = TeamDAO.GetMembersByTeamId(team.TeamId);
+            this.members.OrderBy(member => member.UserId);
+            this.listTasks = TaskDAO.SelectListByTeam(this.team.TeamId);
             UpdateMembers();
             UpdateChart();
-            this.gProgressBar.Value = myProcess.CalStatisticalThesis(this.listTasks);
+            this.gProgressBar.Value = CalculationUtil.CalStatisticalProject(this.listTasks);
             this.lblTotalProgress.Text = this.gProgressBar.Value.ToString() + "%";
         }
 
@@ -43,12 +45,12 @@ namespace ProjectManagement
 
         public void UpdateMembers()
         {
-            this.evaluationOfMembers = myProcess.CalEvaluations(this.listTasks, this.team.Members.Count(), evaluation => evaluation.Contribute);
-            this.scoreOfMembers = myProcess.CalEvaluations(this.listTasks, this.team.Members.Count(), evaluation => evaluation.Scores);
+            this.evaluationOfMembers = CalculationUtil.CalEvaluations(this.listTasks, this.members.Count(), evaluation => evaluation.CompletionRate);
+            this.scoreOfMembers = CalculationUtil.CalEvaluations(this.listTasks, this.members.Count(), evaluation => evaluation.Score);
             flpMemberStatistical.Controls.Clear();
-            for (int i = 0; i < this.team.Members.Count; i++)
+            for (int i = 0; i < this.members.Count; i++)
             {
-                UCUserMiniLine line = new UCUserMiniLine(this.team.Members[i]);
+                UCUserMiniLine line = new UCUserMiniLine(this.members[i]);
                 line.SetBackGroundColor(SystemColors.ButtonFace);
                 line.SetSize(new Size(580, 63));
                 line.SetDeleteMode(false);

@@ -9,25 +9,25 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCProjectMiniBoard : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
-        private Project thesis = new Project();
+        
+        private Project project = new Project();
 
-        public UCProjectMiniBoard(Project thesis)
+        public UCProjectMiniBoard(Project project)
         {
             InitializeComponent();
 
-            this.thesis = thesis;
-            myProcess.SetItemFavorite(gButtonStar, thesis.IsFavorite);
-            gTextBoxStatus.Text = thesis.Status.ToString();
-            gTextBoxStatus.FillColor = thesis.GetStatusColor();
-            gTextBoxTopic.Text = thesis.Topic;
-            gTextBoxField.Text = thesis.Field.ToString();
+            this.project = project;
+            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
+            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.FillColor = project.GetStatusColor();
+            gTextBoxTopic.Text = project.Topic;
+            gTextBoxField.Text = project.FieldId.ToString();
         }
         public void SetColorViewState(Color color)
         {
@@ -36,14 +36,14 @@ namespace ProjectManagement
             gTextBoxTopic.BorderThickness = 0;
             gTextBoxField.BorderThickness = 0;
         }
-        private void SetThesisView()
+        private void SetProjectView()
         {
-            FProjectView fThesisView = new FProjectView(thesis);
-            fThesisView.ShowDialog();
+            FProjectView fProjectView = new FProjectView(project);
+            fProjectView.ShowDialog();
         }
         private void gButtonDetails_Click(object sender, EventArgs e)
         {
-            SetThesisView();
+            SetProjectView();
         }
     }
 }

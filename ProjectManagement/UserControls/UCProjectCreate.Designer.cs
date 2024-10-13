@@ -479,7 +479,7 @@
             gTextBoxRequirements.Name = "gTextBoxRequirements";
             gTextBoxRequirements.PasswordChar = '\0';
             gTextBoxRequirements.PlaceholderForeColor = Color.Gray;
-            gTextBoxRequirements.PlaceholderText = "Requirements during project implementation";
+            gTextBoxRequirements.PlaceholderText = "Requirement during project implementation";
             gTextBoxRequirements.SelectedText = "";
             gTextBoxRequirements.ShadowDecoration.CustomizableEdges = customizableEdges24;
             gTextBoxRequirements.Size = new Size(648, 170);

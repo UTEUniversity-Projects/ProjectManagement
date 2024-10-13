@@ -1,36 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ProjectManagement.Models;
-using ProjectManagement.Process;
+﻿using ProjectManagement.Models;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCWelcome : UserControl
-    {
-        private MyProcess myProcess = new MyProcess();
-
+    { 
         public UCWelcome()
         {
             InitializeComponent();
         }
-        public UCWelcome(User people)
+        public UCWelcome(Users user)
         {
             InitializeComponent();
 
-            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(people.AvatarName);
-            lblViewHandle.Text = people.Handle;
-            gTextBoxFullname.Text = people.FullName;
-            gTextBoxCitizencode.Text = people.CitizenCode;
-            gTextBoxBirthday.Text = people.Birthday.ToString("dd/MM/yyyy");
-            gTextBoxEmail.Text = people.Email;
-            gTextBoxPhonenumber.Text = people.PhoneNumber;
+            gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(user.Avatar);
+            lblViewHandle.Text = user.UserName;
+            gTextBoxFullname.Text = user.FullName;
+            gTextBoxCitizencode.Text = user.CitizenCode;
+            gTextBoxBirthday.Text = user.DateOfBirth.ToString("dd/MM/yyyy");
+            gTextBoxEmail.Text = user.Email;
+            gTextBoxPhonenumber.Text = user.PhoneNumber;
         }
     }
 }

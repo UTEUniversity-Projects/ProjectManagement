@@ -1,26 +1,15 @@
 ﻿using Guna.UI2.WinForms;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ProjectManagement.DAOs;
-using ProjectManagement.Database;
+using ProjectManagement.Enums;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCDisplayRegister : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
-        private User people = new User();
-        private UserDAO peopleDAO = new UserDAO();
+
+        private Users user = new Users();
 
         private bool flagCheck = false;
         private Image pictureAvatar = Properties.Resources.PicAvatarDemoUser;
@@ -52,8 +41,9 @@ namespace ProjectManagement
 
         private void SetUpUserControl()
         {
-            myProcess.AddEnumsToComboBox(gComboBoxGender, typeof(EGender));
+            EnumUtil.AddEnumsToComboBox(gComboBoxGender, typeof(EUserGender));
             gButtonLoadLogin.Hide();
+            gTextBoxWorkcode.PlaceholderText = "Student code";
             InitAvatarList();
         }
         private void InitAvatarList()
@@ -83,28 +73,41 @@ namespace ProjectManagement
             gTextBoxUserName.Text = string.Empty;
             gTextBoxPassword.Text = string.Empty;
             gTextBoxConfirmPassword.Text = string.Empty;
+            gTextBoxUniversity.Text = string.Empty;
+            gTextBoxFaculty.Text = string.Empty;
             gTextBoxWorkcode.Text = string.Empty;
             gCirclePictureBoxAvatar.Image = Properties.Resources.PicAvatarDemoUser;
         }
+        private void RunCheckUserInfor()
+        {
+            WinformControlUtil.RunCheckDataValid(user.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
+            WinformControlUtil.RunCheckDataValid(user.CheckCitizenCode() || flagCheck, erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
+            WinformControlUtil.RunCheckDataValid(user.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
+            WinformControlUtil.RunCheckDataValid(user.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
+            WinformControlUtil.RunCheckDataValid(user.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(user.CheckPhoneNumber() || flagCheck, erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(user.CheckUserName() || flagCheck, erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck, erpConfirmPassword, gTextBoxConfirmPassword, "Confirmation password does not match");
+            WinformControlUtil.RunCheckDataValid(user.CheckUniversity() || flagCheck, erpUniversity, gTextBoxUniversity, "University cannot be empty");
+            WinformControlUtil.RunCheckDataValid(user.CheckFaculty() || flagCheck, erpFaculty, gTextBoxFaculty, "Faculty cannot be empty");
+        }
+        private void RunCheckStudentInfor()
+        {
+            WinformControlUtil.RunCheckDataValid(user.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
+        }
         public void RunCheckInformation()
         {
-            myProcess.RunCheckDataValid(people.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
-            myProcess.RunCheckDataValid(people.CheckCitizenCode() || flagCheck, erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
-            myProcess.RunCheckDataValid(people.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
-            myProcess.RunCheckDataValid(people.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
-            myProcess.RunCheckDataValid(people.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email is already exists or invalid");
-            myProcess.RunCheckDataValid(people.CheckPhoneNumber() || flagCheck, erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
-            myProcess.RunCheckDataValid(people.CheckHandle() || flagCheck, erpHandle, gTextBoxUserName, "Username is already exists or invalid");
-            myProcess.RunCheckDataValid(people.CheckPassWord() || flagCheck, erpConfirmPassword, gTextBoxConfirmPassword, "Confirmation password does not match");
-            myProcess.RunCheckDataValid(people.CheckWorkCode() || flagCheck, erpWorkCode, gTextBoxWorkcode, "Work code is already exists or invalid");
+            RunCheckUserInfor();
         }
-        private bool CheckInformationValid()
+        private bool CheckUserInformationValid()
         {
-            RunCheckInformation();
+            RunCheckUserInfor();
 
-            return people.CheckFullName() && people.CheckCitizenCode() && people.CheckBirthday() && people.CheckGender() && people.CheckEmail()
-                    && people.CheckPhoneNumber() && people.CheckHandle() && people.CheckPassWord() && people.CheckWorkCode();
+            return user.CheckFullName() && user.CheckCitizenCode() && user.CheckBirthday() && user.CheckGender() && user.CheckEmail()
+                    && user.CheckPhoneNumber() && user.CheckUserName() && user.CheckPassWord(gTextBoxConfirmPassword.Text)
+                    && user.CheckUniversity() && user.CheckFaculty() && user.CheckWorkCode();
         }
+
         private PictureBox CreateAvatarPictureBox(Image image)
         {
             PictureBox pictureBox = new PictureBox();
@@ -135,33 +138,26 @@ namespace ProjectManagement
 
         #region EVENT gButtonRegister
 
-        private ERole GetRole()
+        private EUserRole GetRole()
         {
             if (gRadioButtonStudent.Checked == true)
             {
-                return ERole.Student;
+                return EUserRole.STUDENT;
             }
-            return ERole.Lecture;
-        }
-        private EClassify GetClassify()
-        {
-            if (gRadioButtonStudent.Checked == true)
-            {
-                return EClassify.Student;
-            }
-            return EClassify.Lecture;
+            return EUserRole.LECTURE;
         }
 
         private void gButtonRegister_Click(object sender, EventArgs e)
         {
-            this.people = new User(gTextBoxFullname.Text, gTextBoxCitizencode.Text, gDateTimePickerBirthday.Value, (EGender)gComboBoxGender.SelectedItem,
-                gTextBoxEmail.Text, gTextBoxPhonenumber.Text, gTextBoxUserName.Text, GetRole(), gTextBoxWorkcode.Text, gTextBoxPassword.Text, gTextBoxConfirmPassword.Text,
-                myProcess.ImageToName(gCirclePictureBoxAvatar.Image), GetClassify());
+            this.user = new Users(gTextBoxUserName.Text, gTextBoxFullname.Text, gTextBoxPassword.Text, gTextBoxEmail.Text,
+                gTextBoxPhonenumber.Text, gDateTimePickerBirthday.Value, gTextBoxCitizencode.Text, gTextBoxUniversity.Text, gTextBoxFaculty.Text, gTextBoxWorkcode.Text,
+                (EUserGender)EnumUtil.ConvertStringToEnum(gComboBoxGender, typeof(EUserGender)), WinformControlUtil.ImageToName(gCirclePictureBoxAvatar.Image),
+                GetRole(), DateTime.Now);
 
             this.flagCheck = false;
-            if (CheckInformationValid())
+            if (CheckUserInformationValid())
             {
-                peopleDAO.Insert(this.people);
+                UserDAO.Insert(this.user);
                 this.flagCheck = true;
                 gButtonLoadLogin.PerformClick();
             }
@@ -188,55 +184,54 @@ namespace ProjectManagement
 
         private void gTextBoxFullname_TextChanged(object sender, EventArgs e)
         {
-            this.people.FullName = gTextBoxFullname.Text;
-            myProcess.RunCheckDataValid(people.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
+            this.user.FullName = gTextBoxFullname.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
         }
         private void gTextBoxCitizencode_TextChanged(object sender, EventArgs e)
         {
-            this.people.CitizenCode = gTextBoxCitizencode.Text;
-            myProcess.RunCheckDataValid(people.CheckCitizenCode() || flagCheck, erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
+            this.user.CitizenCode = gTextBoxCitizencode.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckCitizenCode() || flagCheck, erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
         }
         private void gDateTimePickerBirthday_ValueChanged(object sender, EventArgs e)
         {
-            this.people.Birthday = gDateTimePickerBirthday.Value;
-            myProcess.RunCheckDataValid(people.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
+            this.user.DateOfBirth = gDateTimePickerBirthday.Value;
+            WinformControlUtil.RunCheckDataValid(user.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
         }
         private void gComboBoxGender_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.people.Gender = (EGender)myProcess.ConvertStringToEnum(gComboBoxGender, typeof(EGender));
-            myProcess.RunCheckDataValid(people.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
+            this.user.Gender = (EUserGender)EnumUtil.ConvertStringToEnum(gComboBoxGender, typeof(EUserGender));
+            WinformControlUtil.RunCheckDataValid(user.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
         }
         private void gTextBoxEmail_TextChanged(object sender, EventArgs e)
         {
-            this.people.Email = gTextBoxEmail.Text;
-            myProcess.RunCheckDataValid(people.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email is already exists or invalid");
+            this.user.Email = gTextBoxEmail.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email is already exists or invalid");
         }
         private void gTextBoxPhonenumber_TextChanged(object sender, EventArgs e)
         {
-            this.people.PhoneNumber = gTextBoxPhonenumber.Text;
-            myProcess.RunCheckDataValid(people.CheckPhoneNumber() || flagCheck, erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
+            this.user.PhoneNumber = gTextBoxPhonenumber.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckPhoneNumber() || flagCheck, erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
         }
         private void gTextBoxHandle_TextChanged(object sender, EventArgs e)
         {
-            this.people.Handle = gTextBoxUserName.Text;
-            myProcess.RunCheckDataValid(people.CheckHandle() || flagCheck, erpHandle, gTextBoxUserName, "Username is already exists or invalid");
+            this.user.UserName = gTextBoxUserName.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckUserName() || flagCheck, erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
         }
         private void gTextBoxPassword_TextChanged(object sender, EventArgs e)
         {
-            this.people.Password = gTextBoxPassword.Text;
-            myProcess.RunCheckDataValid(people.CheckPassWord() || flagCheck, erpPassword, gTextBoxPassword, "Confirmation password does not match");
-            if (people.CheckPassWord() || flagCheck) erpConfirmPassword.SetError(gTextBoxConfirmPassword, null);
+            this.user.Password = gTextBoxPassword.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck, erpPassword, gTextBoxPassword, "Confirmation password does not match");
+            if (user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck) erpConfirmPassword.SetError(gTextBoxConfirmPassword, null);
         }
         private void gTextBoxConfirmPassword_TextChanged(object sender, EventArgs e)
         {
-            this.people.ConfirmPassword = gTextBoxConfirmPassword.Text;
-            myProcess.RunCheckDataValid(people.CheckPassWord() || flagCheck, erpConfirmPassword, gTextBoxConfirmPassword, "Confirmation password does not match");
-            if (people.CheckPassWord() || flagCheck) erpPassword.SetError(gTextBoxPassword, null);
+            WinformControlUtil.RunCheckDataValid(user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck, erpConfirmPassword, gTextBoxConfirmPassword, "Confirmation password does not match");
+            if (user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck) erpPassword.SetError(gTextBoxPassword, null);
         }
         private void gTextBoxWorkcode_TextChanged(object sender, EventArgs e)
         {
-            this.people.WorkCode = gTextBoxWorkcode.Text;
-            myProcess.RunCheckDataValid(people.CheckWorkCode() || flagCheck, erpWorkCode, gTextBoxWorkcode, "Work code is already exists or invalid");
+            // this.user.WorkCode = gTextBoxWorkcode.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckWorkCode() || flagCheck, erpWorkCode, gTextBoxWorkcode, "Work code is already exists or invalid");
         }
 
         #endregion

@@ -1,29 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Data;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using Guna.Charts.WinForms;
+using ProjectManagement.Enums;
 using System.Globalization;
 using Guna.UI2.WinForms;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCDashboardStatistics : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
         private List<Project> listTheses;
 
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private UserDAO peopleDAO = new UserDAO();
+        private ProjectDAO ProjectDAO = new ProjectDAO();
 
         public UCDashboardStatistics()
         {
@@ -51,7 +42,7 @@ namespace ProjectManagement
 
         void SetupFlpStatus()
         {
-            List<EThesisStatus> statusList = new List<EThesisStatus>((EThesisStatus[])Enum.GetValues(typeof(EThesisStatus)));
+            List<EProjectStatus> statusList = new List<EProjectStatus>((EProjectStatus[])Enum.GetValues(typeof(EProjectStatus)));
             foreach (var status in statusList)
             {
                 Guna2Button button = new Guna2Button();
@@ -60,7 +51,7 @@ namespace ProjectManagement
                 button.ForeColor = Color.White;
                 button.Size = new Size(105, 25);
                 button.BorderRadius = 5;
-                button.FillColor = myProcess.GetThesisStatusColor(status);
+                button.FillColor = EnumUtil.GetProjectStatusColor(status);
                 this.flpStatus.Controls.Add(button);
             }
         }
@@ -71,19 +62,19 @@ namespace ProjectManagement
         public void UpdateDoughnutChart()
         {
             this.lblTotal.Text = this.listTheses.Count.ToString();
-            var thesisGroupedByStatus = this.listTheses
-            .GroupBy(thesis => thesis.Status)
+            var projectGroupedByStatus = this.listTheses
+            .GroupBy(project => project.Status)
             .Select(group => new
             {
                 Status = group.Key,
                 Count = group.Count(),
             });
             this.gDoughnutChart.Datasets.Clear();
-            foreach (var group in thesisGroupedByStatus)
+            foreach (var group in projectGroupedByStatus)
             {
-                int ind = myProcess.GetThesisStatusIndex(group.Status);
+                int ind = EnumUtil.GetProjectStatusIndex(group.Status);
                 this.gDoughnutDataset.DataPoints[ind].Y = group.Count;
-                this.gDoughnutDataset.FillColors[ind] = myProcess.GetThesisStatusColor(group.Status);
+                this.gDoughnutDataset.FillColors[ind] = EnumUtil.GetProjectStatusColor(group.Status);
             }
             this.gDoughnutChart.Datasets.Add(gDoughnutDataset);
             this.gDoughnutChart.Update();
@@ -114,51 +105,34 @@ namespace ProjectManagement
         #endregion
 
         #region HORIZONTALBAR CHART
-        IEnumerable<object> ByLecture()
-        {
-            List<Dictionary<Project, int>> getThesisByMaxSubscribers = thesisDAO.GetMaxSubscribers();
-            List<string> lectures = peopleDAO.SelectListID(ERole.Lecture);
-            var result = from dict in getThesisByMaxSubscribers
-                         join lecture in lectures on dict.Keys.FirstOrDefault().IdInstructor equals lecture
-                         select new { Lecture = lecture, Count = dict.Values.FirstOrDefault() };
-            var groupedResult = result.GroupBy(
-                item => item.Lecture,
-                (key, group) => new
-                {
-                    Name = key,
-                    Count = group.Sum(item => item.Count)
-                }
-            ).ToList();
-            return groupedResult;
-
-        }
+        
         IEnumerable<object> ByField()
         {
-            var thesisGroupedByField = this.listTheses
-              .GroupBy(thesis => thesis.Field)
+            var projectGroupedByField = this.listTheses
+              .GroupBy(project => project.FieldId)
               .Select(group => new
               {
                   Name = group.Key,
                   Count = group.Count()
               });
-            thesisGroupedByField = thesisGroupedByField.OrderByDescending(item => item.Count);
-            return thesisGroupedByField;
+            projectGroupedByField = projectGroupedByField.OrderByDescending(item => item.Count);
+            return projectGroupedByField;
         }
         public void UpdateHorizontalbarChart()
         {
             string selectedFilter = gComboBoxTop.SelectedItem.ToString();
-            var thesisGroupedByField = selectedFilter == "Field" ? ByField() : ByLecture();
+            var projectGroupedByField = ByField();
             int max = 5;
             int i = 0;
             this.gHorizontalBarDataset.DataPoints.Clear();
             this.gHorizontalBarChart.Datasets.Clear();
-            foreach (var group in thesisGroupedByField)
+            foreach (var group in projectGroupedByField)
             {
                 var name = group.GetType().GetProperty("Name").GetValue(group, null).ToString();
                 if (selectedFilter == "Lecture")
                 {
-                    User people = peopleDAO.SelectOnlyByID(name);
-                    name = people.Handle;
+                    Users user = UserDAO.SelectOnlyByID(name);
+                    name = user.UserName;
                 }
                 var count = (int)group.GetType().GetProperty("Count").GetValue(group, null);
                 this.gHorizontalBarDataset.DataPoints.Add(name, count);
@@ -175,14 +149,14 @@ namespace ProjectManagement
         {
             var allMonths = Enumerable.Range(1, 12);
             int selectedYear = (int)gComboBoxSelectYear.SelectedItem;
-            var thesisGroupedByMonth = allMonths
+            var projectGroupedByMonth = allMonths
                 .GroupJoin(this.listTheses,
                            month => month,
-                           thesis => thesis.PublishDate.Month,
+                           project => project.PublicDate.Month,
                            (month, theses) => new
                            {
                                Month = month,
-                               Count = theses.Where(thesis => thesis.PublishDate.Year == selectedYear).Count()
+                               Count = theses.Where(project => project.PublicDate.Year == selectedYear).Count()
                            })
                 .Select(result => new
                 {
@@ -195,7 +169,7 @@ namespace ProjectManagement
             this.gSplineDataset.DataPoints.Clear();
             this.gBarDataset.DataPoints.Clear();
             this.gMixedBarAndSplineChart.Datasets.Clear();
-            foreach (var group in thesisGroupedByMonth)
+            foreach (var group in projectGroupedByMonth)
             {
                 monthName = dtfi.GetMonthName(group.Month);
                 this.gSplineDataset.DataPoints.Add(monthName, group.Count);

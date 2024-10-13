@@ -9,196 +9,181 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
+using ProjectManagement.Mappers.Implement;
+using System.Data.SqlClient;
+using Microsoft.VisualBasic.ApplicationServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ProjectManagement.DAOs
 {
     internal class ProjectDAO : DBConnection
-    {
-        private MyProcess myProcess = new MyProcess();
+    {       
 
-        public ProjectDAO() { }
+        #region SELECT PROJECT
 
-        #region SELECT THESIS
-
-        public List<Project> SelectList(string command)
+        public static Project SelectOnly(string projectId)
         {
-            DataTable dataTable = Select(command);
-
-            List<Project> list = new List<Project>();
-            foreach (DataRow row in dataTable.Rows)
-            {
-                list.Add(GetFromDataRow(row));
-            }
-
-            return list;
+            return DBGetModel.GetModel(DBTableNames.Project, "projectId", projectId, new ProjectMapper());
         }
-        public Project SelectOnly(string idThesis)
+        public static Project SelectFollowTeam(string teamId)
         {
-            DataTable dt = Select(string.Format("SELECT * FROM {0} WHERE idthesis = '{1}'", DBTableNames.DBThesis, idThesis));
+            string sqlStr = $"SELECT * FROM {DBTableNames.Team} WHERE teamId = @TeamId";
 
-            if (dt.Rows.Count > 0) return GetFromDataRow(dt.Rows[0]);
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
+
+            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            if (dt.Rows.Count > 0)
+            {
+                return SelectOnly(dt.Rows[0]["projectId"].ToString());
+            }
             return new Project();
         }
-        public Project SelectFollowTeam(string idTeam)
+
+        #endregion
+
+        #region SELECT PROJECT FOLLOW ROLE
+
+        public static List<Project> SelectListRoleLecture(string userId)
         {
-            DataTable dt = Select(string.Format("SELECT * FROM {0} WHERE idteam = '{1}'", DBTableNames.DBThesisStatus, idTeam));
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE instructorId = @UserId",
+                DBTableNames.Project);
 
-            if (dt.Rows.Count > 0) return SelectOnly(dt.Rows[0]["idthesis"].ToString());
-            return new Project();
-        }
-        public List<Dictionary<Project, int>> GetMaxSubscribers()
-        {
-            string command = "SELECT idthesis, SUM(SL) AS total_SL " +
-                             "FROM ThesisStatus " +
-                             "JOIN (SELECT idteam, COUNT(idaccount) AS SL FROM Team GROUP BY idteam) AS Team " +
-                             "ON ThesisStatus.idteam = Team.idteam " +
-                             "WHERE ThesisStatus.status IN ('Registered', 'Processing', 'Completed') " +
-                             "GROUP BY idthesis " +
-                             "ORDER BY total_SL DESC";
-            DataTable dataTable = Select(command);
-
-            List<Dictionary<Project, int>> resultList = new List<Dictionary<Project, int>>();
-
-            foreach (DataRow row in dataTable.Rows)
+            List<SqlParameter> parameters = new List<SqlParameter>
             {
-                string idThesis = row["idthesis"].ToString();
-                Project thesis = SelectOnly(idThesis);
-                int total = Convert.ToInt32(row["total_SL"]);
-                Dictionary<Project, int> resultDict = new Dictionary<Project, int>
-                {
-                    { thesis, total }
-                };
-                resultList.Add(resultDict);
-            }
-            return resultList;
+                new SqlParameter("@UserId", userId)
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+        }
+        public static List<Project> SelectListRoleStudent(string userId)
+        {
+            string sqlStr = string.Format("SELECT {0}.* FROM {0} WHERE status IN (@Published, @Registered) " +
+                                           "AND NOT EXISTS(SELECT 1 FROM {1} WHERE {1}.projectId = {0}.projectId " +
+                                           "AND teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId))",
+                                           DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@Published", EnumUtil.GetDisplayName(EProjectStatus.PUBLISHED)),
+                new SqlParameter("@Registered", EnumUtil.GetDisplayName(EProjectStatus.REGISTERED))
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+        }
+        public static List<Project> SelectListModeMyTheses(string userId)
+        {
+            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " +
+                                           "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId)",
+                                            DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId)
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+        }
+        public static List<Project> SelectListModeNotCompleted(string userId)
+        {
+            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " +
+                                           "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId) " +
+                                           "AND {0}.status = @GaveUp",
+                                            DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@GaveUp", EnumUtil.GetDisplayName(EProjectStatus.GAVEUP))
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+        }
+        public static List<Project> SelectListModeMyCompletedTheses(string userId)
+        {
+            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " + 
+                                            "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId) " + 
+                                            "AND {0}.status = @Completed",
+                                            DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam); 
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@Completed", EnumUtil.GetDisplayName(EProjectStatus.COMPLETED))
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+        }
+        #endregion
+
+        #region SEARCH PROJECT
+
+        public static List<Project> SearchRoleLecture(string userId, string topic)
+        {
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE instructorId = @UserId AND topic LIKE @TopicSyntax",
+                                DBTableNames.Project);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@TopicSyntax", topic + "%")
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+
+        }
+        public static List<Project> SearchRoleStudent(string topic)
+        {
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE status IN (@Published, @Registered) AND topic LIKE @TopicSyntax",
+                                    DBTableNames.Project);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TopicSyntax", topic + "%"),
+                new SqlParameter("@Published", EnumUtil.GetDisplayName(EProjectStatus.PUBLISHED)),
+                new SqlParameter("@Registered", EnumUtil.GetDisplayName(EProjectStatus.REGISTERED))
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
         }
 
         #endregion
 
-        #region SELECT THESIS FOLLOW ROLE
+        #region PROJECT DAO EXECUTION
 
-        public List<Project> SelectListRoleLecture(string idAccount)
+        public static void Insert(Project project)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE idinstructor = '{1}'", DBTableNames.DBThesis, idAccount);
-            return SelectList(command);
+            DBExecution.Insert(project, DBTableNames.Project);
         }
-        public List<Project> SelectListRoleStudent(string idAccount)
-        {
-            string command = string.Format("SELECT * FROM {0} WHERE status IN ('Published', 'Registered') " +
-                                           "AND NOT EXISTS(SELECT 1 FROM {1} WHERE {1}.idthesis = {0}.idthesis " +
-                                           "AND idteam IN (SELECT idteam FROM {2} WHERE idaccount = '{3}'))",
-                                           DBTableNames.DBThesis, DBTableNames.DBThesisStatus, DBTableNames.DBMember, idAccount);
-            return SelectList(command);
-        }
-        public List<Project> SelectListModeMyTheses(string idAccount)
-        {
-            string command = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.idthesis = {1}.idthesis " +
-                                           "WHERE {1}.idteam IN (SELECT idteam FROM {2} WHERE idaccount = '{3}')",
-                                            DBTableNames.DBThesis, DBTableNames.DBThesisStatus, DBTableNames.DBMember, idAccount);
-            return SelectList(command);
-        }
-        public List<Project> SelectListModeNotCompleted(string idAccount)
-        {
-            string command = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.idthesis = {1}.idthesis " +
-                                           "WHERE {1}.idteam IN (SELECT idteam FROM {2} WHERE idaccount = '{3}') " +
-                                           "AND {1}.status = 'NotCompleted'",
-                                            DBTableNames.DBThesis, DBTableNames.DBThesisStatus, DBTableNames.DBMember, idAccount);
-            return SelectList(command);
-        }
-        public List<Project> SelectListModeMyCompletedTheses(string idAccount)
-        {
-            string command = $"SELECT {DBTableNames.DBThesis}.* " +
-                             $"FROM {DBTableNames.DBThesis} INNER JOIN {DBTableNames.DBThesisStatus} " +
-                             $"ON {DBTableNames.DBThesis}.idthesis = {DBTableNames.DBThesisStatus}.idthesis " +
-                             $"WHERE {DBTableNames.DBThesisStatus}.idteam IN (SELECT idteam FROM {DBTableNames.DBMember} WHERE idaccount = '{idAccount}') " +
-                             $"and {DBTableNames.DBThesis}.status = 'Completed'";
-            return SelectList(command);
-        }
-        #endregion
 
-        #region SEARCH THESIS
-
-        public List<Project> SearchRoleLecture(string idAccount, string topic)
+        public static void Delete(Project project)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE idinstructor = '{1}' and topic LIKE '{2}%'",
-                                DBTableNames.DBThesis, idAccount, topic);
-            return SelectList(command);
-
+            DBExecution.Delete(DBTableNames.Project, "projectId", project.ProjectId);
         }
-        public List<Project> SearchRoleStudent(string topic)
+
+        public static void Update(Project project)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE status IN ('{1}', '{2}') and topic LIKE '{3}%'",
-                                    DBTableNames.DBThesis, EThesisStatus.Published.ToString(), EThesisStatus.Registered.ToString(), topic);
-            return SelectList(command);
-
+            DBExecution.Update(project, DBTableNames.Project, "projectId", project.ProjectId);
         }
+        public static void UpdateStatus(Project project, EProjectStatus status)
+        {
+            string sqlStr = string.Format("UPDATE {0} SET status = @Status WHERE projectId = @ProjectId",
+                                                DBTableNames.Project);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", project.ProjectId),
+                new SqlParameter("@Status", EnumUtil.GetDisplayName(status))
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }
+        public static void UpdateFavorite(Project project) { }
 
         #endregion
 
-        #region THESIS DAO EXECUTION
-
-        public void Insert(Project thesis)
-        {
-            ExecuteQueryThesis(thesis, "INSERT INTO {0} " +
-                "VALUES ('{1}', '{2}', '{3}', '{4}', {5}, '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', {12}, '{13}', '{14}')",
-                "Create", true);
-        }
-        public void Delete(Project thesis)
-        {
-            ExecuteQueryThesis(thesis, "DELETE FROM {0} WHERE idthesis = '{1}'",
-                "Delete", false);
-        }
-        public void Update(Project thesis)
-        {
-            ExecuteQueryThesis(thesis, "UPDATE {0} SET " +
-                "idthesis = '{1}', topic = '{2}', field = '{3}', level = '{4}', maxmembers = {5}, " +
-                "description = '{6}', publishdate = '{7}', technology = '{8}', functions = '{9}', requirements = '{10}', " +
-                "idcreator = '{11}', isfavorite = {12}, status = '{13}', idinstructor = '{14}' WHERE idthesis = '{1}'",
-                "Update", false);
-        }
-        public void UpdateStatus(Project thesis, EThesisStatus status)
-        {
-            string command = string.Format("UPDATE {0} SET status = '{1}' WHERE idthesis = '{2}'",
-                                                DBTableNames.DBThesis, status.ToString(), thesis.IdThesis);
-            SQLExecuteByCommand(command);
-        }
-        public void UpdateFavorite(Project thesis)
-        {
-            string command = string.Format("UPDATE {0} SET isfavorite = {1} WHERE idthesis = '{2}'",
-                                                DBTableNames.DBThesis, thesis.IsFavorite ? 1 : 0, thesis.IdThesis);
-            SQLExecuteByCommand(command);
-        }
-
-        #endregion
-
-        #region Get Thesis From Data Row
-
-        public Project GetFromDataRow(DataRow row)
-        {
-            string idThesis = row["idthesis"].ToString();
-            string topic = row["topic"].ToString();
-            EField field = myProcess.GetEnumFromDisplayName<EField>(row["field"].ToString());
-            ELevel level = myProcess.GetEnumFromDisplayName<ELevel>(row["level"].ToString());
-            int maxMembers = int.Parse(row["maxmembers"].ToString());
-            string description = row["description"].ToString();
-            DateTime publishDate = DateTime.Parse(row["publishdate"].ToString());
-            string technology = row["technology"].ToString();
-            string functions = row["functions"].ToString();
-            string requirements = row["requirements"].ToString();
-            string idCreator = row["idcreator"].ToString();
-            bool isFavorite = row["isfavorite"].ToString() == "True" ? true : false;
-            EThesisStatus status = myProcess.GetEnumFromDisplayName<EThesisStatus>(row["status"].ToString());
-            string idInstructor = row["idinstructor"].ToString();
-
-            Project thesis = new Project(idThesis, topic, field, level, maxMembers, description, publishDate, technology,
-                                        functions, requirements, idCreator, isFavorite, status, idInstructor);
-            return thesis;
-        }
-
-        #endregion 
     }
 }

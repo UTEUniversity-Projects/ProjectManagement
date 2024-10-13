@@ -283,7 +283,7 @@
             lblDescription.TabIndex = 6;
             lblDescription.Text = "PROGRESS\r\n";
             // 
-            // UCThesisDetailsStatistical
+            // UCProjectDetailsStatistical
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -292,7 +292,7 @@
             Controls.Add(guna2ShadowPanel1);
             Controls.Add(gShadowPanelShowInfor);
             DoubleBuffered = true;
-            Name = "UCThesisDetailsStatistical";
+            Name = "UCProjectDetailsStatistical";
             Size = new Size(715, 635);
             gShadowPanelShowInfor.ResumeLayout(false);
             gCircleProgressBarThree.ResumeLayout(false);

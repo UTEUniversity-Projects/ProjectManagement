@@ -12,20 +12,22 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCTaskEvaluateDetails : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
-        private Project thesis = new Project();
-        private Tasks tasks = new Tasks();
-        private User student = new User();
-        private User host = new User();
+        
+        private Project project = new Project();
+        private Tasks task = new Tasks();
+        private Users student = new Users();
+        private Users host = new Users();
         private Evaluation evaluation = new Evaluation();
 
-        private EvaluationDAO evaluationDAO = new EvaluationDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
+        private EvaluationDAO EvaluationDAO = new EvaluationDAO();
+        private NotificationDAO NotificationDAO = new NotificationDAO();
 
         private bool isProcessing = true;
         private bool flagCheck = false;
@@ -46,10 +48,10 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetUpUserControl(Project thesis, Tasks tasks, User student, Evaluation evaluation, User host, bool isProcessing)
+        public void SetUpUserControl(Project project, Tasks task, Users student, Evaluation evaluation, Users host, bool isProcessing)
         {
-            this.thesis = thesis;
-            this.tasks = tasks;
+            this.project = project;
+            this.task = task;
             this.student = student;
             this.evaluation = evaluation;
             this.host = host;
@@ -59,23 +61,23 @@ namespace ProjectManagement
         private void InitUserControl()
         {
             this.flagCheck = true;
-            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(student.AvatarName);
-            lblUserName.Text = myProcess.FormatStringLength(student.FullName, 40);
-            lblPeopleCode.Text = student.IdAccount;
+            gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(student.Avatar);
+            lblUserName.Text = DataTypeUtil.FormatStringLength(student.FullName, 40);
+            lblUserCode.Text = student.UserId;
             gTextBoxEvaluation.Text = evaluation.Content;
-            gProgressBarToLine.Value = evaluation.Contribute;
-            gTextBoxCompleted.Text = evaluation.Contribute.ToString();
-            gTextBoxScores.Text = evaluation.Scores.ToString();
-            gTextBoxStatus.Text = evaluation.IsEvaluated ? ("Evaluated") : ("NotEvaluated");
+            gProgressBarToLine.Value = (int)evaluation.CompletionRate;
+            gTextBoxCompleted.Text = evaluation.CompletionRate.ToString();
+            gTextBoxScores.Text = evaluation.Score.ToString();
+            gTextBoxStatus.Text = evaluation.Evaluated ? ("Evaluated") : ("NotEvaluated");
             gTextBoxStatus.FillColor = evaluation.GetStatusColor();
             SetEditState(false);
 
             if (this.isProcessing)
             {
-                if (host.Role == ERole.Lecture) SetEditState(true);
+                if (host.Role == EUserRole.LECTURE) SetEditState(true);
                 else
                 {
-                    if (!evaluation.IsEvaluated) SetTextBoxEditState(gTextBoxCompleted, true);
+                    if (!evaluation.Evaluated) SetTextBoxEditState(gTextBoxCompleted, true);
                     else
                     {
                         SetTextBoxEditState(gTextBoxCompleted, false);
@@ -107,7 +109,7 @@ namespace ProjectManagement
         }
         private void SetEditState(bool flag)
         {
-            gTextBoxStatus.Text = evaluation.IsEvaluated ? ("Evaluated") : ("NotEvaluated");
+            gTextBoxStatus.Text = evaluation.Evaluated ? ("Evaluated") : ("NotEvaluated");
             gTextBoxStatus.FillColor = evaluation.GetStatusColor();
             SetTextBoxEditState(gTextBoxEvaluation, flag);
             SetTextBoxEditState(gTextBoxCompleted, flag);
@@ -117,26 +119,26 @@ namespace ProjectManagement
         {
             int contribution = 0;
             bool checkContribute = int.TryParse(gTextBoxCompleted.Text, out contribution);
-            if (checkContribute) evaluation.Contribute = contribution;
-            myProcess.RunCheckDataValid((checkContribute && evaluation.CheckContribute()) || flagCheck, erpContribute, gTextBoxCompleted, "Can only take values from 0 to 100");
+            if (checkContribute) evaluation.CompletionRate = contribution;
+            WinformControlUtil.RunCheckDataValid((checkContribute && evaluation.CheckCompletionRate()) || flagCheck, erpContribute, gTextBoxCompleted, "Can only take values from 0 to 100");
         }
         private void UpdateScores()
         {
             float scores = 0.0F;
-            bool checkScores = float.TryParse(gTextBoxScores.Text, out scores) || host.Role == ERole.Student;
-            if (checkScores) evaluation.Scores = scores;
-            myProcess.RunCheckDataValid((checkScores && evaluation.CheckScores()) || flagCheck, erpScores, gTextBoxScores, "Can only take values from 0.0 to 10.0");
+            bool checkScores = float.TryParse(gTextBoxScores.Text, out scores) || host.Role == EUserRole.STUDENT;
+            if (checkScores) evaluation.Score = scores;
+            WinformControlUtil.RunCheckDataValid((checkScores && evaluation.CheckScore()) || flagCheck, erpScores, gTextBoxScores, "Can only take values from 0.0 to 10.0");
         }
         private bool CheckInformationValid()
         {
-            myProcess.RunCheckDataValid(evaluation.CheckContent() || flagCheck || host.Role == ERole.Student, erpEvaluation, gTextBoxEvaluation, "Comment be empty");
+            WinformControlUtil.RunCheckDataValid(evaluation.CheckContent() || flagCheck || host.Role == EUserRole.STUDENT, erpEvaluation, gTextBoxEvaluation, "Comment be empty");
             UpdateContribute(); 
             UpdateScores();
             int contribution;
             float scores;
-            return (evaluation.CheckContent() || flagCheck || host.Role == ERole.Student)
-                && (int.TryParse(gTextBoxCompleted.Text, out contribution) && tasks.CheckProgress()) 
-                && (float.TryParse(gTextBoxScores.Text, out scores) && evaluation.CheckScores());
+            return (evaluation.CheckContent() || flagCheck || host.Role == EUserRole.STUDENT)
+                && (int.TryParse(gTextBoxCompleted.Text, out contribution) && task.CheckProgress()) 
+                && (float.TryParse(gTextBoxScores.Text, out scores) && evaluation.CheckScore());
         }
 
         #endregion
@@ -148,14 +150,13 @@ namespace ProjectManagement
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                this.evaluation = new Evaluation(evaluation.IdEvaluation, evaluation.IdTask, evaluation.IdPeople, gTextBoxEvaluation.Text,
-                                            int.Parse(gTextBoxCompleted.Text), float.Parse(gTextBoxScores.Text), DateTime.Now, host.Role == ERole.Lecture);
-
-                evaluationDAO.Update(evaluation);
-                if (host.Role == ERole.Lecture && evaluation.IsEvaluated)
+                this.evaluation = new Evaluation(evaluation.EvaluationId, gTextBoxEvaluation.Text, double.Parse(gTextBoxCompleted.Text), 
+                    double.Parse(gTextBoxScores.Text), true, DateTime.Now, evaluation.CreatedBy, this.student.UserId, evaluation.TaskId);
+                EvaluationDAO.Update(evaluation);
+                if (host.Role == EUserRole.LECTURE && evaluation.Evaluated)
                 {
-                    string content = Notification.GetContentTypeEvaluation(host.FullName, tasks.Title);
-                    notificationDAO.Insert(new Notification(student.IdAccount, host.IdAccount, thesis.IdThesis, evaluation.IdEvaluation, content, DateTime.Now, false, false));
+                    string content = Notification.GetContentTypeEvaluation(host.FullName, task.Title);
+                    NotificationDAO.Insert(new Notification("xxx", content, Notification.GetNotificationType(evaluation.EvaluationId), DateTime.Now));
                 }
                 this.flagCheck = true;
                 SetEditState(false);
@@ -164,13 +165,13 @@ namespace ProjectManagement
         private void gTextBoxEvaluation_TextChanged(object sender, EventArgs e)
         {
             this.evaluation.Content = gTextBoxEvaluation.Text;
-            myProcess.RunCheckDataValid(evaluation.CheckContent() || flagCheck || host.Role == ERole.Student, erpEvaluation, gTextBoxEvaluation, "Comment be empty");
+            WinformControlUtil.RunCheckDataValid(evaluation.CheckContent() || flagCheck || host.Role == EUserRole.STUDENT, erpEvaluation, gTextBoxEvaluation, "Comment be empty");
         }
         private void gTextBoxContribute_TextChanged(object sender, EventArgs e)
         {
             UpdateContribute();
             int contribution = 0;
-            if (int.TryParse(gTextBoxCompleted.Text, out contribution) && tasks.CheckProgress())
+            if (int.TryParse(gTextBoxCompleted.Text, out contribution) && task.CheckProgress())
             {
                 gProgressBarToLine.Value = contribution;
             }

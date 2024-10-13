@@ -153,9 +153,9 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap LogoThesisManagement {
+        internal static System.Drawing.Bitmap LogoProjectManagement {
             get {
-                object obj = ResourceManager.GetObject("LogoThesisManagement", resourceCulture);
+                object obj = ResourceManager.GetObject("LogoProjectManagement", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +163,9 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon LogoThesisManagement1 {
+        internal static System.Drawing.Icon LogoProjectManagement1 {
             get {
-                object obj = ResourceManager.GetObject("LogoThesisManagement1", resourceCulture);
+                object obj = ResourceManager.GetObject("LogoProjectManagement1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -623,6 +623,16 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PicItemConfirmPassword {
+            get {
+                object obj = ResourceManager.GetObject("PicItemConfirmPassword", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PicItemCopy {
             get {
                 object obj = ResourceManager.GetObject("PicItemCopy", resourceCulture);
@@ -743,6 +753,16 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PicItemMajor {
+            get {
+                object obj = ResourceManager.GetObject("PicItemMajor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PicItemMember {
             get {
                 object obj = ResourceManager.GetObject("PicItemMember", resourceCulture);
@@ -776,6 +796,16 @@ namespace ProjectManagement.Properties {
         internal static System.Drawing.Bitmap PicItemOn {
             get {
                 object obj = ResourceManager.GetObject("PicItemOn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PicItemPassword {
+            get {
+                object obj = ResourceManager.GetObject("PicItemPassword", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -873,6 +903,16 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PicItemSchoolYear {
+            get {
+                object obj = ResourceManager.GetObject("PicItemSchoolYear", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PicItemSearch {
             get {
                 object obj = ResourceManager.GetObject("PicItemSearch", resourceCulture);
@@ -953,6 +993,16 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PicProject {
+            get {
+                object obj = ResourceManager.GetObject("PicProject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PicSearch {
             get {
                 object obj = ResourceManager.GetObject("PicSearch", resourceCulture);
@@ -996,16 +1046,6 @@ namespace ProjectManagement.Properties {
         internal static System.Drawing.Bitmap PicTeam {
             get {
                 object obj = ResourceManager.GetObject("PicTeam", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap PicThesis {
-            get {
-                object obj = ResourceManager.GetObject("PicThesis", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1213,6 +1253,26 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PictureProject {
+            get {
+                object obj = ResourceManager.GetObject("PictureProject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PictureProjectGradient {
+            get {
+                object obj = ResourceManager.GetObject("PictureProjectGradient", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PictureRegistered {
             get {
                 object obj = ResourceManager.GetObject("PictureRegistered", resourceCulture);
@@ -1256,26 +1316,6 @@ namespace ProjectManagement.Properties {
         internal static System.Drawing.Bitmap PictureTaskGradient {
             get {
                 object obj = ResourceManager.GetObject("PictureTaskGradient", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap PictureThesis {
-            get {
-                object obj = ResourceManager.GetObject("PictureThesis", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap PictureThesisGradient {
-            get {
-                object obj = ResourceManager.GetObject("PictureThesisGradient", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

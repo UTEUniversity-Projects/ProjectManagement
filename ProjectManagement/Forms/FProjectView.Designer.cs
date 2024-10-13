@@ -75,7 +75,7 @@
             gButtonStar = new Guna.UI2.WinForms.Guna2Button();
             lblDescription = new Label();
             gTextBoxDescription = new Guna.UI2.WinForms.Guna2TextBox();
-            lblThesisTopic = new Label();
+            lblProjectTopic = new Label();
             gTextBoxTopic = new Guna.UI2.WinForms.Guna2TextBox();
             gShadowPanelCreAndIns = new Guna.UI2.WinForms.Guna2ShadowPanel();
             flpCreator = new FlowLayoutPanel();
@@ -251,7 +251,7 @@
             gShadowPanelTopic.Controls.Add(gButtonStar);
             gShadowPanelTopic.Controls.Add(lblDescription);
             gShadowPanelTopic.Controls.Add(gTextBoxDescription);
-            gShadowPanelTopic.Controls.Add(lblThesisTopic);
+            gShadowPanelTopic.Controls.Add(lblProjectTopic);
             gShadowPanelTopic.Controls.Add(gTextBoxTopic);
             gShadowPanelTopic.FillColor = Color.White;
             gShadowPanelTopic.Location = new Point(23, 19);
@@ -553,16 +553,16 @@
             gTextBoxDescription.TabIndex = 6;
             gTextBoxDescription.TextOffset = new Point(5, 0);
             // 
-            // lblThesisTopic
+            // lblProjectTopic
             // 
-            lblThesisTopic.AutoSize = true;
-            lblThesisTopic.BackColor = Color.Transparent;
-            lblThesisTopic.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblThesisTopic.Location = new Point(27, 70);
-            lblThesisTopic.Name = "lblThesisTopic";
-            lblThesisTopic.Size = new Size(155, 28);
-            lblThesisTopic.TabIndex = 8;
-            lblThesisTopic.Text = "THESIS TOPIC";
+            lblProjectTopic.AutoSize = true;
+            lblProjectTopic.BackColor = Color.Transparent;
+            lblProjectTopic.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblProjectTopic.Location = new Point(27, 70);
+            lblProjectTopic.Name = "lblProjectTopic";
+            lblProjectTopic.Size = new Size(155, 28);
+            lblProjectTopic.TabIndex = 8;
+            lblProjectTopic.Text = "PROJECT TOPIC";
             // 
             // gTextBoxTopic
             // 
@@ -587,7 +587,7 @@
             gTextBoxTopic.Name = "gTextBoxTopic";
             gTextBoxTopic.PasswordChar = '\0';
             gTextBoxTopic.PlaceholderForeColor = Color.Gray;
-            gTextBoxTopic.PlaceholderText = "Thesis topic";
+            gTextBoxTopic.PlaceholderText = "Project topic";
             gTextBoxTopic.ReadOnly = true;
             gTextBoxTopic.SelectedText = "";
             gTextBoxTopic.ShadowDecoration.CustomizableEdges = customizableEdges22;
@@ -649,7 +649,7 @@
             lblInstructor.TabIndex = 11;
             lblInstructor.Text = "INSTRUCTOR";
             // 
-            // FThesisView
+            // FProjectView
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -660,9 +660,9 @@
             Controls.Add(gShadowPanelTechFunc);
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "FThesisView";
+            Name = "FProjectView";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Thesis View";
+            Text = "Project View";
             gShadowPanelTechFunc.ResumeLayout(false);
             gShadowPanelTechFunc.PerformLayout();
             gShadowPanelTopic.ResumeLayout(false);
@@ -693,7 +693,7 @@
         private Guna.UI2.WinForms.Guna2Button gButtonStar;
         private Label lblDescription;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxDescription;
-        private Label lblThesisTopic;
+        private Label lblProjectTopic;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxTopic;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelCreAndIns;
         private FlowLayoutPanel flpInstructor;

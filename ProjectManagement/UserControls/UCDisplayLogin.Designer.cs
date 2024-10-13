@@ -56,7 +56,7 @@
             // gPictureBoxLogo
             // 
             gPictureBoxLogo.CustomizableEdges = customizableEdges1;
-            gPictureBoxLogo.Image = Properties.Resources.LogoThesisManagement;
+            gPictureBoxLogo.Image = Properties.Resources.LogoProjectManagement;
             gPictureBoxLogo.ImageRotate = 0F;
             gPictureBoxLogo.Location = new Point(186, 58);
             gPictureBoxLogo.Name = "gPictureBoxLogo";

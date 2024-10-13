@@ -11,24 +11,24 @@ using System.Xml.Linq;
 using ProjectManagement.DAOs;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCTaskComment : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
 
-        private User people = new User();
-        private User instructor = new User();
-        private Project thesis = new Project();
-        private Tasks tasks = new Tasks();
+        private Users user = new Users();
+        private Users instructor = new Users();
+        private Project project = new Project();
+        private Tasks task = new Tasks();
         private Team team = new Team();
         private Comment comment = new Comment();
 
-        private TeamDAO teamDAO = new TeamDAO();
+        private TeamDAO TeamDAO = new TeamDAO();
         private CommentDAO commentDAO = new CommentDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
+        private NotificationDAO NotificationDAO = new NotificationDAO();
 
         private bool isProcessing = true;
 
@@ -39,19 +39,19 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetUpUserControl(User people, User instructor, Project thesis, Tasks tasks, bool isProcessing)
+        public void SetUpUserControl(Users user, Users instructor, Project project, Tasks task, bool isProcessing)
         {
-            this.people = people;
-            this.tasks = tasks;
-            this.thesis = thesis;
+            this.user = user;
+            this.task = task;
+            this.project = project;
             this.instructor = instructor;
             this.isProcessing = isProcessing;
-            this.team = teamDAO.SelectOnly(tasks.IdTeam);
+            // this.team = TeamDAO.SelectOnly(task.TeamId);
             InitUserControl();
         }
         private void InitUserControl()
         {
-            gCirclePictureBoxCommentator.Image = myProcess.NameToImage(people.AvatarName);
+            gCirclePictureBoxCommentator.Image = WinformControlUtil.NameToImage(user.Avatar);
             if (!isProcessing)
             {
                 gCirclePictureBoxCommentator.Hide();
@@ -65,7 +65,7 @@ namespace ProjectManagement
         }
         private void LoadTaskComment()
         {
-            List<Comment> listComment = commentDAO.SelectList(this.tasks);
+            List<Comment> listComment = CommentDAO.SelectList(this.task.TaskId);
 
             flpComment.Controls.Clear();
             UCCommentLine line = new UCCommentLine();
@@ -85,16 +85,16 @@ namespace ProjectManagement
         {
             if (gTextBoxComment.Text != string.Empty)
             {
-                this.comment = new Comment(tasks.IdTask, people.IdAccount, gTextBoxComment.Text, "EmojiLike", DateTime.Now);
+                this.comment = new Comment(gTextBoxComment.Text, DateTime.Now, user.UserId, task.TaskId);
                 UCCommentLine line = new UCCommentLine(comment);
                 flpComment.Controls.Add(line);
                 flpComment.ScrollControlIntoView(line);
-                commentDAO.Insert(comment);
+                CommentDAO.Insert(comment);
 
-                List<User> peoples = team.Members.ToList();
-                peoples.Add(this.instructor);
-                string content = Notification.GetContentTypeComment(people.FullName, comment.Content, tasks.Title);
-                notificationDAO.InsertFollowListPeople(people.IdAccount, thesis.IdThesis, comment.IdComment, content, peoples);
+                List<Student> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
+                // peoples.Add(this.instructor);
+                string content = Notification.GetContentTypeComment(user.FullName, comment.Content, task.Title);
+                NotificationDAO.InsertFollowListUser(this.team.TeamId, content, Enums.ENotificationType.COMMENT);
 
                 gTextBoxComment.Clear();
             }

@@ -1,31 +1,20 @@
 ﻿using Guna.UI2.WinForms;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCAccount : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
-        private User people = new User();
-        private User dynamicPeople = new User();
+        private Users user = new Users();
+        private Lecture lecture = new Lecture();
+        private Student student = new Student();
+        private Users dynamicUser = new Users();
         private int totalContributions = 0;
-
-        private UserDAO peopleDAO = new UserDAO();
-        private TeamDAO teamDAO = new TeamDAO();
-        private EvaluationDAO evaluationDAO = new EvaluationDAO();
-        private ProjectDAO thesisDAO = new ProjectDAO();
 
         private bool flagCheck = false;
 
@@ -36,32 +25,34 @@ namespace ProjectManagement
 
         #region FUNCTIONS FORM
 
-        public void SetInformation(User people)
+        public void SetInformation(Users user)
         {
-            this.people = people;
-            this.dynamicPeople = people.Clone();
-            myProcess.AddEnumsToComboBox(gComboBoxGender, typeof(EGender));
+            this.user = user;
+            if (user is Lecture) this.lecture = LectureDAO.SelectOnlyByID(user.UserId);
+            else if (user is Student) this.student = StudentDAO.SelectOnlyByID(user.UserId);
+            this.dynamicUser = user.Clone();
+            EnumUtil.AddEnumsToComboBox(gComboBoxGender, typeof(EUserGender));
             SetupComboBoxSelectYear();
             InitUserControl();
         }
         private void InitUserControl()
         {
-            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(people.AvatarName);
-            lblViewHandle.Text = people.Handle;
-            lblViewRole.Text = people.Role.ToString();
+            gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(user.Avatar);
+            lblViewHandle.Text = user.UserName;
+            lblViewRole.Text = user.Role.ToString();
 
-            gTextBoxFullname.Text = people.FullName;
-            gTextBoxCitizencode.Text = people.CitizenCode;
-            gDateTimePickerBirthday.Value = people.Birthday;
-            gComboBoxGender.SelectedItem = people.Gender.ToString();
-            gTextBoxEmail.Text = people.Email;
-            gTextBoxPhonenumber.Text = people.PhoneNumber;
-            gTextBoxUserName.Text = people.Handle;
-            gTextBoxWorkcode.Text = people.WorkCode;
+            gTextBoxFullname.Text = user.FullName;
+            gTextBoxCitizencode.Text = user.CitizenCode;
+            gDateTimePickerBirthday.Value = user.DateOfBirth;
+            gComboBoxGender.SelectedItem = user.Gender.ToString();
+            gTextBoxEmail.Text = user.Email;
+            gTextBoxPhonenumber.Text = user.PhoneNumber;
+            gTextBoxUserName.Text = user.UserName;
+            gTextBoxWorkcode.Text = user.WorkCode;
 
-            myProcess.SetTextBoxState(gTextBoxUniversity, true);
-            myProcess.SetTextBoxState(gTextBoxFaculty, true);
-            myProcess.SetTextBoxState(gTextBoxWorkcode, true);
+            GunaControlUtil.SetTextBoxState(gTextBoxUniversity, true);
+            GunaControlUtil.SetTextBoxState(gTextBoxFaculty, true);
+            GunaControlUtil.SetTextBoxState(gTextBoxWorkcode, true);
 
             SetViewSate(true);
             SetTeamsList();
@@ -71,13 +62,13 @@ namespace ProjectManagement
         }
         private void SetViewSate(bool onlyView)
         {
-            myProcess.SetTextBoxState(gTextBoxFullname, onlyView);
-            myProcess.SetTextBoxState(gTextBoxCitizencode, onlyView);
-            myProcess.SetTextBoxState(gTextBoxEmail, onlyView);
-            myProcess.SetTextBoxState(gTextBoxPhonenumber, onlyView);
-            myProcess.SetTextBoxState(gTextBoxUserName, onlyView);
-            myProcess.SetDatePickerState(gDateTimePickerBirthday, onlyView);
-            myProcess.SetComboBoxState(gComboBoxGender, onlyView);
+            GunaControlUtil.SetTextBoxState(gTextBoxFullname, onlyView);
+            GunaControlUtil.SetTextBoxState(gTextBoxCitizencode, onlyView);
+            GunaControlUtil.SetTextBoxState(gTextBoxEmail, onlyView);
+            GunaControlUtil.SetTextBoxState(gTextBoxPhonenumber, onlyView);
+            GunaControlUtil.SetTextBoxState(gTextBoxUserName, onlyView);
+            GunaControlUtil.SetDatePickerState(gDateTimePickerBirthday, onlyView);
+            GunaControlUtil.SetComboBoxState(gComboBoxGender, onlyView);
 
             if (onlyView)
             {
@@ -96,14 +87,14 @@ namespace ProjectManagement
         private void SetTeamsList()
         {
             flpTeams.Controls.Clear();
-            if (people.Role == ERole.Lecture)
+            if (user.Role == EUserRole.LECTURE)
             {
-                Guna2PictureBox pictureBox = myProcess.CreatePictureBox(Properties.Resources.PictureEmptyState, new Size(370, 325));
+                Guna2PictureBox pictureBox = GunaControlUtil.CreatePictureBox(Properties.Resources.PictureEmptyState, new Size(370, 325));
                 flpTeams.Controls.Add(pictureBox);
                 return;
             }
 
-            List<Team> list = teamDAO.SelectFollowPeople(people);
+            List<Team> list = TeamDAO.SelectFollowUser(user);
             foreach (Team team in list)
             {
                 UCTeamMiniLine line = new UCTeamMiniLine(team);
@@ -115,26 +106,26 @@ namespace ProjectManagement
         }
         public void RunCheckInformation()
         {
-            myProcess.RunCheckDataValid(dynamicPeople.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
-            myProcess.RunCheckDataValid(dynamicPeople.CheckCitizenCode() || flagCheck || people.CitizenCode == dynamicPeople.CitizenCode,
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckCitizenCode() || flagCheck || user.CitizenCode == dynamicUser.CitizenCode,
                 erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
-            myProcess.RunCheckDataValid(dynamicPeople.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
-            myProcess.RunCheckDataValid(dynamicPeople.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
-            myProcess.RunCheckDataValid(dynamicPeople.CheckEmail() || flagCheck || people.Email == dynamicPeople.Email,
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckEmail() || flagCheck || user.Email == dynamicUser.Email,
                 erpEmail, gTextBoxEmail, "Email is already exists or invalid");
-            myProcess.RunCheckDataValid(dynamicPeople.CheckPhoneNumber() || flagCheck || people.PhoneNumber == dynamicPeople.PhoneNumber,
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckPhoneNumber() || flagCheck || user.PhoneNumber == dynamicUser.PhoneNumber,
                 erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
-            myProcess.RunCheckDataValid(dynamicPeople.CheckHandle() || flagCheck || people.Handle == dynamicPeople.Handle,
-                erpHandle, gTextBoxUserName, "Username is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckUserName() || flagCheck || user.UserName == dynamicUser.UserName,
+                erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
         }
         private bool CheckInformationValid()
         {
             RunCheckInformation();
 
-            return dynamicPeople.CheckFullName() && (dynamicPeople.CheckCitizenCode() || people.CitizenCode == dynamicPeople.CitizenCode)
-                   && dynamicPeople.CheckBirthday() && dynamicPeople.CheckGender() && (dynamicPeople.CheckEmail() || people.Email == dynamicPeople.Email)
-                   && (dynamicPeople.CheckPhoneNumber() || people.PhoneNumber == dynamicPeople.PhoneNumber)
-                   && (dynamicPeople.CheckHandle() || people.Handle == dynamicPeople.Handle);
+            return dynamicUser.CheckFullName() && (dynamicUser.CheckCitizenCode() || user.CitizenCode == dynamicUser.CitizenCode)
+                   && dynamicUser.CheckBirthday() && dynamicUser.CheckGender() && (dynamicUser.CheckEmail() || user.Email == dynamicUser.Email)
+                   && (dynamicUser.CheckPhoneNumber() || user.PhoneNumber == dynamicUser.PhoneNumber)
+                   && (dynamicUser.CheckUserName() || user.UserName == dynamicUser.UserName);
         }
 
         #endregion
@@ -151,18 +142,18 @@ namespace ProjectManagement
         }
         private void gGradientButtonSave_Click(object sender, EventArgs e)
         {
-            this.dynamicPeople = new User(dynamicPeople.IdAccount, gTextBoxFullname.Text, gTextBoxCitizencode.Text, gDateTimePickerBirthday.Value,
-                                     (EGender)myProcess.ConvertStringToEnum(gComboBoxGender, typeof(EGender)), gTextBoxEmail.Text, gTextBoxPhonenumber.Text, gTextBoxUserName.Text,
-                                     dynamicPeople.Role, gTextBoxWorkcode.Text, dynamicPeople.Password, dynamicPeople.AvatarName);
+            this.dynamicUser = new Users(dynamicUser.UserId, gTextBoxUserName.Text, gTextBoxFullname.Text, dynamicUser.Password, gTextBoxEmail.Text,
+                gTextBoxPhonenumber.Text, gDateTimePickerBirthday.Value, gTextBoxCitizencode.Text, gTextBoxUniversity.Text, gTextBoxFaculty.Text, gTextBoxWorkcode.Text,
+                EnumUtil.GetEnumFromDisplayName<EUserGender>(gComboBoxGender.SelectedItem.ToString()), dynamicUser.Avatar, dynamicUser.Role, dynamicUser.JoinAt);
 
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                this.people = dynamicPeople.Clone();
-                peopleDAO.Update(this.people);
+                this.user = dynamicUser.Clone();
+                UserDAO.Update(this.user);
                 this.flagCheck = true;
                 SetViewSate(true);
-                lblViewHandle.Text = this.people.Handle;
+                lblViewHandle.Text = this.user.UserName;
             }
         }
 
@@ -172,42 +163,42 @@ namespace ProjectManagement
 
         private void gTextBoxFullname_TextChanged(object sender, EventArgs e)
         {
-            this.dynamicPeople.FullName = gTextBoxFullname.Text;
-            myProcess.RunCheckDataValid(dynamicPeople.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
+            this.dynamicUser.FullName = gTextBoxFullname.Text;
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
         }
         private void gTextBoxCitizencode_TextChanged(object sender, EventArgs e)
         {
-            this.dynamicPeople.CitizenCode = gTextBoxCitizencode.Text;
-            myProcess.RunCheckDataValid(dynamicPeople.CheckCitizenCode() || flagCheck || people.CitizenCode == dynamicPeople.CitizenCode,
+            this.dynamicUser.CitizenCode = gTextBoxCitizencode.Text;
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckCitizenCode() || flagCheck || user.CitizenCode == dynamicUser.CitizenCode,
                 erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
         }
         private void gDateTimePickerBirthday_ValueChanged(object sender, EventArgs e)
         {
-            this.dynamicPeople.Birthday = gDateTimePickerBirthday.Value;
-            myProcess.RunCheckDataValid(dynamicPeople.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
+            this.dynamicUser.DateOfBirth = gDateTimePickerBirthday.Value;
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
         }
         private void gComboBoxGender_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.dynamicPeople.Gender = (EGender)myProcess.ConvertStringToEnum(gComboBoxGender, typeof(EGender));
-            myProcess.RunCheckDataValid(dynamicPeople.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
+            this.dynamicUser.Gender = (EUserGender)EnumUtil.ConvertStringToEnum(gComboBoxGender, typeof(EUserGender));
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
         }
         private void gTextBoxEmail_TextChanged(object sender, EventArgs e)
         {
-            this.dynamicPeople.Email = gTextBoxEmail.Text;
-            myProcess.RunCheckDataValid(dynamicPeople.CheckEmail() || flagCheck || people.Email == dynamicPeople.Email,
+            this.dynamicUser.Email = gTextBoxEmail.Text;
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckEmail() || flagCheck || user.Email == dynamicUser.Email,
                 erpEmail, gTextBoxEmail, "Email is already exists or invalid");
         }
         private void gTextBoxPhonenumber_TextChanged(object sender, EventArgs e)
         {
-            this.dynamicPeople.PhoneNumber = gTextBoxPhonenumber.Text;
-            myProcess.RunCheckDataValid(dynamicPeople.CheckPhoneNumber() || flagCheck || people.PhoneNumber == dynamicPeople.PhoneNumber,
+            this.dynamicUser.PhoneNumber = gTextBoxPhonenumber.Text;
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckPhoneNumber() || flagCheck || user.PhoneNumber == dynamicUser.PhoneNumber,
                 erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
         }
         private void gTextBoxHandle_TextChanged(object sender, EventArgs e)
         {
-            this.dynamicPeople.Handle = gTextBoxUserName.Text;
-            myProcess.RunCheckDataValid(dynamicPeople.CheckHandle() || flagCheck || people.Handle == dynamicPeople.Handle,
-                erpHandle, gTextBoxUserName, "Username is already exists or invalid");
+            this.dynamicUser.UserName = gTextBoxUserName.Text;
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckUserName() || flagCheck || user.UserName == dynamicUser.UserName,
+                erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
         }
 
         #endregion
@@ -242,8 +233,8 @@ namespace ProjectManagement
         #region MIXED BAR AND SPLINE CHART
         IEnumerable<object> GetContributionForTeacher(int selectedYear)
         {
-            List<Project> listTheses = thesisDAO.SelectListRoleLecture(this.people.IdAccount)
-                                     .Where(thesis => thesis.PublishDate.Year == selectedYear)
+            List<Project> listTheses = ProjectDAO.SelectListRoleLecture(this.user.UserId)
+                                     .Where(project => project.PublicDate.Year == selectedYear)
                                      .ToList();
 
             this.totalContributions = listTheses.Count;
@@ -251,7 +242,7 @@ namespace ProjectManagement
             var contributions = allMonths
             .GroupJoin(listTheses,
                        month => month,
-                       thesis => thesis.PublishDate.Month,
+                       project => project.PublicDate.Month,
                        (month, evaluation) => new
                        {
                            Month = month,
@@ -267,17 +258,17 @@ namespace ProjectManagement
 
         IEnumerable<object> GetContributionForStudent(int selectedYear)
         {
-            List<Evaluation> listEvaluations = evaluationDAO.SelectListByPeople(this.people.IdAccount);
+            List<Evaluation> listEvaluations = EvaluationDAO.SelectListByUser(this.user.UserId);
             this.totalContributions = listEvaluations.Count;
             var allMonths = Enumerable.Range(1, 12);
             var contributions = allMonths
             .GroupJoin(listEvaluations,
                        month => month,
-                       evaluation => evaluation.Created.Month,
+                       evaluation => evaluation.CreatedAt.Month,
                        (month, evaluation) => new
                        {
                            Month = month,
-                           Count = evaluation.Where(thesis => thesis.Created.Year == selectedYear).Count()
+                           Count = evaluation.Where(project => project.CreatedAt.Year == selectedYear).Count()
                        })
             .Select(result => new
             {
@@ -291,7 +282,7 @@ namespace ProjectManagement
         {
             int selectedYear = (int)gComboBoxSelectYear.SelectedItem;
 
-            var contributions = people.Role == ERole.Lecture ? GetContributionForTeacher(selectedYear) : GetContributionForStudent(selectedYear);
+            var contributions = user.Role == EUserRole.LECTURE ? GetContributionForTeacher(selectedYear) : GetContributionForStudent(selectedYear);
 
             CultureInfo culture = CultureInfo.InvariantCulture;
             DateTimeFormatInfo dtfi = culture.DateTimeFormat;

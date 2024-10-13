@@ -10,30 +10,31 @@ using System.Windows.Forms;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCProjectMiniLine : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
-        private Project thesis = new Project();
+        
+        private Project project = new Project();
 
-        public UCProjectMiniLine(Project thesis)
+        public UCProjectMiniLine(Project project)
         {
             InitializeComponent();
-            this.thesis = thesis;
+            this.project = project;
             InitUserControl();
         }
         private void InitUserControl()
         {
-            lblProjectTopic.Text = myProcess.FormatStringLength(thesis.Topic, 20);
-            gTextBoxStatus.Text = thesis.Status.ToString();
-            gTextBoxStatus.FillColor = thesis.GetStatusColor();
+            lblProjectTopic.Text = DataTypeUtil.FormatStringLength(project.Topic, 20);
+            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.FillColor = project.GetStatusColor();
         }
-        private void UCThesisMiniLine_Click(object sender, EventArgs e)
+        private void UCProjectMiniLine_Click(object sender, EventArgs e)
         {
-            FProjectView fThesisView = new FProjectView(this.thesis);
-            fThesisView.ShowDialog();
+            FProjectView fProjectView = new FProjectView(this.project);
+            fProjectView.ShowDialog();
         }
     }
 }

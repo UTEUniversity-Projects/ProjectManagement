@@ -1,34 +1,25 @@
 ﻿using Guna.UI2.WinForms;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
+using System.Data.SqlClient;
 
 namespace ProjectManagement
 {
     public partial class UCProjectCreate : UserControl
-    {
-        private MyProcess myProcess = new MyProcess();
-        private DBConnection dBConnection = new DBConnection();
+    {              
 
-        private User people = new User();
-        private Project thesis = new Project();
+        private Users user = new Users();
+        private Project project = new Project();
 
-        private UserDAO peopleDAO = new UserDAO();
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
+        private ProjectDAO ProjectDAO = new ProjectDAO();
+        private NotificationDAO NotificationDAO = new NotificationDAO();
 
-        private UCUserMiniLine uCPeopleMiniLine = new UCUserMiniLine();
+        private UCUserMiniLine uCUserMiniLine = new UCUserMiniLine();
         private bool flagCheck = false;
         private bool flagCreate = false;
         private bool flagEdit = false;
@@ -51,26 +42,26 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetCreateState(User people)
+        public void SetCreateState(Users user)
         {
-            this.people = people;
+            this.user = user;
             InitCreateState();
         }
-        public void SetEditState(User people, Project thesis)
+        public void SetEditState(Users user, Project project)
         {
-            this.people = people;
-            this.thesis = thesis;
+            this.user = user;
+            this.project = project;
             InitEditState();
         }
         private void InitUserControl()
         {
-            myProcess.AddEnumsToComboBox(gComboBoxField, typeof(EField));
-            myProcess.AddEnumsToComboBox(gComboBoxLevel, typeof(ELevel));
-            uCPeopleMiniLine.GButtonAdd.Hide();
-            uCPeopleMiniLine.SetSize(new Size(397, 60));
+            EnumUtil.AddEnumsToComboBox(gComboBoxField, typeof(EField));
+            EnumUtil.AddEnumsToComboBox(gComboBoxLevel, typeof(ELevel));
+            uCUserMiniLine.GButtonAdd.Hide();
+            uCUserMiniLine.SetSize(new Size(397, 60));
             
             cmbIDInstructor.Items.Clear();
-            List<string> list = peopleDAO.SelectListID(ERole.Lecture);
+            List<string> list = UserDAO.SelectListID(EUserRole.LECTURE);
             foreach (var item in list)
             {
                 cmbIDInstructor.Items.Add(item);
@@ -94,9 +85,9 @@ namespace ProjectManagement
             gButtonCreateOrEdit.Text = "Create";
             cmbIDInstructor.Enabled = true;
 
-            if (people.Role == ERole.Lecture)
+            if (user.Role == EUserRole.LECTURE)
             {
-                cmbIDInstructor.SelectedItem = people.IdAccount;
+                cmbIDInstructor.SelectedItem = user.UserId;
                 cmbIDInstructor.Enabled = false;
             }
             cmbIDInstructor_SelectedIndexChanged(cmbIDInstructor, new EventArgs());
@@ -105,45 +96,53 @@ namespace ProjectManagement
         {
             flagInitEdit = true;
             InitUserControl();
-            gTextBoxTopic.Text = thesis.Topic;
-            gComboBoxField.SelectedItem = thesis.Field;
-            gComboBoxLevel.SelectedItem = thesis.Level;
-            gComboBoxMembers.SelectedItem = thesis.MaxMembers.ToString();
-            gTextBoxDescription.Text = thesis.Description;
-            gTextBoxFunctions.Text = thesis.Functions;
-            gTextBoxRequirements.Text = thesis.Requirements;
+            gTextBoxTopic.Text = project.Topic;
+            gComboBoxField.SelectedItem = project.FieldId;
+            // gComboBoxLevel.SelectedItem = project.Level;
+            gComboBoxMembers.SelectedItem = project.MaxMember.ToString();
+            gTextBoxDescription.Text = project.Description;
+            gTextBoxFunctions.Text = project.Feature;
+            gTextBoxRequirements.Text = project.Requirement;
             flagCreate = false;
             flagEdit = true;
             gButtonCreateOrEdit.Text = "Save";
-            cmbIDInstructor.SelectedItem = thesis.IdInstructor;
+            cmbIDInstructor.SelectedItem = project.InstructorId;
             cmbIDInstructor.Enabled = false;
             cmbIDInstructor_SelectedIndexChanged(cmbIDInstructor, new EventArgs());
         }
         private void SetComboBoxTechnology()
         {
             if (gComboBoxField.SelectedItem == null) return;
-            string command = string.Format("SELECT * FROM {0} WHERE field = '{1}'",
-                                    DBTableNames.DBTechnology, gComboBoxField.Text);
-            DataTable table = dBConnection.Select(command);
+
+            string sqlStr = string.Format("SELECT T.technologyId, T.name " +
+                "FROM {0} AS T JOIN (SELECT * FROM {1} WHERE {1}.fieldId = @FieldId) AS FT " +
+                "ON T.technologyId = FT.technologyId", DBTableNames.Technology, DBTableNames.FieldTechnology);
+
+            List<SqlParameter> parameters = new List<SqlParameter> 
+            { 
+                new SqlParameter("@FieldId", gComboBoxField.Text)
+            };
+
+            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
 
             gComboBoxTechnology.Items.Clear();
-            foreach (DataRow row in table.Rows)
+            foreach (DataRow row in dt.Rows)
             {
-                gComboBoxTechnology.Items.Add(row["tech"].ToString());
+                gComboBoxTechnology.Items.Add(row["name"].ToString());
             }
             gComboBoxTechnology.StartIndex = 0;
         }
         private bool CheckInformationValid()
         {
-            myProcess.RunCheckDataValid(thesis.CheckTopic() || flagCheck, erpTopic, gTextBoxTopic, "Topic cannot be empty");
-            myProcess.RunCheckDataValid(thesis.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
-            myProcess.RunCheckDataValid(thesis.CheckTechnology() || flagCheck, erpTechnology, gTextBoxTechnology, "Technologies cannot be empty");
-            myProcess.RunCheckDataValid(thesis.CheckFunctions() || flagCheck, erpFunctions, gTextBoxFunctions, "Functions cannot be empty");
-            myProcess.RunCheckDataValid(thesis.CheckRequirements() || flagCheck, erpRequirements, gTextBoxRequirements, "Requirements cannot be empty");
-            myProcess.RunCheckDataValid(thesis.CheckInstructor() || flagCheck, erpInstructor, cmbIDInstructor, "Instructor cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckTopic() || flagCheck, erpTopic, gTextBoxTopic, "Topic cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckTechnology() || flagCheck, erpTechnology, gTextBoxTechnology, "Technologies cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckFeature() || flagCheck, erpFunctions, gTextBoxFunctions, "Feature cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckRequirement() || flagCheck, erpRequirements, gTextBoxRequirements, "Requirement cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckInstructorId() || flagCheck, erpInstructor, cmbIDInstructor, "Instructor cannot be empty");
 
-            return thesis.CheckTopic() && thesis.CheckDesription() && thesis.CheckTechnology()
-                    && thesis.CheckFunctions() && thesis.CheckRequirements() && thesis.CheckInstructor();
+            return project.CheckTopic() && project.CheckDesription() && project.CheckTechnology()
+                    && project.CheckFeature() && project.CheckRequirement() && project.CheckInstructorId();
         }
 
         #endregion
@@ -152,20 +151,19 @@ namespace ProjectManagement
 
         private void SolveForCreate()
         {
-            this.thesis = new Project(gTextBoxTopic.Text,
-                (EField)gComboBoxField.SelectedItem, (ELevel)gComboBoxLevel.SelectedItem,
-                myProcess.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString()), gTextBoxDescription.Text, DateTime.Now,
-                gTextBoxTechnology.Text, gTextBoxFunctions.Text, gTextBoxRequirements.Text, this.people.IdAccount,
-                cmbIDInstructor.SelectedIndex != -1 ? cmbIDInstructor.SelectedItem.ToString() : string.Empty);
+            this.project = new Project(cmbIDInstructor.SelectedIndex != -1 ? cmbIDInstructor.SelectedItem.ToString() : string.Empty, 
+                gTextBoxTopic.Text, gTextBoxDescription.Text, gTextBoxFunctions.Text, gTextBoxRequirements.Text,
+                DataTypeUtil.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString()),
+                DateTime.Now, EProjectStatus.PUBLISHED, DateTime.Now, this.user.UserId, "xxx");
 
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                thesisDAO.Insert(thesis);
-                if (thesis.IdCreator != thesis.IdInstructor)
+                ProjectDAO.Insert(project);
+                if (project.CreatedBy != project.InstructorId)
                 {
-                    string content = Notification.GetContentTypeThesis(people.FullName, thesis.Topic);
-                    notificationDAO.Insert(new Notification(thesis.IdInstructor, thesis.IdCreator, thesis.IdThesis, thesis.IdThesis, content, DateTime.Now, false, false));
+                    string content = Notification.GetContentTypeProject(user.FullName, project.Topic);
+                    NotificationDAO.Insert(new Notification("xxx", content, Notification.GetNotificationType(project.ProjectId), DateTime.Now));
                 }
                 this.flagCheck = true;
                 InitCreateState();
@@ -173,18 +171,16 @@ namespace ProjectManagement
         }
         private void SolveForEdit()
         {
-            this.thesis = new Project(this.thesis.IdThesis, gTextBoxTopic.Text,
-                (EField)gComboBoxField.SelectedItem, (ELevel)gComboBoxLevel.SelectedItem,
-                myProcess.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString()), gTextBoxDescription.Text,
-                DateTime.Now, gTextBoxTechnology.Text, gTextBoxFunctions.Text, gTextBoxRequirements.Text,
-                this.thesis.IdCreator, this.thesis.IsFavorite, this.thesis.Status, this.thesis.IdInstructor);
+            this.project = new Project(this.project.ProjectId, gTextBoxTopic.Text, gTextBoxDescription.Text,
+                gTextBoxFunctions.Text, gTextBoxRequirements.Text, DataTypeUtil.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString()),
+                DateTime.Now, EProjectStatus.PUBLISHED, this.project.CreatedAt, this.project.CreatedBy, "xxx");
 
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                thesisDAO.Update(thesis);
+                ProjectDAO.Update(project);
                 this.flagCheck = true;
-                this.thesis = thesisDAO.SelectOnly(thesis.IdThesis);
+                this.project = ProjectDAO.SelectOnly(project.ProjectId);
                 gButtonCancel.PerformClick();
             }
         }
@@ -200,28 +196,28 @@ namespace ProjectManagement
 
         private void gTextBoxTopic_TextChanged(object sender, EventArgs e)
         {
-            thesis.Topic = gTextBoxTopic.Text;
-            myProcess.RunCheckDataValid(thesis.CheckTopic() || flagCheck, erpTopic, gTextBoxTopic, "Topic cannot be empty");
+            project.Topic = gTextBoxTopic.Text;
+            WinformControlUtil.RunCheckDataValid(project.CheckTopic() || flagCheck, erpTopic, gTextBoxTopic, "Topic cannot be empty");
         }
         private void gTextBoxDescription_TextChanged(object sender, EventArgs e)
         {
-            thesis.Description = gTextBoxDescription.Text;
-            myProcess.RunCheckDataValid(thesis.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            project.Description = gTextBoxDescription.Text;
+            WinformControlUtil.RunCheckDataValid(project.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
         }
         private void gTextBoxTechnology_TextChanged(object sender, EventArgs e)
         {
-            thesis.Technology = gTextBoxTechnology.Text;
-            myProcess.RunCheckDataValid(thesis.CheckTechnology() || flagCheck, erpTechnology, gTextBoxTechnology, "Technologies cannot be empty");
+            // project.Technology = gTextBoxTechnology.Text;
+            WinformControlUtil.RunCheckDataValid(project.CheckTechnology() || flagCheck, erpTechnology, gTextBoxTechnology, "Technologies cannot be empty");
         }
         private void gTextBoxFunctions_TextChanged(object sender, EventArgs e)
         {
-            thesis.Functions = gTextBoxFunctions.Text;
-            myProcess.RunCheckDataValid(thesis.CheckFunctions() || flagCheck, erpFunctions, gTextBoxFunctions, "Functions cannot be empty");
+            project.Feature = gTextBoxFunctions.Text;
+            WinformControlUtil.RunCheckDataValid(project.CheckFeature() || flagCheck, erpFunctions, gTextBoxFunctions, "Feature cannot be empty");
         }
         private void gTextBoxRequirements_TextChanged(object sender, EventArgs e)
         {
-            thesis.Requirements = gTextBoxRequirements.Text;
-            myProcess.RunCheckDataValid(thesis.CheckRequirements() || flagCheck, erpRequirements, gTextBoxRequirements, "Requirements cannot be empty");
+            project.Requirement = gTextBoxRequirements.Text;
+            WinformControlUtil.RunCheckDataValid(project.CheckRequirement() || flagCheck, erpRequirements, gTextBoxRequirements, "Requirement cannot be empty");
         }
 
         #endregion
@@ -233,14 +229,14 @@ namespace ProjectManagement
             if (cmbIDInstructor.SelectedItem != null)
             {
                 string idInstructor = cmbIDInstructor.SelectedItem.ToString();
-                User people = peopleDAO.SelectOnlyByID(idInstructor);
-                uCPeopleMiniLine.SetInformation(people);
+                Users user = UserDAO.SelectOnlyByID(idInstructor);
+                uCUserMiniLine.SetInformation(user);
                 flpInstructor.Controls.Clear();
-                flpInstructor.Controls.Add(uCPeopleMiniLine);
+                flpInstructor.Controls.Add(uCUserMiniLine);
             }
             else
             {
-                Label label = myProcess.CreateLabel("There aren't any people selected !");
+                Label label = WinformControlUtil.CreateLabel("There aren't any user selected !");
                 flpInstructor.Controls.Clear();
                 flpInstructor.Controls.Add(label);
             }
@@ -263,7 +259,7 @@ namespace ProjectManagement
         {
             if (flagInitEdit)
             {
-                gTextBoxTechnology.Text = thesis.Technology;
+                // gTextBoxTechnology.Text = project.Technology;
                 flagInitEdit = false;
                 return;
             }

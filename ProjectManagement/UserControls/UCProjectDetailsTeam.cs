@@ -7,41 +7,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCProjectDetailsTeam : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
         private Team team = new Team();
-        private Project thesis = new Project();
+        private Project project = new Project();
+        private List<Student> members = new List<Student>();
 
         public UCProjectDetailsTeam()
         {
             InitializeComponent();
         }
-        public void SetInformation(Team team, Project thesis)
+        public void SetInformation(Team team, Project project)
         {
             this.team = team;
-            this.thesis = thesis;
+            this.project = project;
+            this.members = TeamDAO.GetMembersByTeamId(team.TeamId);
             InitUserControl();
         }
         private void InitUserControl()
         {
-            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(team.AvatarName);
-            lblTeamName.Text = myProcess.FormatStringLength(team.TeamName, 20);
-            gTextBoxTeamCode.Text = team.IdTeam;
-            gTextBoxTeamMemebrs.Text = team.Members.Count.ToString() + " members";
+            gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(team.Avatar);
+            lblTeamName.Text = DataTypeUtil.FormatStringLength(team.TeamName, 20);
+            gTextBoxTeamCode.Text = team.TeamId;
+            gTextBoxTeamMemebrs.Text = members.Count.ToString() + " members";
         }
         private void ShowTeam()
         {
-            FTeamDetails fTeamDetails = new FTeamDetails(team, thesis);
+            FTeamDetails fTeamDetails = new FTeamDetails(team, project);
             fTeamDetails.ShowDialog();
         }
 
-        private void UCThesisDetailsTeam_Click(object sender, EventArgs e)
+        private void UCProjectDetailsTeam_Click(object sender, EventArgs e)
         {
             ShowTeam();
         }

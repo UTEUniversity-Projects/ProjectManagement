@@ -36,7 +36,7 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            lblPeopleCode = new Label();
+            lblUserCode = new Label();
             lblUserName = new Label();
             gCirclePictureBoxAvatar = new Guna.UI2.WinForms.Guna2CirclePictureBox();
             gShadowPanelBack = new Guna.UI2.WinForms.Guna2ShadowPanel();
@@ -47,17 +47,17 @@
             gShadowPanelBack.SuspendLayout();
             SuspendLayout();
             // 
-            // lblPeopleCode
+            // lblUserCode
             // 
-            lblPeopleCode.AutoSize = true;
-            lblPeopleCode.BackColor = Color.White;
-            lblPeopleCode.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPeopleCode.ForeColor = Color.FromArgb(74, 97, 94);
-            lblPeopleCode.Location = new Point(71, 30);
-            lblPeopleCode.Name = "lblPeopleCode";
-            lblPeopleCode.Size = new Size(71, 17);
-            lblPeopleCode.TabIndex = 27;
-            lblPeopleCode.Text = "243300001";
+            lblUserCode.AutoSize = true;
+            lblUserCode.BackColor = Color.White;
+            lblUserCode.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUserCode.ForeColor = Color.FromArgb(74, 97, 94);
+            lblUserCode.Location = new Point(71, 30);
+            lblUserCode.Name = "lblUserCode";
+            lblUserCode.Size = new Size(71, 17);
+            lblUserCode.TabIndex = 27;
+            lblUserCode.Text = "243300001";
             // 
             // lblUserName
             // 
@@ -68,7 +68,7 @@
             lblUserName.Name = "lblUserName";
             lblUserName.Size = new Size(87, 23);
             lblUserName.TabIndex = 26;
-            lblUserName.Text = "Username";
+            lblUserName.Text = "UserName";
             // 
             // gCirclePictureBoxAvatar
             // 
@@ -171,7 +171,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Transparent;
-            Controls.Add(lblPeopleCode);
+            Controls.Add(lblUserCode);
             Controls.Add(lblUserName);
             Controls.Add(gCirclePictureBoxAvatar);
             Controls.Add(gShadowPanelBack);
@@ -186,7 +186,7 @@
 
         #endregion
 
-        private Label lblPeopleCode;
+        private Label lblUserCode;
         private Label lblUserName;
         private Guna.UI2.WinForms.Guna2CirclePictureBox gCirclePictureBoxAvatar;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelBack;

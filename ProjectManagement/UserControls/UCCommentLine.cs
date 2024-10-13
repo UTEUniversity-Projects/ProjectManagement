@@ -11,16 +11,15 @@ using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Forms;
 using ProjectManagement.DAOs;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCCommentLine : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
 
         private Comment comment = new Comment();
-        private User creator = new User();
-        private UserDAO peopleDAO = new UserDAO();
+        private Users creator = new Users();
 
         public UCCommentLine()
         {
@@ -34,11 +33,11 @@ namespace ProjectManagement
         }
         private void InitUserControl()
         {
-            this.creator = peopleDAO.SelectOnlyByID(comment.IdCreator);
+            this.creator = UserDAO.SelectOnlyByID(comment.CreatedBy);
             SetUserControlSize();
             rtbContent.Text = comment.Content;
             lblCreator.Text = creator.FullName;
-            gCirclePictureBoxCreator.Image = myProcess.NameToImage(creator.AvatarName);
+            gCirclePictureBoxCreator.Image = WinformControlUtil.NameToImage(creator.Avatar);
         }
         private int CalculateTextWidth(string text, Font font)
         {
@@ -64,8 +63,8 @@ namespace ProjectManagement
         }
         private void gCirclePictureBoxCreator_Click(object sender, EventArgs e)
         {
-            FPeopleDetails fPeopleDetails = new FPeopleDetails(creator);
-            fPeopleDetails.ShowDialog();
+            FUserDetails fUserDetails = new FUserDetails(creator);
+            fUserDetails.ShowDialog();
         }
     }
 }
