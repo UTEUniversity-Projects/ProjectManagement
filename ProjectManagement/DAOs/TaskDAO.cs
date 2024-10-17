@@ -88,14 +88,14 @@ namespace ProjectManagement.DAOs
 
         #region SEARCH TASK
 
-        public static List<Tasks> SearchTaskTitle(string teamId, string title)
+        public static List<Tasks> SearchTaskTitle(string projectId, string title)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE teamId = @TeamId AND title LIKE @TitleSyntax ORDER BY createdAt DESC",
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE projectId = @ProjectId AND title LIKE @TitleSyntax ORDER BY createdAt DESC",
                                 DBTableNames.Task);
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
-                new SqlParameter("@TeamId", teamId),
+                new SqlParameter("@ProjectId", projectId),
                 new SqlParameter("@TitleSyntax", title + "%")
             };
 

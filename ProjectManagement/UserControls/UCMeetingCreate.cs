@@ -1,5 +1,4 @@
 ﻿using Guna.UI2.WinForms;
-using ProjectManagement.Process;
 using ProjectManagement.Models;
 using ProjectManagement.DAOs;
 using ProjectManagement.Enums;
@@ -10,17 +9,13 @@ namespace ProjectManagement
     public partial class UCMeetingCreate : UserControl
     {
         public event EventHandler MeetingCreated;
-        
+
 
         private Users host = new Users();
         private Users instructor = new Users();
         private Project project = new Project();
         private Team team = new Team();
         private Meeting meeting = new Meeting();
-
-        private ProjectDAO ProjectDAO = new ProjectDAO();
-        private MeetingDAO MeetingDAO = new MeetingDAO();
-        private NotificationDAO NotificationDAO = new NotificationDAO();
 
         private bool flagCheck = true;
         private EDatabaseOperation eOperation = new EDatabaseOperation();
@@ -30,8 +25,6 @@ namespace ProjectManagement
             InitializeComponent();
             gDateTimePickerStart.Format = DateTimePickerFormat.Custom;
             gDateTimePickerStart.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
-            gDateTimePickerEnd.Format = DateTimePickerFormat.Custom;
-            gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
         }
 
         #region PROPERTIES
@@ -94,7 +87,6 @@ namespace ProjectManagement
             gTextBoxTitle.Text = meeting.Title;
             gTextBoxDescription.Text = meeting.Description;
             gDateTimePickerStart.Value = meeting.StartAt;
-            gDateTimePickerEnd.Value = meeting.TheEnd;
             gTextBoxLocation.Text = meeting.Location;
             gTextBoxLink.Text = meeting.Link;
         }
@@ -105,7 +97,6 @@ namespace ProjectManagement
             GunaControlUtil.SetTextBoxState(gTextBoxLocation, true);
             GunaControlUtil.SetTextBoxState(gTextBoxLink, true);
             gDateTimePickerStart.Enabled = false;
-            gDateTimePickerEnd.Enabled = false;
 
             Users creator = UserDAO.SelectOnlyByID(meeting.CreatedBy);
             lblCre.Text = "CreatedAt by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
@@ -124,7 +115,6 @@ namespace ProjectManagement
             GunaControlUtil.SetTextBoxState(gTextBoxLocation, false);
             GunaControlUtil.SetTextBoxState(gTextBoxLink, false);
             gDateTimePickerStart.Enabled = true;
-            gDateTimePickerEnd.Enabled = true;
             gButtonCreate.Text = "Save";
             gButtonCancel.Show();
             gButtonCancel.Text = "Cancel";
@@ -139,7 +129,6 @@ namespace ProjectManagement
             gTextBoxLocation.Clear();
             gTextBoxLink.Clear();
             gDateTimePickerStart.Value = DateTime.Now;
-            gDateTimePickerEnd.Value = DateTime.Now;
             lblCre.Hide();
         }
         private bool CheckInformationValid()
@@ -147,7 +136,6 @@ namespace ProjectManagement
             WinformControlUtil.RunCheckDataValid(meeting.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
             WinformControlUtil.RunCheckDataValid(meeting.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
             WinformControlUtil.RunCheckDataValid(meeting.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
-            WinformControlUtil.RunCheckDataValid(meeting.CheckTheEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "Invalid end time");
             WinformControlUtil.RunCheckDataValid(meeting.CheckLocation() || flagCheck, erpLocation, gTextBoxLocation, "Location cannot be empty");
 
             return meeting.CheckTitle() && meeting.CheckDescription() && meeting.CheckStart() && meeting.CheckTheEnd() && meeting.CheckLocation();
@@ -223,11 +211,6 @@ namespace ProjectManagement
         {
             this.meeting.StartAt = gDateTimePickerStart.Value;
             WinformControlUtil.RunCheckDataValid(meeting.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
-        }
-        private void gDateTimePickerEnd_ValueChanged(object sender, EventArgs e)
-        {
-            this.meeting.TheEnd = gDateTimePickerEnd.Value;
-            WinformControlUtil.RunCheckDataValid(meeting.CheckTheEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "Invalid end time");
         }
 
         #endregion
