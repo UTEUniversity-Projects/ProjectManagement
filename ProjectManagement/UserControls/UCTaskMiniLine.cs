@@ -48,7 +48,7 @@ namespace ProjectManagement
         private void InitUserControl()
         {
             creator = UserDAO.SelectOnlyByID(task.CreatedBy);
-            // team = TeamDAO.SelectOnly(task.TeamId);
+            team = TeamDAO.SelectFollowProject(this.project.ProjectId);
 
             lblTaskTitle.Text = DataTypeUtil.FormatStringLength(task.Title, 60);
             lblCreator.Text = creator.FullName;

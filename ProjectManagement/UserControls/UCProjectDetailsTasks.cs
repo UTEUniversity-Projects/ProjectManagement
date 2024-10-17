@@ -159,7 +159,7 @@ namespace ProjectManagement
 
         private void gTextBoxSearch_TextChanged(object sender, EventArgs e)
         {
-            this.listTask = TaskDAO.SearchTaskTitle(this.team.TeamId, gTextBoxSearch.Text);
+            this.listTask = TaskDAO.SearchTaskTitle(this.project.ProjectId, gTextBoxSearch.Text);
             LoadTaskList();
         }
 

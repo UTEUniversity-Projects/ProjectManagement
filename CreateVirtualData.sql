@@ -6,8 +6,7 @@
 --USE ProjectManagement;
 --GO
 
---DROP TABLE FieldTechnology, FavoriteProject, FavoriteTask, FavoriteNotification, GiveUp, TaskStudent, ProjectTechnology, ProjectMedia, ViewNotification, 
---Notification, JoinTeam, Evaluation, Comment, Meeting, Task, Team, Project, Media, Technology, Field, Users;
+-- DROP TABLE FieldTechnology, FavoriteProject, FavoriteTask, FavoriteNotification, GiveUp, TaskStudent, ProjectTechnology, ProjectMedia, ViewNotification, Notification, JoinTeam, Evaluation, Comment, Meeting, Task, Team, Project, Media, Technology, Field, Users;
 
 CREATE TABLE Users (
     userId VARCHAR(20),
@@ -1241,7 +1240,10 @@ VALUES
     ('248500057', 'Multi-dimensional peer evaluation process incorporating various perspectives for a holistic view.', 100, 9.25, 1, '2024-04-07', '242200001', '243300014', '246600025'),
     ('248500058', 'Quantitative customer satisfaction evaluation utilizing statistical analysis for data-driven insights.', 100, 8.75, 1, '2024-04-07', '242200001', '243300014', '246600026'),
     ('248500059', 'Qualitative productivity assessment to explore factors influencing performance beyond numerical metrics.', 100, 9.25, 1, '2024-04-07', '242200001', '243300014', '246600027'),
-    ('248500060', 'Impact evaluation methodology to measure the broader effects and outcomes of interventions or programs.', 100, 9.75, 1, '2024-04-07', '242200001', '243300014', '246600028');
+    ('248500060', 'Impact evaluation methodology to measure the broader effects and outcomes of interventions or programs.', 100, 9.75, 1, '2024-04-07', '242200001', '243300014', '246600028'),
+	('248500061', 'Thorough customer satisfaction evaluation aimed at gauging client contentment and identifying areas for enhancement.', 75, 9.25, 1, '2024-04-07', '242200001', '243300002', '246600009'),
+    ('248500062', '', 0, 0.0, 0, '2024-04-07', '242200001', '243300018', '246600009'),
+	('248500063', '', 0, 0.0, 0, '2024-04-07', '242200001', '243300019', '246600009');
 
 
 -- Insert data into Notification table 

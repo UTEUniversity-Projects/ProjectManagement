@@ -41,7 +41,7 @@ namespace ProjectManagement
         }
         private void LoadListRoleLecture()
         {
-            foreach (Users user in TeamDAO.GetMembersByTeamId(team.TeamId))
+            foreach (Users user in TeamDAO.GetMembersByTeamId(this.team.TeamId))
             {
                 AddUserMiniLine(user);
             }
