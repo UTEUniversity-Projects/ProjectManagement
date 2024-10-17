@@ -51,7 +51,7 @@ namespace ProjectManagement
                 button.ForeColor = Color.White;
                 button.Size = new Size(105, 25);
                 button.BorderRadius = 5;
-                button.FillColor = EnumUtil.GetProjectStatusColor(status);
+                button.FillColor = ModelUtil.GetProjectStatusColor(status);
                 this.flpStatus.Controls.Add(button);
             }
         }
@@ -72,9 +72,9 @@ namespace ProjectManagement
             this.gDoughnutChart.Datasets.Clear();
             foreach (var group in projectGroupedByStatus)
             {
-                int ind = EnumUtil.GetProjectStatusIndex(group.Status);
+                int ind = ModelUtil.GetProjectStatusIndex(group.Status);
                 this.gDoughnutDataset.DataPoints[ind].Y = group.Count;
-                this.gDoughnutDataset.FillColors[ind] = EnumUtil.GetProjectStatusColor(group.Status);
+                this.gDoughnutDataset.FillColors[ind] = ModelUtil.GetProjectStatusColor(group.Status);
             }
             this.gDoughnutChart.Datasets.Add(gDoughnutDataset);
             this.gDoughnutChart.Update();

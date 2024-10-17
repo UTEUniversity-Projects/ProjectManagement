@@ -41,8 +41,9 @@ namespace ProjectManagement
             lblNotification.Text = DataTypeUtil.FormatStringLength(notification.Content.ToString(), 130);
             lblFrom.Text = user.FullName;
             lblTime.Text = notification.CreatedAt.ToString("dd/MM/yyyy hh:mm:ss tt");
-            gTextBoxType.Text = notification.Type.ToString();
+            gTextBoxType.Text = EnumUtil.GetDisplayName(notification.Type);
             gTextBoxType.FillColor = notification.GetTypeColor();
+
             // GunaControlUtil.SetItemFavorite(gButtonStar, notification.IsFavorite);
             //if (notification.IsSaw)
             //{
@@ -58,6 +59,7 @@ namespace ProjectManagement
         {
             this.lineColor = Color.FromArgb(222, 224, 224);
             this.BackColor = lineColor;
+
             //if (notification.IsSaw != true)
             //{
             //    notification.IsSaw = true;

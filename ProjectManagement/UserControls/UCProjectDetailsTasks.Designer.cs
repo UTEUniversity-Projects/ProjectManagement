@@ -40,6 +40,7 @@
             gTextBoxSearch = new Guna.UI2.WinForms.Guna2TextBox();
             gGradientButtonAddTask = new Guna.UI2.WinForms.Guna2GradientButton();
             lblSearch = new Label();
+            gShadowPanelTaskCreate = new Guna.UI2.WinForms.Guna2ShadowPanel();
             gShadowPanelBack.SuspendLayout();
             SuspendLayout();
             // 
@@ -149,6 +150,19 @@
             lblSearch.TabIndex = 48;
             lblSearch.Text = "Search";
             // 
+            // gShadowPanelTaskCreate
+            // 
+            gShadowPanelTaskCreate.BackColor = Color.Transparent;
+            gShadowPanelTaskCreate.FillColor = SystemColors.ButtonFace;
+            gShadowPanelTaskCreate.Location = new Point(3, 72);
+            gShadowPanelTaskCreate.Name = "gShadowPanelTaskCreate";
+            gShadowPanelTaskCreate.Radius = 7;
+            gShadowPanelTaskCreate.ShadowColor = Color.Black;
+            gShadowPanelTaskCreate.ShadowShift = 0;
+            gShadowPanelTaskCreate.ShadowStyle = Guna.UI2.WinForms.Guna2ShadowPanel.ShadowMode.ForwardDiagonal;
+            gShadowPanelTaskCreate.Size = new Size(710, 560);
+            gShadowPanelTaskCreate.TabIndex = 44;
+            // 
             // UCProjectDetailsTasks
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -160,6 +174,7 @@
             Controls.Add(gSeparatorUnderHeader);
             Controls.Add(lblTaskList);
             Controls.Add(gShadowPanelBack);
+            Controls.Add(gShadowPanelTaskCreate);
             DoubleBuffered = true;
             Name = "UCProjectDetailsTasks";
             Size = new Size(715, 635);
@@ -177,5 +192,6 @@
         private Guna.UI2.WinForms.Guna2GradientButton gGradientButtonAddTask;
         private FlowLayoutPanel flpTaskList;
         private Label lblSearch;
+        private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelTaskCreate;
     }
 }

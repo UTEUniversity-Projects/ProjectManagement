@@ -22,7 +22,7 @@ namespace ProjectManagement
         {
             flpTeamRegistered.Controls.Clear();
         }
-        public void AddTeam(UCTeamMiniLine line)
+        public void AddTeam(UCTeamLine line)
         {
             flpTeamRegistered.Controls.Add(line);
         }

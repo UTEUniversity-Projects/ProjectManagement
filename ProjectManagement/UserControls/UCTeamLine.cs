@@ -14,7 +14,7 @@ using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
-    public partial class UCTeamMiniLine : UserControl
+    public partial class UCTeamLine : UserControl
     {
         
         public event EventHandler ProjectAddAccepted;
@@ -22,7 +22,7 @@ namespace ProjectManagement
         private Project project = new Project();
         private ProjectDAO ProjectDAO = new ProjectDAO();
 
-        public UCTeamMiniLine(Team team)
+        public UCTeamLine(Team team)
         {
             InitializeComponent();
             SetInformation(team);

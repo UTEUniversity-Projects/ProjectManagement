@@ -64,5 +64,34 @@ namespace ProjectManagement.Utils
             return id;
         }
 
+        public static Color GetProjectStatusColor(EProjectStatus eProjectStatus)
+        {
+            switch (eProjectStatus)
+            {
+                case EProjectStatus.REGISTERED:
+                    return Color.FromArgb(255, 87, 87);
+                case EProjectStatus.PROCESSING:
+                    return Color.FromArgb(94, 148, 255);
+                case EProjectStatus.COMPLETED:
+                    return Color.FromArgb(45, 237, 55);
+                default:
+                    return Color.Gray;
+            }
+        }
+
+        public static int GetProjectStatusIndex(EProjectStatus eProjectStatus)
+        {
+            switch (eProjectStatus)
+            {
+                case EProjectStatus.REGISTERED:
+                    return 0;
+                case EProjectStatus.PROCESSING:
+                    return 1;
+                case EProjectStatus.COMPLETED:
+                    return 2;
+                default:
+                    return 3;
+            }
+        }
     }
 }

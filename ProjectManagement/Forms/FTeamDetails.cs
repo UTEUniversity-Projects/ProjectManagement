@@ -10,7 +10,6 @@ namespace ProjectManagement
         
         private Team team = new Team();
         private Project project = new Project();
-        private TaskDAO TaskDAO = new TaskDAO();
 
         private int progress = 0;
         private List<Tasks> listTasks;

@@ -92,11 +92,13 @@ namespace ProjectManagement
         }
         private void GButtonCancel_Click(object? sender, EventArgs e)
         {
+            lblMeetingList.Text = "MEETING LIST";
             flpMeetingList.Show();
             uCMeetingCreate.Hide();
         }
         private void gGradientButtonAddMeeting_Click(object sender, EventArgs e)
         {
+            lblMeetingList.Text = "CREATE MEETING";
             flpMeetingList.Hide();
             uCMeetingCreate.SetCreateMode();
             uCMeetingCreate.Show();

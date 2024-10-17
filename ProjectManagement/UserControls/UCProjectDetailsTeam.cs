@@ -16,7 +16,7 @@ namespace ProjectManagement
 {
     public partial class UCProjectDetailsTeam : UserControl
     {
-        
+
         private Team team = new Team();
         private Project project = new Project();
         private List<Users> members = new List<Users>();
@@ -36,7 +36,6 @@ namespace ProjectManagement
         {
             gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(team.Avatar);
             lblTeamName.Text = DataTypeUtil.FormatStringLength(team.TeamName, 20);
-            gTextBoxTeamCode.Text = team.TeamId;
             gTextBoxTeamMemebrs.Text = members.Count.ToString() + " members";
         }
         private void ShowTeam()
@@ -45,11 +44,11 @@ namespace ProjectManagement
             fTeamDetails.ShowDialog();
         }
 
-        private void UCProjectDetailsTeam_Click(object sender, EventArgs e)
+        private void gCirclePictureBoxAvatar_Click(object sender, EventArgs e)
         {
             ShowTeam();
         }
-        private void gCirclePictureBoxAvatar_Click(object sender, EventArgs e)
+        private void gGradientButtonViewDetails_Click(object sender, EventArgs e)
         {
             ShowTeam();
         }

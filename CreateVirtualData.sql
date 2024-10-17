@@ -6,7 +6,7 @@
 --USE ProjectManagement;
 --GO
 
--- DROP TABLE FieldTechnology, FavoriteProject, FavoriteTask, FavoriteNotification, GiveUp, TaskStudent, ProjectTechnology, ProjectMedia, ViewNotification, Notification, JoinTeam, Evaluation, Comment, Meeting, Task, Team, Project, Media, Technology, Field, Users;
+-- DROP TABLE FieldTechnology, FavoriteProject, FavoriteTask, FavoriteNotification, GiveUp, TaskStudent, ProjectTechnology, ViewNotification, Notification, JoinTeam, Evaluation, Comment, Meeting, Task, Team, Project, Technology, Field, Users;
 
 CREATE TABLE Users (
     userId VARCHAR(20),
@@ -37,14 +37,6 @@ CREATE TABLE Technology (
     technologyId VARCHAR(20),
     name NVARCHAR(100) NOT NULL,
     CONSTRAINT PK_Technology PRIMARY KEY (technologyId)
-);
-
-CREATE TABLE Media (
-    mediaId VARCHAR(20),
-    saveCode TEXT NOT NULL,
-    type VARCHAR(20) NOT NULL,
-    createdAt DATETIME NOT NULL,
-    CONSTRAINT PK_Media PRIMARY KEY (mediaId)
 );
 
 CREATE TABLE Project (
@@ -162,14 +154,6 @@ CREATE TABLE ViewNotification (
     CONSTRAINT PK_ViewNotification PRIMARY KEY (userId, notificationId),
     CONSTRAINT FK_VN_User FOREIGN KEY (userId) REFERENCES Users(userId),
     CONSTRAINT FK_VN_Notification FOREIGN KEY (notificationId) REFERENCES Notification(notificationId)
-);
-
-CREATE TABLE ProjectMedia (
-    projectId VARCHAR(20),
-    mediaId VARCHAR(20),
-    CONSTRAINT PK_ProjectMedia PRIMARY KEY (projectId, mediaId),
-    CONSTRAINT FK_PM_Project FOREIGN KEY (projectId) REFERENCES Project(projectId),
-    CONSTRAINT FK_PM_Media FOREIGN KEY (mediaId) REFERENCES Media(mediaId)
 );
 
 CREATE TABLE ProjectTechnology (
@@ -793,22 +777,7 @@ INSERT INTO Technology (technologyId, name) VALUES
     ('249900485', 'MEME (Multiple Em for Motif Elicitation)'),
     ('249900486', 'MAFFT (Multiple Alignment using Fast Fourier Transform)'),
     ('249900487', 'TCDB (Transporter Classification Database)');
-
-
--- Insert data into Media table
-INSERT INTO Media (mediaId, saveCode, type, createdAt)
-VALUES
-    ('244500001', '', 'docx', '2024-03-15 19:30:45'),
-    ('244500002', '', 'pdf', '2024-03-14 14:45:30'),
-    ('244500003', '', 'docx', '2024-03-13 10:20:15'),
-    ('244500004', '', 'pdf', '2024-03-12 08:55:10'),
-    ('244500005', '', 'docx', '2024-03-11 12:30:25'),
-    ('244500006', '', 'pdf', '2024-03-10 15:20:40'),
-    ('244500007', '', 'docx', '2024-04-09 18:10:55'),
-    ('244500008', '', 'pdf', '2024-04-08 09:40:20'),
-    ('244500009', '', 'docx', '2024-04-07 11:50:35'),
-    ('244500010', '', 'pdf', '2024-03-06 14:25:50');
-
+	
 
 -- Insert data into Project table 
 INSERT INTO Project (projectId, instructorId, topic, description, feature, requirement, maxMember, publicDate, status, createdAt, createdBy, fieldId)
@@ -1308,22 +1277,7 @@ VALUES
     ('243300002', '249500003', 0),
     ('243300002', '249500004', 0);
 
-
--- Inserting data into ProjectMedia table
-INSERT INTO ProjectMedia (projectId, mediaId)
-VALUES
-    ('244400001', '244500001'),
-    ('244400002', '244500002'),
-    ('244400003', '244500003'),
-    ('244400004', '244500004'),
-    ('244400005', '244500005'),
-    ('244400006', '244500006'),
-    ('244400007', '244500007'),
-    ('244400008', '244500008'),
-    ('244400009', '244500009'),
-    ('244400010', '244500010');
-
-
+	   
 -- Inserting data into ProjectTechnology table
 INSERT INTO ProjectTechnology (projectId, technologyId)
 VALUES

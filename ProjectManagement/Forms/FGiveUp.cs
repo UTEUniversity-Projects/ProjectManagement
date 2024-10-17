@@ -64,7 +64,7 @@ namespace ProjectManagement.Forms
         }
         private void SetTeam()
         {
-            UCTeamMiniLine uCTeamMiniLine = new UCTeamMiniLine(team);
+            UCTeamLine uCTeamMiniLine = new UCTeamLine(team);
             uCTeamMiniLine.SetSize(new Size(275, 60));
             gPanelTeam.Controls.Clear();
             gPanelTeam.Controls.Add(uCTeamMiniLine);
