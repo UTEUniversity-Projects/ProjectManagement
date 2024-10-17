@@ -10,6 +10,7 @@ using ProjectManagement.Mappers.Implement;
 using System.Data.SqlClient;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace ProjectManagement.DAOs
 {
@@ -46,7 +47,7 @@ namespace ProjectManagement.DAOs
 
             List<Users> students = TeamDAO.GetMembersByTeamId(teamId);
 
-            foreach (Student student in students)
+            foreach (Users student in students)
             {
                 InsertViewNotification(student.UserId, notification.NotificationId, false);
             }
