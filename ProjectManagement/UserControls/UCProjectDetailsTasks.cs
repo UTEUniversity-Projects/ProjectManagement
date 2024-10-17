@@ -44,11 +44,11 @@ namespace ProjectManagement
         {
             flpTaskList.Location = new Point(12, 12);
             uCTaskCreate.SetUpUserControl(user, instructor, team, project);
-            uCTaskCreate.Location = new Point(12, 12);
+            uCTaskCreate.Location = new Point(10, 10);
             uCTaskCreate.GButtonCancel.Click += GButtonCancel_Click;
             uCTaskCreate.TasksCreateClicked += UCTaskCreate_TasksCreateClicked;
-            gShadowPanelBack.Controls.Add(uCTaskCreate);
-            uCTaskCreate.Hide();
+            gShadowPanelTaskCreate.Controls.Add(uCTaskCreate);
+            gShadowPanelTaskCreate.Hide();
 
             if (!isProcessing)
             {
@@ -144,13 +144,17 @@ namespace ProjectManagement
 
         private void gGradientButtonAddTask_Click(object sender, EventArgs e)
         {
+            lblTaskList.Text = "CREATE TASK";
             flpTaskList.Hide();
-            uCTaskCreate.Show();
+            gShadowPanelTaskCreate.Show();
+            gShadowPanelTaskCreate.BringToFront();
         }
         private void GButtonCancel_Click(object? sender, EventArgs e)
         {
-            uCTaskCreate.Hide();
+            lblTaskList.Text = "TASK LIST";
             flpTaskList.Show();
+            gShadowPanelTaskCreate.Hide();
+            gShadowPanelTaskCreate.SendToBack();
         }
 
         #endregion

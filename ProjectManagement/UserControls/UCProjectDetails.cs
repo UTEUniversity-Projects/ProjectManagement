@@ -435,7 +435,7 @@ namespace ProjectManagement
             uCProjectDetailsRegistered.Clear();
             foreach (Team team in listTeam)
             {
-                UCTeamMiniLine line = new UCTeamMiniLine(team);
+                UCTeamLine line = new UCTeamLine(team);
                 line.ProjectAddAccepted += ProjectAddAccepted_Clicked;
                 uCProjectDetailsRegistered.AddTeam(line);
             }
@@ -444,7 +444,7 @@ namespace ProjectManagement
         }
         private void ProjectAddAccepted_Clicked(object sender, EventArgs e)
         {
-            UCTeamMiniLine line = sender as UCTeamMiniLine;
+            UCTeamLine line = sender as UCTeamLine;
 
             if (line != null)
             {

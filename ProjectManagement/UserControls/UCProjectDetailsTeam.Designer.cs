@@ -36,7 +36,7 @@
             gCirclePictureBoxAvatar = new Guna.UI2.WinForms.Guna2CirclePictureBox();
             gTextBoxTeamMemebrs = new Guna.UI2.WinForms.Guna2TextBox();
             lblTeamName = new Label();
-            gTextBoxTeamCode = new Guna.UI2.WinForms.Guna2TextBox();
+            gGradientButtonViewDetails = new Guna.UI2.WinForms.Guna2GradientButton();
             ((System.ComponentModel.ISupportInitialize)gCirclePictureBoxAvatar).BeginInit();
             SuspendLayout();
             // 
@@ -93,46 +93,46 @@
             lblTeamName.TabIndex = 58;
             lblTeamName.Text = "Team name";
             // 
-            // gTextBoxTeamCode
+            // gGradientButtonViewDetails
             // 
-            gTextBoxTeamCode.BackColor = Color.Transparent;
-            gTextBoxTeamCode.BorderColor = Color.Silver;
-            gTextBoxTeamCode.BorderRadius = 5;
-            gTextBoxTeamCode.CustomizableEdges = customizableEdges4;
-            gTextBoxTeamCode.DefaultText = "245500001";
-            gTextBoxTeamCode.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
-            gTextBoxTeamCode.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
-            gTextBoxTeamCode.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
-            gTextBoxTeamCode.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
-            gTextBoxTeamCode.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
-            gTextBoxTeamCode.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gTextBoxTeamCode.ForeColor = Color.FromArgb(74, 97, 94);
-            gTextBoxTeamCode.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            gTextBoxTeamCode.Location = new Point(335, 31);
-            gTextBoxTeamCode.Margin = new Padding(3, 4, 3, 4);
-            gTextBoxTeamCode.Name = "gTextBoxTeamCode";
-            gTextBoxTeamCode.PasswordChar = '\0';
-            gTextBoxTeamCode.PlaceholderForeColor = Color.Gray;
-            gTextBoxTeamCode.PlaceholderText = "";
-            gTextBoxTeamCode.ReadOnly = true;
-            gTextBoxTeamCode.SelectedText = "";
-            gTextBoxTeamCode.ShadowDecoration.CustomizableEdges = customizableEdges5;
-            gTextBoxTeamCode.Size = new Size(120, 35);
-            gTextBoxTeamCode.TabIndex = 63;
-            gTextBoxTeamCode.TextAlign = HorizontalAlignment.Center;
+            gGradientButtonViewDetails.BackColor = Color.Transparent;
+            gGradientButtonViewDetails.BorderColor = Color.Gainsboro;
+            gGradientButtonViewDetails.BorderRadius = 10;
+            gGradientButtonViewDetails.BorderThickness = 1;
+            gGradientButtonViewDetails.CustomizableEdges = customizableEdges4;
+            gGradientButtonViewDetails.DisabledState.BorderColor = Color.DarkGray;
+            gGradientButtonViewDetails.DisabledState.CustomBorderColor = Color.DarkGray;
+            gGradientButtonViewDetails.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            gGradientButtonViewDetails.DisabledState.FillColor2 = Color.FromArgb(169, 169, 169);
+            gGradientButtonViewDetails.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            gGradientButtonViewDetails.FillColor = Color.White;
+            gGradientButtonViewDetails.FillColor2 = Color.White;
+            gGradientButtonViewDetails.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            gGradientButtonViewDetails.ForeColor = Color.FromArgb(74, 97, 94);
+            gGradientButtonViewDetails.HoverState.BorderColor = Color.White;
+            gGradientButtonViewDetails.HoverState.FillColor = Color.FromArgb(94, 148, 255);
+            gGradientButtonViewDetails.HoverState.FillColor2 = Color.FromArgb(255, 77, 165);
+            gGradientButtonViewDetails.HoverState.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            gGradientButtonViewDetails.HoverState.ForeColor = Color.White;
+            gGradientButtonViewDetails.Location = new Point(326, 31);
+            gGradientButtonViewDetails.Name = "gGradientButtonViewDetails";
+            gGradientButtonViewDetails.ShadowDecoration.CustomizableEdges = customizableEdges5;
+            gGradientButtonViewDetails.Size = new Size(125, 40);
+            gGradientButtonViewDetails.TabIndex = 71;
+            gGradientButtonViewDetails.Text = "View details";
+            gGradientButtonViewDetails.Click += gGradientButtonViewDetails_Click;
             // 
             // UCProjectDetailsTeam
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            Controls.Add(gTextBoxTeamCode);
+            Controls.Add(gGradientButtonViewDetails);
             Controls.Add(gTextBoxTeamMemebrs);
             Controls.Add(lblTeamName);
             Controls.Add(gCirclePictureBoxAvatar);
             Name = "UCProjectDetailsTeam";
             Size = new Size(480, 100);
-            Click += UCProjectDetailsTeam_Click;
             ((System.ComponentModel.ISupportInitialize)gCirclePictureBoxAvatar).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -143,6 +143,6 @@
         private Guna.UI2.WinForms.Guna2CirclePictureBox gCirclePictureBoxAvatar;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxTeamMemebrs;
         private Label lblTeamName;
-        private Guna.UI2.WinForms.Guna2TextBox gTextBoxTeamCode;
+        private Guna.UI2.WinForms.Guna2GradientButton gGradientButtonViewDetails;
     }
 }

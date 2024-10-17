@@ -26,9 +26,7 @@ namespace ProjectManagement
         private Team team = new Team();
         private Project project = new Project();
 
-        private TaskDAO TaskDAO = new TaskDAO();
-        private EvaluationDAO EvaluationDAO = new EvaluationDAO();
-        private NotificationDAO NotificationDAO = new NotificationDAO();
+        private List<Users> students = new List<Users>();
 
         private bool flagCheck = false;
 
@@ -65,7 +63,46 @@ namespace ProjectManagement
             gTextBoxTitle.Text = string.Empty;
             gTextBoxDescription.Text = string.Empty;
             EnumUtil.AddEnumsToComboBox(gComboBoxPriority, typeof(ETaskPriority));
+
+            gDateTimePickerStart.Format = DateTimePickerFormat.Custom;
+            gDateTimePickerStart.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
+            gDateTimePickerEnd.Format = DateTimePickerFormat.Custom;
+            gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
+
+            flpMembers.Controls.Clear();
+            foreach (Users user in TeamDAO.GetMembersByTeamId(team.TeamId))
+            {
+                UCUserMiniLine line = new UCUserMiniLine(user);
+                line.SetBackGroundColor(SystemColors.ButtonFace);
+                line.SetSize(new Size(305, 60));
+                line.GButtonAdd.Location = new Point(250, 10);
+                line.GButtonAdd.HoverState.FillColor = SystemColors.ButtonFace;
+                line.GButtonAdd.HoverState.Image = null;
+                line.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, user);
+                line.GButtonAdd.Show();
+                flpMembers.Controls.Add(line);
+            }
         }
+
+        private void ButtonAdd_Clicked(object? sender, EventArgs e, Users user)
+        {
+            UCUserMiniLine line = (UCUserMiniLine)sender;
+
+            if (line != null)
+            {
+                if (WinformControlUtil.ImageEquals(line.GButtonAdd.Image, Properties.Resources.PicItemComplete))
+                {
+                    line.GButtonAdd.Image = Properties.Resources.PicItemAdd;
+                    this.students.Add(user);
+                }
+                else
+                {
+                    line.GButtonAdd.Image = Properties.Resources.PicItemComplete;
+                    this.students.Remove(user);
+                }
+            }
+        }
+
         private bool CheckInformationValid()
         {
             WinformControlUtil.RunCheckDataValid(task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");

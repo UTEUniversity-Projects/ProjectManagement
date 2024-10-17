@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
+using ProjectManagement.Forms;
 using ProjectManagement.Models;
 
 namespace ProjectManagement
@@ -19,7 +20,6 @@ namespace ProjectManagement
         private Users host = new Users();
         private Notification notificationClicked = new Notification();
         private List<Notification> notificationList = new List<Notification>();
-        private NotificationDAO NotificationDAO = new NotificationDAO();
 
         public UCNotification()
         {
@@ -73,13 +73,21 @@ namespace ProjectManagement
         }
         private void NotificationLine_Clicked(object sender, EventArgs e)
         {
-            UCNotificationLine line = sender as UCNotificationLine;
+            UCNotificationLine line = (UCNotificationLine)sender;
 
             if (line != null)
             {
-                this.notificationClicked = line.GetNotification;
-                OnNotificationLineClicked(EventArgs.Empty);
+                FNotificationDetails fNotificationDetails = new FNotificationDetails(line.GetNotification);
+                fNotificationDetails.ShowDialog();
             }
+
+            //UCNotificationLine line = sender as UCNotificationLine;
+
+            //if (line != null)
+            //{
+            //    this.notificationClicked = line.GetNotification;
+            //    OnNotificationLineClicked(EventArgs.Empty);
+            //}
         }
         private void OnNotificationLineClicked(EventArgs e)
         {

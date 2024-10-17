@@ -61,7 +61,7 @@ namespace ProjectManagement.Utils
             if (ImageEquals(image, Properties.Resources.PicAvatarTen)) return "PicAvatarTen";
             return "PicAvatarDemoUser";
         }
-        private static bool ImageEquals(Image img1, Image img2)
+        public static bool ImageEquals(Image img1, Image img2)
         {
             if (img1 == null || img2 == null)
                 return false;
