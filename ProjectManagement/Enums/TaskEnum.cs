@@ -18,4 +18,13 @@ namespace ProjectManagement.Enums
         [Display(Name = "Canceled")]
         CANCELED
     }
+    public enum ETaskPriority
+    {
+        [Display(Name = "High")]
+        HIGH,
+        [Display(Name = "Medium")]
+        MEDIUM,
+        [Display(Name = "Low")]
+        LOW
+    }
 }

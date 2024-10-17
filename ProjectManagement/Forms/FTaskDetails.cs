@@ -142,7 +142,7 @@ namespace ProjectManagement.Forms
             if (CheckInformationValid())
             {
                 this.task = new Tasks(task.TaskId, DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
-                    double.Parse(gTextBoxProgress.Text), "Low", task.CreatedAt, this.creator.UserId, this.project.ProjectId);
+                    double.Parse(gTextBoxProgress.Text), ETaskPriority.LOW, task.CreatedAt, this.creator.UserId, this.project.ProjectId);
 
                 TaskDAO.Update(task);
                 this.flagCheck = true;

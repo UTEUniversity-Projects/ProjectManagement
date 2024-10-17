@@ -1,4 +1,6 @@
-﻿using ProjectManagement.Models;
+﻿using ProjectManagement.Enums;
+using ProjectManagement.Models;
+using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,7 +20,7 @@ namespace ProjectManagement.Mappers.Implement
             string title = row["title"].ToString();
             string description = row["description"].ToString();
             double progress = double.Parse(row["progress"].ToString());
-            string priority = row["priority"].ToString();
+            ETaskPriority priority = EnumUtil.GetEnumFromDisplayName<ETaskPriority>(row["priority"].ToString());
             DateTime createdAt = DateTime.Parse(row["createdAt"].ToString());
             string createdBy = row["createdBy"].ToString();
             string projectId = row["projectId"].ToString();
