@@ -38,6 +38,12 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             lblDescription = new Label();
             gTextBoxDescription = new Guna.UI2.WinForms.Guna2TextBox();
             lblTaskTitle = new Label();
@@ -46,6 +52,12 @@
             gButtonCancel = new Guna.UI2.WinForms.Guna2Button();
             erpTitle = new ErrorProvider(components);
             erpDescription = new ErrorProvider(components);
+            lblEnd = new Label();
+            gDateTimePickerEnd = new Guna.UI2.WinForms.Guna2DateTimePicker();
+            lblStart = new Label();
+            gDateTimePickerStart = new Guna.UI2.WinForms.Guna2DateTimePicker();
+            gComboBoxPriority = new Guna.UI2.WinForms.Guna2ComboBox();
+            lblPriority = new Label();
             ((System.ComponentModel.ISupportInitialize)erpTitle).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).BeginInit();
             SuspendLayout();
@@ -55,7 +67,7 @@
             lblDescription.AutoSize = true;
             lblDescription.BackColor = Color.Transparent;
             lblDescription.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblDescription.Location = new Point(16, 150);
+            lblDescription.Location = new Point(16, 113);
             lblDescription.Name = "lblDescription";
             lblDescription.Size = new Size(151, 28);
             lblDescription.TabIndex = 10;
@@ -79,7 +91,7 @@
             gTextBoxDescription.IconLeft = (Image)resources.GetObject("gTextBoxDescription.IconLeft");
             gTextBoxDescription.IconLeftOffset = new Point(5, 0);
             gTextBoxDescription.IconLeftSize = new Size(22, 22);
-            gTextBoxDescription.Location = new Point(16, 182);
+            gTextBoxDescription.Location = new Point(16, 145);
             gTextBoxDescription.Margin = new Padding(3, 4, 3, 4);
             gTextBoxDescription.Multiline = true;
             gTextBoxDescription.Name = "gTextBoxDescription";
@@ -88,7 +100,7 @@
             gTextBoxDescription.PlaceholderText = "Task description";
             gTextBoxDescription.SelectedText = "";
             gTextBoxDescription.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            gTextBoxDescription.Size = new Size(615, 163);
+            gTextBoxDescription.Size = new Size(615, 104);
             gTextBoxDescription.TabIndex = 11;
             gTextBoxDescription.TextOffset = new Point(5, 0);
             gTextBoxDescription.TextChanged += gTextBoxDescription_TextChanged;
@@ -130,7 +142,7 @@
             gTextBoxTitle.PlaceholderText = "Task title";
             gTextBoxTitle.SelectedText = "";
             gTextBoxTitle.ShadowDecoration.CustomizableEdges = customizableEdges4;
-            gTextBoxTitle.Size = new Size(615, 90);
+            gTextBoxTitle.Size = new Size(615, 55);
             gTextBoxTitle.TabIndex = 9;
             gTextBoxTitle.TextOffset = new Point(5, 0);
             gTextBoxTitle.TextChanged += gTextBoxTitle_TextChanged;
@@ -186,11 +198,102 @@
             erpDescription.ContainerControl = this;
             erpDescription.Icon = (Icon)resources.GetObject("erpDescription.Icon");
             // 
+            // lblEnd
+            // 
+            lblEnd.AutoSize = true;
+            lblEnd.BackColor = Color.Transparent;
+            lblEnd.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblEnd.Location = new Point(343, 323);
+            lblEnd.Name = "lblEnd";
+            lblEnd.Size = new Size(52, 28);
+            lblEnd.TabIndex = 88;
+            lblEnd.Text = "End";
+            // 
+            // gDateTimePickerEnd
+            // 
+            gDateTimePickerEnd.Checked = true;
+            gDateTimePickerEnd.CustomizableEdges = customizableEdges11;
+            gDateTimePickerEnd.FillColor = Color.White;
+            gDateTimePickerEnd.Font = new Font("Segoe UI", 9F);
+            gDateTimePickerEnd.Format = DateTimePickerFormat.Long;
+            gDateTimePickerEnd.Location = new Point(401, 315);
+            gDateTimePickerEnd.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
+            gDateTimePickerEnd.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            gDateTimePickerEnd.Name = "gDateTimePickerEnd";
+            gDateTimePickerEnd.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            gDateTimePickerEnd.ShowUpDown = true;
+            gDateTimePickerEnd.Size = new Size(230, 45);
+            gDateTimePickerEnd.TabIndex = 85;
+            gDateTimePickerEnd.Value = new DateTime(2024, 5, 8, 8, 42, 56, 890);
+            // 
+            // lblStart
+            // 
+            lblStart.AutoSize = true;
+            lblStart.BackColor = Color.Transparent;
+            lblStart.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblStart.Location = new Point(17, 323);
+            lblStart.Name = "lblStart";
+            lblStart.Size = new Size(64, 28);
+            lblStart.TabIndex = 87;
+            lblStart.Text = "Start";
+            // 
+            // gDateTimePickerStart
+            // 
+            gDateTimePickerStart.Checked = true;
+            gDateTimePickerStart.CustomFormat = "";
+            gDateTimePickerStart.CustomizableEdges = customizableEdges13;
+            gDateTimePickerStart.FillColor = Color.White;
+            gDateTimePickerStart.Font = new Font("Segoe UI", 9F);
+            gDateTimePickerStart.Format = DateTimePickerFormat.Long;
+            gDateTimePickerStart.Location = new Point(89, 315);
+            gDateTimePickerStart.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
+            gDateTimePickerStart.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            gDateTimePickerStart.Name = "gDateTimePickerStart";
+            gDateTimePickerStart.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            gDateTimePickerStart.ShowUpDown = true;
+            gDateTimePickerStart.Size = new Size(230, 45);
+            gDateTimePickerStart.TabIndex = 86;
+            gDateTimePickerStart.Value = new DateTime(2024, 5, 8, 8, 42, 56, 890);
+            // 
+            // gComboBoxPriority
+            // 
+            gComboBoxPriority.BackColor = Color.Transparent;
+            gComboBoxPriority.CustomizableEdges = customizableEdges9;
+            gComboBoxPriority.DrawMode = DrawMode.OwnerDrawFixed;
+            gComboBoxPriority.DropDownStyle = ComboBoxStyle.DropDownList;
+            gComboBoxPriority.FocusedColor = Color.FromArgb(94, 148, 255);
+            gComboBoxPriority.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            gComboBoxPriority.Font = new Font("Segoe UI", 10F);
+            gComboBoxPriority.ForeColor = Color.FromArgb(68, 88, 112);
+            gComboBoxPriority.ItemHeight = 30;
+            gComboBoxPriority.Location = new Point(120, 256);
+            gComboBoxPriority.Name = "gComboBoxPriority";
+            gComboBoxPriority.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            gComboBoxPriority.Size = new Size(230, 36);
+            gComboBoxPriority.TabIndex = 89;
+            // 
+            // lblPriority
+            // 
+            lblPriority.AutoSize = true;
+            lblPriority.BackColor = Color.Transparent;
+            lblPriority.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPriority.Location = new Point(16, 264);
+            lblPriority.Name = "lblPriority";
+            lblPriority.Size = new Size(94, 28);
+            lblPriority.TabIndex = 90;
+            lblPriority.Text = "Priority";
+            // 
             // UCTaskCreate
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ButtonFace;
+            Controls.Add(lblPriority);
+            Controls.Add(gComboBoxPriority);
+            Controls.Add(lblEnd);
+            Controls.Add(gDateTimePickerEnd);
+            Controls.Add(lblStart);
+            Controls.Add(gDateTimePickerStart);
             Controls.Add(gButtonCreate);
             Controls.Add(gButtonCancel);
             Controls.Add(lblDescription);
@@ -216,5 +319,11 @@
         private Guna.UI2.WinForms.Guna2Button gButtonCancel;
         private ErrorProvider erpTitle;
         private ErrorProvider erpDescription;
+        private Label lblEnd;
+        private Guna.UI2.WinForms.Guna2DateTimePicker gDateTimePickerEnd;
+        private Label lblStart;
+        private Guna.UI2.WinForms.Guna2DateTimePicker gDateTimePickerStart;
+        private Label lblPriority;
+        private Guna.UI2.WinForms.Guna2ComboBox gComboBoxPriority;
     }
 }

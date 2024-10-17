@@ -11,12 +11,13 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Utils;
+using ProjectManagement.Enums;
 
 namespace ProjectManagement
 {
     public partial class UCTaskCreate : UserControl
     {
-        
+
         public event EventHandler TasksCreateClicked;
 
         private Users creator = new Users();
@@ -63,6 +64,7 @@ namespace ProjectManagement
         {
             gTextBoxTitle.Text = string.Empty;
             gTextBoxDescription.Text = string.Empty;
+            EnumUtil.AddEnumsToComboBox(gComboBoxPriority, typeof(ETaskPriority));
         }
         private bool CheckInformationValid()
         {
@@ -82,7 +84,7 @@ namespace ProjectManagement
             if (CheckInformationValid())
             {
                 this.task = new Tasks(DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
-                    0.0D, "Low", DateTime.Now, this.creator.UserId, this.project.ProjectId);
+                    0.0D, Enums.ETaskPriority.LOW, DateTime.Now, this.creator.UserId, this.project.ProjectId);
                 TaskDAO.Insert(task);
                 EvaluationDAO.InsertFollowTeam(instructor.UserId, task.TaskId, team.TeamId);
 
@@ -97,7 +99,7 @@ namespace ProjectManagement
             }
         }
         private void OnTasksCreateClicked(EventArgs e)
-        { 
+        {
             TasksCreateClicked?.Invoke(this, e);
         }
 

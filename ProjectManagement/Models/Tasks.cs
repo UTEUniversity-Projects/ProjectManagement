@@ -14,7 +14,7 @@ namespace ProjectManagement.Models
         private string title;
         private string description;
         private double progress;
-        private string priority;
+        private ETaskPriority priority; 
         private DateTime createdAt;
         private string createdBy;
         private string projectId;
@@ -31,13 +31,13 @@ namespace ProjectManagement.Models
             title = string.Empty;
             description = string.Empty;
             progress = 0;
-            priority = string.Empty;
+            priority = default;
             createdAt = DateTime.MinValue;
             createdBy = string.Empty;
             projectId = string.Empty;
         }
 
-        public Tasks(string taskId, DateTime startAt, DateTime endAt, string title, string description, double progress, string priority, DateTime createdAt, string createdBy, string projectId)
+        public Tasks(string taskId, DateTime startAt, DateTime endAt, string title, string description, double progress, ETaskPriority priority, DateTime createdAt, string createdBy, string projectId) 
         {
             this.taskId = taskId;
             this.startAt = startAt;
@@ -51,7 +51,7 @@ namespace ProjectManagement.Models
             this.projectId = projectId;
         }
 
-        public Tasks(DateTime startAt, DateTime endAt, string title, string description, double progress, string priority, DateTime createdAt, string createdBy, string projectId)
+        public Tasks(DateTime startAt, DateTime endAt, string title, string description, double progress, ETaskPriority priority, DateTime createdAt, string createdBy, string projectId)
         {
             this.taskId = ModelUtil.GenerateModelId(EModelClassification.TASK);
             this.startAt = startAt;
@@ -64,7 +64,6 @@ namespace ProjectManagement.Models
             this.createdBy = createdBy;
             this.projectId = projectId;
         }
-
 
         #endregion
 
@@ -100,7 +99,7 @@ namespace ProjectManagement.Models
             get { return this.progress; }
             set { this.progress = value; }
         }
-        public string Priority
+        public ETaskPriority Priority
         {
             get { return this.priority; }
             set { this.priority = value; }
