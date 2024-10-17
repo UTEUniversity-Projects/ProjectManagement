@@ -13,8 +13,6 @@ using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 using ProjectManagement.Mappers.Implement;
 using System.Data.SqlClient;
-using Microsoft.VisualBasic.ApplicationServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ProjectManagement.DAOs
 {
@@ -29,7 +27,7 @@ namespace ProjectManagement.DAOs
         }
         public static Project SelectFollowTeam(string teamId)
         {
-            string sqlStr = $"SELECT * FROM {DBTableNames.Team} WHERE teamId = @TeamId";
+            string sqlStr = $"SELECT projectId FROM {DBTableNames.Team} WHERE teamId = @TeamId";
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
 
@@ -74,7 +72,7 @@ namespace ProjectManagement.DAOs
 
             return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
         }
-        public static List<Project> SelectListModeMyTheses(string userId)
+        public static List<Project> SelectListModeMyProjects(string userId)
         {
             string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " +
                                            "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId)",
@@ -102,7 +100,7 @@ namespace ProjectManagement.DAOs
 
             return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
         }
-        public static List<Project> SelectListModeMyCompletedTheses(string userId)
+        public static List<Project> SelectListModeMyCompletedProjects(string userId)
         {
             string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " + 
                                             "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId) " + 
@@ -154,19 +152,48 @@ namespace ProjectManagement.DAOs
 
         #region PROJECT DAO EXECUTION
 
-        public static void Insert(Project project)
+        public static void Insert(Project project, List<Technology> technologies)
         {
-            DBExecution.Insert(project, DBTableNames.Project);
+            DBExecution.Insert(project, DBTableNames.Project, "Create");
+            InsertProjectTechnology(project.ProjectId, technologies);       
+        }
+        private static void InsertProjectTechnology(string projectId, List<Technology> technologies)
+        {
+            string sqlStr = string.Format("INSERT INTO {0} (projectId, technologyId) VALUES (@ProjectId, @TechnologyId)",
+                DBTableNames.ProjectTechnology);
+
+            foreach (Technology technology in technologies)
+            {
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@ProjectId", projectId),
+                    new SqlParameter("@TechnologyId", technology.TechnologyId)
+                };
+
+                DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            }
         }
 
-        public static void Delete(Project project)
+        public static void Delete(string projectId)
         {
-            DBExecution.Delete(DBTableNames.Project, "projectId", project.ProjectId);
+            Team team = TeamDAO.SelectFollowProject(projectId);
+            TeamDAO.Delete(team.TeamId);
+
+            TaskDAO.DeleteFollowProject(projectId);
+
+            DBExecution.Delete(DBTableNames.Meeting, "projectId", projectId);
+            DBExecution.Delete(DBTableNames.ProjectMedia, "projectId", projectId);
+            DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", projectId);
+            DBExecution.Delete(DBTableNames.GiveUp, "projectId", projectId);
+            DBExecution.Delete(DBTableNames.FavoriteProject, "projectId", projectId);
+            DBExecution.Delete(DBTableNames.Project, "projectId", projectId);
         }
 
-        public static void Update(Project project)
+        public static void Update(Project project, List<Technology> technologies)
         {
+            DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", project.ProjectId);
             DBExecution.Update(project, DBTableNames.Project, "projectId", project.ProjectId);
+            InsertProjectTechnology(project.ProjectId, technologies);
         }
         public static void UpdateStatus(Project project, EProjectStatus status)
         {

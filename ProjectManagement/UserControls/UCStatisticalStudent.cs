@@ -36,7 +36,7 @@ namespace ProjectManagement
         }
         void SetupUserControl() 
         {
-            this.listProject = ProjectDAO.SelectListModeMyCompletedTheses(user.UserId);
+            this.listProject = ProjectDAO.SelectListModeMyCompletedProjects(user.UserId);
             this.lblNumProject.Text = this.listProject.Count.ToString();
             this.avgContribute = 0;
 

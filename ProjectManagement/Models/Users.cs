@@ -240,7 +240,7 @@ namespace ProjectManagement.Models
         public Users Clone()
         {
             return new Users(userId, userName, fullName, password, email, phoneNumber, dateOfBirth,
-                citizenCode, university, workCode, faculty, gender, avatar, role, joinAt);
+                citizenCode, university, faculty, workCode, gender, avatar, role, joinAt);
         }
 
         #endregion

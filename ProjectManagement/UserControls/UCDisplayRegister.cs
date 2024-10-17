@@ -43,7 +43,6 @@ namespace ProjectManagement
         {
             EnumUtil.AddEnumsToComboBox(gComboBoxGender, typeof(EUserGender));
             gButtonLoadLogin.Hide();
-            gTextBoxWorkcode.PlaceholderText = "Student code";
             InitAvatarList();
         }
         private void InitAvatarList()
@@ -78,26 +77,19 @@ namespace ProjectManagement
             gTextBoxWorkcode.Text = string.Empty;
             gCirclePictureBoxAvatar.Image = Properties.Resources.PicAvatarDemoUser;
         }
-        private void RunCheckUserInfor()
+        public void RunCheckUserInfor()
         {
-            WinformControlUtil.RunCheckDataValid(user.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
+            WinformControlUtil.RunCheckDataValid(user.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Full name cannot be empty");
             WinformControlUtil.RunCheckDataValid(user.CheckCitizenCode() || flagCheck, erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
             WinformControlUtil.RunCheckDataValid(user.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
             WinformControlUtil.RunCheckDataValid(user.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
-            WinformControlUtil.RunCheckDataValid(user.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(user.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email address is already exists or invalid");
             WinformControlUtil.RunCheckDataValid(user.CheckPhoneNumber() || flagCheck, erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
-            WinformControlUtil.RunCheckDataValid(user.CheckUserName() || flagCheck, erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(user.CheckUserName() || flagCheck, erpHandle, gTextBoxUserName, "Username is already exists or invalid");
             WinformControlUtil.RunCheckDataValid(user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck, erpConfirmPassword, gTextBoxConfirmPassword, "Confirmation password does not match");
             WinformControlUtil.RunCheckDataValid(user.CheckUniversity() || flagCheck, erpUniversity, gTextBoxUniversity, "University cannot be empty");
             WinformControlUtil.RunCheckDataValid(user.CheckFaculty() || flagCheck, erpFaculty, gTextBoxFaculty, "Faculty cannot be empty");
-        }
-        private void RunCheckStudentInfor()
-        {
-            WinformControlUtil.RunCheckDataValid(user.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
-        }
-        public void RunCheckInformation()
-        {
-            RunCheckUserInfor();
+            WinformControlUtil.RunCheckDataValid(user.CheckWorkCode() || flagCheck, erpWorkCode, gTextBoxWorkcode, "Work code is already exists or invalid");
         }
         private bool CheckUserInformationValid()
         {
@@ -185,7 +177,7 @@ namespace ProjectManagement
         private void gTextBoxFullname_TextChanged(object sender, EventArgs e)
         {
             this.user.FullName = gTextBoxFullname.Text;
-            WinformControlUtil.RunCheckDataValid(user.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
+            WinformControlUtil.RunCheckDataValid(user.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Full name cannot be empty");
         }
         private void gTextBoxCitizencode_TextChanged(object sender, EventArgs e)
         {
@@ -205,7 +197,7 @@ namespace ProjectManagement
         private void gTextBoxEmail_TextChanged(object sender, EventArgs e)
         {
             this.user.Email = gTextBoxEmail.Text;
-            WinformControlUtil.RunCheckDataValid(user.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(user.CheckEmail() || flagCheck, erpEmail, gTextBoxEmail, "Email address is already exists or invalid");
         }
         private void gTextBoxPhonenumber_TextChanged(object sender, EventArgs e)
         {
@@ -215,7 +207,7 @@ namespace ProjectManagement
         private void gTextBoxHandle_TextChanged(object sender, EventArgs e)
         {
             this.user.UserName = gTextBoxUserName.Text;
-            WinformControlUtil.RunCheckDataValid(user.CheckUserName() || flagCheck, erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(user.CheckUserName() || flagCheck, erpHandle, gTextBoxUserName, "Username is already exists or invalid");
         }
         private void gTextBoxPassword_TextChanged(object sender, EventArgs e)
         {
@@ -228,9 +220,19 @@ namespace ProjectManagement
             WinformControlUtil.RunCheckDataValid(user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck, erpConfirmPassword, gTextBoxConfirmPassword, "Confirmation password does not match");
             if (user.CheckPassWord(gTextBoxConfirmPassword.Text) || flagCheck) erpPassword.SetError(gTextBoxPassword, null);
         }
+        private void gTextBoxUniversity_TextChanged(object sender, EventArgs e)
+        {
+            this.user.University = gTextBoxUniversity.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckUniversity() || flagCheck, erpUniversity, gTextBoxUniversity, "University cannot be empty");
+        }
+        private void gTextBoxFaculty_TextChanged(object sender, EventArgs e)
+        {
+            this.user.Faculty = gTextBoxFaculty.Text;
+            WinformControlUtil.RunCheckDataValid(user.CheckFaculty() || flagCheck, erpFaculty, gTextBoxFaculty, "Faculty cannot be empty");
+        }
         private void gTextBoxWorkcode_TextChanged(object sender, EventArgs e)
         {
-            // this.user.WorkCode = gTextBoxWorkcode.Text;
+            this.user.WorkCode = gTextBoxWorkcode.Text;
             WinformControlUtil.RunCheckDataValid(user.CheckWorkCode() || flagCheck, erpWorkCode, gTextBoxWorkcode, "Work code is already exists or invalid");
         }
 

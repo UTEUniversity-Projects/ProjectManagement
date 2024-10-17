@@ -54,10 +54,6 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges22 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges23 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges24 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges25 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges26 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges27 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges28 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             gButtonCancel = new Guna.UI2.WinForms.Guna2Button();
             gButtonCreateOrEdit = new Guna.UI2.WinForms.Guna2GradientButton();
             gPictureBoxFaculty = new Guna.UI2.WinForms.Guna2PictureBox();
@@ -65,16 +61,15 @@
             lblDescription = new Label();
             gTextBoxDescription = new Guna.UI2.WinForms.Guna2TextBox();
             gShadowPanelTopic = new Guna.UI2.WinForms.Guna2ShadowPanel();
+            lblMembers = new Label();
             gComboBoxMembers = new Guna.UI2.WinForms.Guna2ComboBox();
             gSeparatorTopic = new Guna.UI2.WinForms.Guna2Separator();
-            lblLevel = new Label();
             lblMaximum = new Label();
             lblField = new Label();
-            gPictureBoxLevel = new Guna.UI2.WinForms.Guna2PictureBox();
-            gComboBoxLevel = new Guna.UI2.WinForms.Guna2ComboBox();
             lblProjectTopic = new Label();
             gTextBoxTopic = new Guna.UI2.WinForms.Guna2TextBox();
             gShadowPanelTechFunc = new Guna.UI2.WinForms.Guna2ShadowPanel();
+            flpTechnologyList = new FlowLayoutPanel();
             gButtonTechnologyClear = new Guna.UI2.WinForms.Guna2Button();
             gComboBoxTechnology = new Guna.UI2.WinForms.Guna2ComboBox();
             gTextBoxRequirements = new Guna.UI2.WinForms.Guna2TextBox();
@@ -97,7 +92,6 @@
             erpInstructor = new ErrorProvider(components);
             ((System.ComponentModel.ISupportInitialize)gPictureBoxFaculty).BeginInit();
             gShadowPanelTopic.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gPictureBoxLevel).BeginInit();
             gShadowPanelTechFunc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)erpTopic).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).BeginInit();
@@ -232,17 +226,15 @@
             // gShadowPanelTopic
             // 
             gShadowPanelTopic.BackColor = Color.Transparent;
+            gShadowPanelTopic.Controls.Add(lblMembers);
             gShadowPanelTopic.Controls.Add(gComboBoxMembers);
             gShadowPanelTopic.Controls.Add(gSeparatorTopic);
-            gShadowPanelTopic.Controls.Add(lblLevel);
             gShadowPanelTopic.Controls.Add(lblMaximum);
             gShadowPanelTopic.Controls.Add(lblField);
             gShadowPanelTopic.Controls.Add(lblDescription);
             gShadowPanelTopic.Controls.Add(gTextBoxDescription);
             gShadowPanelTopic.Controls.Add(gPictureBoxFaculty);
-            gShadowPanelTopic.Controls.Add(gPictureBoxLevel);
             gShadowPanelTopic.Controls.Add(gComboBoxField);
-            gShadowPanelTopic.Controls.Add(gComboBoxLevel);
             gShadowPanelTopic.Controls.Add(lblProjectTopic);
             gShadowPanelTopic.Controls.Add(gTextBoxTopic);
             gShadowPanelTopic.FillColor = Color.White;
@@ -253,6 +245,17 @@
             gShadowPanelTopic.ShadowStyle = Guna.UI2.WinForms.Guna2ShadowPanel.ShadowMode.ForwardDiagonal;
             gShadowPanelTopic.Size = new Size(511, 565);
             gShadowPanelTopic.TabIndex = 25;
+            // 
+            // lblMembers
+            // 
+            lblMembers.AutoSize = true;
+            lblMembers.BackColor = Color.Transparent;
+            lblMembers.Font = new Font("Trebuchet MS", 12F, FontStyle.Bold);
+            lblMembers.Location = new Point(209, 262);
+            lblMembers.Name = "lblMembers";
+            lblMembers.Size = new Size(249, 26);
+            lblMembers.TabIndex = 73;
+            lblMembers.Text = "members for this project";
             // 
             // gComboBoxMembers
             // 
@@ -268,7 +271,7 @@
             gComboBoxMembers.ForeColor = Color.Black;
             gComboBoxMembers.ItemHeight = 35;
             gComboBoxMembers.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
-            gComboBoxMembers.Location = new Point(391, 254);
+            gComboBoxMembers.Location = new Point(133, 254);
             gComboBoxMembers.Name = "gComboBoxMembers";
             gComboBoxMembers.ShadowDecoration.CustomizableEdges = customizableEdges12;
             gComboBoxMembers.Size = new Size(71, 41);
@@ -284,27 +287,16 @@
             gSeparatorTopic.Size = new Size(435, 12);
             gSeparatorTopic.TabIndex = 50;
             // 
-            // lblLevel
-            // 
-            lblLevel.AutoSize = true;
-            lblLevel.BackColor = Color.Transparent;
-            lblLevel.Font = new Font("Trebuchet MS", 12F, FontStyle.Bold);
-            lblLevel.Location = new Point(27, 262);
-            lblLevel.Name = "lblLevel";
-            lblLevel.Size = new Size(64, 26);
-            lblLevel.TabIndex = 49;
-            lblLevel.Text = "Level";
-            // 
             // lblMaximum
             // 
             lblMaximum.AutoSize = true;
             lblMaximum.BackColor = Color.Transparent;
             lblMaximum.Font = new Font("Trebuchet MS", 12F, FontStyle.Bold);
-            lblMaximum.Location = new Point(242, 262);
+            lblMaximum.Location = new Point(28, 262);
             lblMaximum.Name = "lblMaximum";
-            lblMaximum.Size = new Size(143, 26);
+            lblMaximum.Size = new Size(101, 26);
             lblMaximum.TabIndex = 46;
-            lblMaximum.Text = "Max members";
+            lblMaximum.Text = "Maximum";
             // 
             // lblField
             // 
@@ -316,41 +308,6 @@
             lblField.Size = new Size(65, 26);
             lblField.TabIndex = 42;
             lblField.Text = "FIELD";
-            // 
-            // gPictureBoxLevel
-            // 
-            gPictureBoxLevel.BackColor = Color.Transparent;
-            gPictureBoxLevel.CustomizableEdges = customizableEdges13;
-            gPictureBoxLevel.FillColor = Color.Transparent;
-            gPictureBoxLevel.Image = (Image)resources.GetObject("gPictureBoxLevel.Image");
-            gPictureBoxLevel.ImageRotate = 0F;
-            gPictureBoxLevel.Location = new Point(105, 264);
-            gPictureBoxLevel.Name = "gPictureBoxLevel";
-            gPictureBoxLevel.ShadowDecoration.CustomizableEdges = customizableEdges14;
-            gPictureBoxLevel.Size = new Size(20, 20);
-            gPictureBoxLevel.SizeMode = PictureBoxSizeMode.StretchImage;
-            gPictureBoxLevel.TabIndex = 6;
-            gPictureBoxLevel.TabStop = false;
-            // 
-            // gComboBoxLevel
-            // 
-            gComboBoxLevel.BackColor = Color.Transparent;
-            gComboBoxLevel.BorderColor = Color.FromArgb(74, 97, 94);
-            gComboBoxLevel.BorderRadius = 5;
-            gComboBoxLevel.CustomizableEdges = customizableEdges15;
-            gComboBoxLevel.DrawMode = DrawMode.OwnerDrawFixed;
-            gComboBoxLevel.DropDownStyle = ComboBoxStyle.DropDownList;
-            gComboBoxLevel.FocusedColor = Color.FromArgb(94, 148, 255);
-            gComboBoxLevel.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
-            gComboBoxLevel.Font = new Font("Segoe UI", 9F);
-            gComboBoxLevel.ForeColor = Color.Black;
-            gComboBoxLevel.ItemHeight = 35;
-            gComboBoxLevel.Location = new Point(95, 254);
-            gComboBoxLevel.Name = "gComboBoxLevel";
-            gComboBoxLevel.ShadowDecoration.CustomizableEdges = customizableEdges16;
-            gComboBoxLevel.Size = new Size(141, 41);
-            gComboBoxLevel.TabIndex = 10;
-            gComboBoxLevel.TextOffset = new Point(32, 0);
             // 
             // lblProjectTopic
             // 
@@ -368,7 +325,7 @@
             gTextBoxTopic.AutoScroll = true;
             gTextBoxTopic.BorderColor = Color.FromArgb(74, 97, 94);
             gTextBoxTopic.BorderRadius = 5;
-            gTextBoxTopic.CustomizableEdges = customizableEdges17;
+            gTextBoxTopic.CustomizableEdges = customizableEdges13;
             gTextBoxTopic.DefaultText = "";
             gTextBoxTopic.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             gTextBoxTopic.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -388,7 +345,7 @@
             gTextBoxTopic.PlaceholderForeColor = Color.Gray;
             gTextBoxTopic.PlaceholderText = "The topic this project will cover";
             gTextBoxTopic.SelectedText = "";
-            gTextBoxTopic.ShadowDecoration.CustomizableEdges = customizableEdges18;
+            gTextBoxTopic.ShadowDecoration.CustomizableEdges = customizableEdges14;
             gTextBoxTopic.Size = new Size(435, 120);
             gTextBoxTopic.TabIndex = 7;
             gTextBoxTopic.TextOffset = new Point(5, 0);
@@ -397,6 +354,7 @@
             // gShadowPanelTechFunc
             // 
             gShadowPanelTechFunc.BackColor = Color.Transparent;
+            gShadowPanelTechFunc.Controls.Add(flpTechnologyList);
             gShadowPanelTechFunc.Controls.Add(gButtonTechnologyClear);
             gShadowPanelTechFunc.Controls.Add(gComboBoxTechnology);
             gShadowPanelTechFunc.Controls.Add(gTextBoxRequirements);
@@ -414,11 +372,20 @@
             gShadowPanelTechFunc.Size = new Size(724, 666);
             gShadowPanelTechFunc.TabIndex = 27;
             // 
+            // flpTechnologyList
+            // 
+            flpTechnologyList.AutoScroll = true;
+            flpTechnologyList.Location = new Point(59, 89);
+            flpTechnologyList.Name = "flpTechnologyList";
+            flpTechnologyList.Size = new Size(610, 116);
+            flpTechnologyList.TabIndex = 48;
+            flpTechnologyList.Paint += flpTechnologyList_Paint;
+            // 
             // gButtonTechnologyClear
             // 
             gButtonTechnologyClear.BackColor = Color.Transparent;
             gButtonTechnologyClear.BorderRadius = 7;
-            gButtonTechnologyClear.CustomizableEdges = customizableEdges19;
+            gButtonTechnologyClear.CustomizableEdges = customizableEdges15;
             gButtonTechnologyClear.DisabledState.BorderColor = Color.DarkGray;
             gButtonTechnologyClear.DisabledState.CustomBorderColor = Color.DarkGray;
             gButtonTechnologyClear.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
@@ -428,7 +395,7 @@
             gButtonTechnologyClear.ForeColor = Color.White;
             gButtonTechnologyClear.Location = new Point(572, 49);
             gButtonTechnologyClear.Name = "gButtonTechnologyClear";
-            gButtonTechnologyClear.ShadowDecoration.CustomizableEdges = customizableEdges20;
+            gButtonTechnologyClear.ShadowDecoration.CustomizableEdges = customizableEdges16;
             gButtonTechnologyClear.Size = new Size(100, 31);
             gButtonTechnologyClear.TabIndex = 15;
             gButtonTechnologyClear.Text = "Clear";
@@ -439,7 +406,7 @@
             gComboBoxTechnology.BackColor = Color.Transparent;
             gComboBoxTechnology.BorderColor = Color.FromArgb(74, 97, 94);
             gComboBoxTechnology.BorderRadius = 5;
-            gComboBoxTechnology.CustomizableEdges = customizableEdges21;
+            gComboBoxTechnology.CustomizableEdges = customizableEdges17;
             gComboBoxTechnology.DrawMode = DrawMode.OwnerDrawFixed;
             gComboBoxTechnology.DropDownStyle = ComboBoxStyle.DropDownList;
             gComboBoxTechnology.FocusedColor = Color.FromArgb(94, 148, 255);
@@ -449,7 +416,7 @@
             gComboBoxTechnology.ItemHeight = 25;
             gComboBoxTechnology.Location = new Point(25, 49);
             gComboBoxTechnology.Name = "gComboBoxTechnology";
-            gComboBoxTechnology.ShadowDecoration.CustomizableEdges = customizableEdges22;
+            gComboBoxTechnology.ShadowDecoration.CustomizableEdges = customizableEdges18;
             gComboBoxTechnology.Size = new Size(541, 31);
             gComboBoxTechnology.TabIndex = 14;
             gComboBoxTechnology.TextOffset = new Point(5, 0);
@@ -460,7 +427,7 @@
             gTextBoxRequirements.AutoScroll = true;
             gTextBoxRequirements.BorderColor = Color.FromArgb(74, 97, 94);
             gTextBoxRequirements.BorderRadius = 5;
-            gTextBoxRequirements.CustomizableEdges = customizableEdges23;
+            gTextBoxRequirements.CustomizableEdges = customizableEdges19;
             gTextBoxRequirements.DefaultText = "";
             gTextBoxRequirements.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             gTextBoxRequirements.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -481,7 +448,7 @@
             gTextBoxRequirements.PlaceholderForeColor = Color.Gray;
             gTextBoxRequirements.PlaceholderText = "Requirement during project implementation";
             gTextBoxRequirements.SelectedText = "";
-            gTextBoxRequirements.ShadowDecoration.CustomizableEdges = customizableEdges24;
+            gTextBoxRequirements.ShadowDecoration.CustomizableEdges = customizableEdges20;
             gTextBoxRequirements.Size = new Size(648, 170);
             gTextBoxRequirements.TabIndex = 7;
             gTextBoxRequirements.TextOffset = new Point(5, 0);
@@ -492,7 +459,7 @@
             gTextBoxFunctions.AutoScroll = true;
             gTextBoxFunctions.BorderColor = Color.FromArgb(74, 97, 94);
             gTextBoxFunctions.BorderRadius = 5;
-            gTextBoxFunctions.CustomizableEdges = customizableEdges25;
+            gTextBoxFunctions.CustomizableEdges = customizableEdges21;
             gTextBoxFunctions.DefaultText = "";
             gTextBoxFunctions.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             gTextBoxFunctions.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -513,7 +480,7 @@
             gTextBoxFunctions.PlaceholderForeColor = Color.Gray;
             gTextBoxFunctions.PlaceholderText = "Features that the project must implement";
             gTextBoxFunctions.SelectedText = "";
-            gTextBoxFunctions.ShadowDecoration.CustomizableEdges = customizableEdges26;
+            gTextBoxFunctions.ShadowDecoration.CustomizableEdges = customizableEdges22;
             gTextBoxFunctions.Size = new Size(648, 170);
             gTextBoxFunctions.TabIndex = 12;
             gTextBoxFunctions.TextOffset = new Point(5, 0);
@@ -534,7 +501,7 @@
             gTextBoxTechnology.AutoScroll = true;
             gTextBoxTechnology.BorderColor = Color.FromArgb(74, 97, 94);
             gTextBoxTechnology.BorderRadius = 5;
-            gTextBoxTechnology.CustomizableEdges = customizableEdges27;
+            gTextBoxTechnology.CustomizableEdges = customizableEdges23;
             gTextBoxTechnology.DefaultText = "";
             gTextBoxTechnology.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             gTextBoxTechnology.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -554,12 +521,12 @@
             gTextBoxTechnology.PasswordChar = '\0';
             gTextBoxTechnology.PlaceholderForeColor = Color.Gray;
             gTextBoxTechnology.PlaceholderText = "Technologies proposed in this project";
+            gTextBoxTechnology.ReadOnly = true;
             gTextBoxTechnology.SelectedText = "";
-            gTextBoxTechnology.ShadowDecoration.CustomizableEdges = customizableEdges28;
+            gTextBoxTechnology.ShadowDecoration.CustomizableEdges = customizableEdges24;
             gTextBoxTechnology.Size = new Size(648, 120);
             gTextBoxTechnology.TabIndex = 7;
             gTextBoxTechnology.TextOffset = new Point(5, 0);
-            gTextBoxTechnology.TextChanged += gTextBoxTechnology_TextChanged;
             // 
             // lblTechnologies
             // 
@@ -699,7 +666,6 @@
             ((System.ComponentModel.ISupportInitialize)gPictureBoxFaculty).EndInit();
             gShadowPanelTopic.ResumeLayout(false);
             gShadowPanelTopic.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)gPictureBoxLevel).EndInit();
             gShadowPanelTechFunc.ResumeLayout(false);
             gShadowPanelTechFunc.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)erpTopic).EndInit();
@@ -720,8 +686,6 @@
         private Label lblDescription;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxDescription;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelTopic;
-        private Guna.UI2.WinForms.Guna2PictureBox gPictureBoxLevel;
-        private Guna.UI2.WinForms.Guna2ComboBox gComboBoxLevel;
         private Label lblProjectTopic;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxTopic;
         private Guna.UI2.WinForms.Guna2PictureBox gPictureBoxFaculty;
@@ -734,7 +698,6 @@
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxFunctions;
         private Label lblFeatures;
         private Label lblField;
-        private Label lblLevel;
         private Label lblMaximum;
         private Guna.UI2.WinForms.Guna2Separator gSeparatorTopic;
         private Guna.UI2.WinForms.Guna2ComboBox gComboBoxMembers;
@@ -752,5 +715,7 @@
         private ErrorProvider erpInstructor;
         private Guna.UI2.WinForms.Guna2ComboBox gComboBoxTechnology;
         private Guna.UI2.WinForms.Guna2Button gButtonTechnologyClear;
+        private Label lblMembers;
+        private FlowLayoutPanel flpTechnologyList;
     }
 }

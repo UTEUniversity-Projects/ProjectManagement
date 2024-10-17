@@ -16,7 +16,7 @@ namespace ProjectManagement
             gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(user.Avatar);
             lblViewHandle.Text = user.UserName;
             gTextBoxFullname.Text = user.FullName;
-            gTextBoxCitizencode.Text = user.CitizenCode;
+            gTextBoxWorkCode.Text = user.WorkCode;
             gTextBoxBirthday.Text = user.DateOfBirth.ToString("dd/MM/yyyy");
             gTextBoxEmail.Text = user.Email;
             gTextBoxPhonenumber.Text = user.PhoneNumber;

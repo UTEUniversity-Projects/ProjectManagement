@@ -113,7 +113,7 @@ namespace ProjectManagement.Forms
                     var peoples = new List<Users>();
                     peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
                     peoples.Add(UserDAO.SelectOnlyByID(project.InstructorId));
-                    NotificationDAO.InsertFollowListUser(this.team.TeamId, content, ENotificationType.PROJECT);
+                    NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.PROJECT);
 
                     ConfirmedGivingUp?.Invoke(this, e);
                     this.Close();

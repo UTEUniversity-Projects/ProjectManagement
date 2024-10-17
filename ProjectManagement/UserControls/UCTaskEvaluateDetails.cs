@@ -152,11 +152,14 @@ namespace ProjectManagement
             {
                 this.evaluation = new Evaluation(evaluation.EvaluationId, gTextBoxEvaluation.Text, double.Parse(gTextBoxCompleted.Text), 
                     double.Parse(gTextBoxScores.Text), true, DateTime.Now, evaluation.CreatedBy, this.student.UserId, evaluation.TaskId);
+
                 EvaluationDAO.Update(evaluation);
+
                 if (host.Role == EUserRole.LECTURE && evaluation.Evaluated)
                 {
                     string content = Notification.GetContentTypeEvaluation(host.FullName, task.Title);
-                    NotificationDAO.Insert(new Notification("xxx", content, Notification.GetNotificationType(evaluation.EvaluationId), DateTime.Now));
+                    Notification notification = new Notification("Evaluated", content, Notification.GetNotificationType(evaluation.EvaluationId), DateTime.Now);
+                    NotificationDAO.Insert(notification, evaluation.StudentId);
                 }
                 this.flagCheck = true;
                 SetEditState(false);

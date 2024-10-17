@@ -7,17 +7,17 @@ using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 using System.Data.SqlClient;
+using ProjectManagement.UserControls;
 
 namespace ProjectManagement
 {
     public partial class UCProjectCreate : UserControl
-    {              
+    {
 
         private Users user = new Users();
         private Project project = new Project();
-
-        private ProjectDAO ProjectDAO = new ProjectDAO();
-        private NotificationDAO NotificationDAO = new NotificationDAO();
+        private List<Field> fields = new List<Field>();
+        private List<Technology> technologies = new List<Technology>();
 
         private UCUserMiniLine uCUserMiniLine = new UCUserMiniLine();
         private bool flagCheck = false;
@@ -55,13 +55,13 @@ namespace ProjectManagement
         }
         private void InitUserControl()
         {
-            EnumUtil.AddEnumsToComboBox(gComboBoxField, typeof(EField));
-            EnumUtil.AddEnumsToComboBox(gComboBoxLevel, typeof(ELevel));
+            this.fields = FieldDAO.SelectList();
+            GunaControlUtil.SetComboBoxDisplayAndValue(gComboBoxField, fields, "Name", "FieldId");
             uCUserMiniLine.GButtonAdd.Hide();
             uCUserMiniLine.SetSize(new Size(397, 60));
-            
+
             cmbIDInstructor.Items.Clear();
-            List<string> list = UserDAO.SelectListID(EUserRole.LECTURE);
+            List<string> list = UserDAO.SelectListId(EUserRole.LECTURE);
             foreach (var item in list)
             {
                 cmbIDInstructor.Items.Add(item);
@@ -70,15 +70,15 @@ namespace ProjectManagement
         private void InitCreateState()
         {
             flagInitEdit = false;
-            gTextBoxTechnology.Text = string.Empty;
             InitUserControl();
             gTextBoxTopic.Text = string.Empty;
             gComboBoxField.StartIndex = 0;
-            gComboBoxLevel.StartIndex = 0;
             gComboBoxMembers.StartIndex = 0;
             gTextBoxDescription.Text = string.Empty;
             gTextBoxFunctions.Text = string.Empty;
             gTextBoxRequirements.Text = string.Empty;
+            this.technologies.Clear();
+            flpTechnologyList.Controls.Clear();
             cmbIDInstructor.Text = string.Empty;
             flagCreate = true;
             flagEdit = false;
@@ -91,14 +91,14 @@ namespace ProjectManagement
                 cmbIDInstructor.Enabled = false;
             }
             cmbIDInstructor_SelectedIndexChanged(cmbIDInstructor, new EventArgs());
+            gComboBoxTechnology_SelectedIndexChanged(gComboBoxTechnology, new EventArgs());
         }
         private void InitEditState()
         {
             flagInitEdit = true;
             InitUserControl();
             gTextBoxTopic.Text = project.Topic;
-            gComboBoxField.SelectedItem = project.FieldId;
-            // gComboBoxLevel.SelectedItem = project.Level;
+            gComboBoxField.SelectedValue = project.FieldId;
             gComboBoxMembers.SelectedItem = project.MaxMember.ToString();
             gTextBoxDescription.Text = project.Description;
             gTextBoxFunctions.Text = project.Feature;
@@ -109,39 +109,37 @@ namespace ProjectManagement
             cmbIDInstructor.SelectedItem = project.InstructorId;
             cmbIDInstructor.Enabled = false;
             cmbIDInstructor_SelectedIndexChanged(cmbIDInstructor, new EventArgs());
+
+            this.technologies.Clear();
+            flpTechnologyList.Controls.Clear();
+            this.technologies = TechnologyDAO.SelectListByProject(project.ProjectId);
+            
+            foreach (Technology technology in technologies)
+            {
+                UCTechnologyLine line = new UCTechnologyLine(technology);
+                line.TechnologyRemove += GButtonRemove_Click;
+                flpTechnologyList.Controls.Add(line);
+            }
         }
         private void SetComboBoxTechnology()
         {
             if (gComboBoxField.SelectedItem == null) return;
 
-            string sqlStr = string.Format("SELECT T.technologyId, T.name " +
-                "FROM {0} AS T JOIN (SELECT * FROM {1} WHERE {1}.fieldId = @FieldId) AS FT " +
-                "ON T.technologyId = FT.technologyId", DBTableNames.Technology, DBTableNames.FieldTechnology);
-
-            List<SqlParameter> parameters = new List<SqlParameter> 
-            { 
-                new SqlParameter("@FieldId", gComboBoxField.Text)
-            };
-
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
-
-            gComboBoxTechnology.Items.Clear();
-            foreach (DataRow row in dt.Rows)
-            {
-                gComboBoxTechnology.Items.Add(row["name"].ToString());
-            }
+            Field field = (Field)gComboBoxField.SelectedItem;
+            List<Technology> fieldTechnologies = TechnologyDAO.SelectListByField(field.FieldId);
+            GunaControlUtil.SetComboBoxDisplayAndValue(gComboBoxTechnology, fieldTechnologies, "Name", "TechnologyId");
             gComboBoxTechnology.StartIndex = 0;
         }
         private bool CheckInformationValid()
         {
             WinformControlUtil.RunCheckDataValid(project.CheckTopic() || flagCheck, erpTopic, gTextBoxTopic, "Topic cannot be empty");
             WinformControlUtil.RunCheckDataValid(project.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
-            WinformControlUtil.RunCheckDataValid(project.CheckTechnology() || flagCheck, erpTechnology, gTextBoxTechnology, "Technologies cannot be empty");
+            WinformControlUtil.RunCheckDataValid(this.technologies.Count > 0 || flagCheck, erpTechnology, flpTechnologyList, "Technologies cannot be empty");
             WinformControlUtil.RunCheckDataValid(project.CheckFeature() || flagCheck, erpFunctions, gTextBoxFunctions, "Feature cannot be empty");
             WinformControlUtil.RunCheckDataValid(project.CheckRequirement() || flagCheck, erpRequirements, gTextBoxRequirements, "Requirement cannot be empty");
             WinformControlUtil.RunCheckDataValid(project.CheckInstructorId() || flagCheck, erpInstructor, cmbIDInstructor, "Instructor cannot be empty");
 
-            return project.CheckTopic() && project.CheckDesription() && project.CheckTechnology()
+            return project.CheckTopic() && project.CheckDesription() && this.technologies.Count > 0
                     && project.CheckFeature() && project.CheckRequirement() && project.CheckInstructorId();
         }
 
@@ -151,19 +149,20 @@ namespace ProjectManagement
 
         private void SolveForCreate()
         {
-            this.project = new Project(cmbIDInstructor.SelectedIndex != -1 ? cmbIDInstructor.SelectedItem.ToString() : string.Empty, 
+            this.project = new Project(cmbIDInstructor.SelectedIndex != -1 ? cmbIDInstructor.SelectedItem.ToString() : string.Empty,
                 gTextBoxTopic.Text, gTextBoxDescription.Text, gTextBoxFunctions.Text, gTextBoxRequirements.Text,
                 DataTypeUtil.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString()),
-                DateTime.Now, EProjectStatus.PUBLISHED, DateTime.Now, this.user.UserId, "xxx");
+                DateTime.Now, EProjectStatus.PUBLISHED, DateTime.Now, this.user.UserId, ((Field)gComboBoxField.SelectedItem).FieldId);
 
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                ProjectDAO.Insert(project);
+                ProjectDAO.Insert(this.project, this.technologies);
                 if (project.CreatedBy != project.InstructorId)
                 {
                     string content = Notification.GetContentTypeProject(user.FullName, project.Topic);
-                    NotificationDAO.Insert(new Notification("xxx", content, Notification.GetNotificationType(project.ProjectId), DateTime.Now));
+                    Notification notification = new Notification("New Project", content, Notification.GetNotificationType(project.ProjectId), DateTime.Now);
+                    NotificationDAO.Insert(notification, project.InstructorId);
                 }
                 this.flagCheck = true;
                 InitCreateState();
@@ -171,14 +170,17 @@ namespace ProjectManagement
         }
         private void SolveForEdit()
         {
-            this.project = new Project(this.project.ProjectId, gTextBoxTopic.Text, gTextBoxDescription.Text,
-                gTextBoxFunctions.Text, gTextBoxRequirements.Text, DataTypeUtil.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString()),
-                DateTime.Now, EProjectStatus.PUBLISHED, this.project.CreatedAt, this.project.CreatedBy, "xxx");
+            this.project.Topic = gTextBoxTopic.Text;
+            this.project.Description = gTextBoxDescription.Text;
+            this.project.Feature = gTextBoxFunctions.Text;
+            this.project.Requirement = gTextBoxRequirements.Text;
+            this.project.MaxMember = DataTypeUtil.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString());
+            this.project.FieldId = ((Field)gComboBoxField.SelectedItem).FieldId;
 
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                ProjectDAO.Update(project);
+                ProjectDAO.Update(this.project, this.technologies);
                 this.flagCheck = true;
                 this.project = ProjectDAO.SelectOnly(project.ProjectId);
                 gButtonCancel.PerformClick();
@@ -187,7 +189,7 @@ namespace ProjectManagement
         private void gButtonCreateOrEdit_Click(object sender, EventArgs e)
         {
             if (flagCreate) SolveForCreate();
-            if (flagEdit) SolveForEdit();
+            else if (flagEdit) SolveForEdit();
         }
 
         #endregion
@@ -204,11 +206,6 @@ namespace ProjectManagement
             project.Description = gTextBoxDescription.Text;
             WinformControlUtil.RunCheckDataValid(project.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
         }
-        private void gTextBoxTechnology_TextChanged(object sender, EventArgs e)
-        {
-            // project.Technology = gTextBoxTechnology.Text;
-            WinformControlUtil.RunCheckDataValid(project.CheckTechnology() || flagCheck, erpTechnology, gTextBoxTechnology, "Technologies cannot be empty");
-        }
         private void gTextBoxFunctions_TextChanged(object sender, EventArgs e)
         {
             project.Feature = gTextBoxFunctions.Text;
@@ -218,6 +215,10 @@ namespace ProjectManagement
         {
             project.Requirement = gTextBoxRequirements.Text;
             WinformControlUtil.RunCheckDataValid(project.CheckRequirement() || flagCheck, erpRequirements, gTextBoxRequirements, "Requirement cannot be empty");
+        }
+        private void flpTechnologyList_Paint(object sender, PaintEventArgs e)
+        {
+            WinformControlUtil.RunCheckDataValid(this.technologies.Count > 0 || flagCheck, erpTechnology, flpTechnologyList, "Technologies cannot be empty");
         }
 
         #endregion
@@ -257,15 +258,41 @@ namespace ProjectManagement
 
         private void gComboBoxTechnology_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Technology technology = (Technology)gComboBoxTechnology.SelectedItem;
             if (flagInitEdit)
             {
-                // gTextBoxTechnology.Text = project.Technology;
+                flpTechnologyList.Controls.Clear();
                 flagInitEdit = false;
                 return;
             }
             if (gComboBoxTechnology.SelectedIndex != -1)
             {
-                gTextBoxTechnology.Text += gComboBoxTechnology.SelectedItem + ", ";
+                UCTechnologyLine line = new UCTechnologyLine(technology);
+                line.TechnologyRemove += GButtonRemove_Click;
+                this.technologies.Add(technology);
+                flpTechnologyList.Controls.Add(line);
+            }
+        }
+        private void GButtonRemove_Click(object sender, EventArgs e)
+        {
+            UCTechnologyLine line = sender as UCTechnologyLine;
+
+            if (line != null)
+            {
+                foreach (Control control in flpTechnologyList.Controls)
+                {
+                    if (control.GetType() == typeof(UCTechnologyLine))
+                    {
+                        UCTechnologyLine techLine = (UCTechnologyLine)control;
+                        if (techLine == line)
+                        {
+                            flpTechnologyList.Controls.Remove(control);
+                            this.technologies.Remove(line.GetTechnology);
+                            control.Dispose();
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -275,7 +302,8 @@ namespace ProjectManagement
 
         private void gButtonTechnologyClear_Click(object sender, EventArgs e)
         {
-            gTextBoxTechnology.Clear();
+            flpTechnologyList.Controls.Clear();
+            this.technologies.Clear();
         }
 
         #endregion

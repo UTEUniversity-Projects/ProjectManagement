@@ -18,7 +18,7 @@ namespace ProjectManagement
     {
         private Team team = new Team();
         private List<Tasks> listTasks = new List<Tasks>();
-        private List<Student> members = new List<Student>();
+        private List<Users> members = new List<Users>();
         private List<double> evaluationOfMembers;
         private List<double> scoreOfMembers;
 

@@ -59,7 +59,7 @@ namespace ProjectManagement
             // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
 
             lblProjectTopic.Text = DataTypeUtil.FormatStringLength(project.Topic, 130);
-            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             lblCreator.Text = creator.FullName;
             lblInstructor.Text = instructor.FullName;
@@ -75,7 +75,7 @@ namespace ProjectManagement
         }
         public void RemoveProject()
         {
-            ProjectDAO.Delete(ProjectDAO.SelectOnly(project.ProjectId));
+            ProjectDAO.Delete(project.ProjectId);
             List<Team> listTeam = TeamDAO.SelectList(this.project.ProjectId);
             TeamDAO.DeleteListTeam(listTeam);
 

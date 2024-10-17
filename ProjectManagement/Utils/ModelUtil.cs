@@ -19,14 +19,26 @@ namespace ProjectManagement.Utils
                 case EModelClassification.STUDENT:
                     cntAccount = DBUtil.GetMaxId(DBTableNames.User, "userId", "role = '" + EnumUtil.GetDisplayName(EModelClassification.STUDENT) + "'");
                     break;
-                case EModelClassification.TEAM:
-                    cntAccount = DBUtil.GetMaxId(DBTableNames.Member, "teamId");
+                case EModelClassification.FIELD:
+                    cntAccount = DBUtil.GetMaxId(DBTableNames.Field, "fieldId");
+                    break;
+                case EModelClassification.TECHNOLOGY:
+                    cntAccount = DBUtil.GetMaxId(DBTableNames.Technology, "technologyId");
+                    break;
+                case EModelClassification.MEDIA:
+                    cntAccount = DBUtil.GetMaxId(DBTableNames.Media, "mediaId");
                     break;
                 case EModelClassification.PROJECT:
                     cntAccount = DBUtil.GetMaxId(DBTableNames.Project, "projectId");
                     break;
+                case EModelClassification.TEAM:
+                    cntAccount = DBUtil.GetMaxId(DBTableNames.Team, "teamId");
+                    break;
                 case EModelClassification.TASK:
                     cntAccount = DBUtil.GetMaxId(DBTableNames.Task, "taskId");
+                    break;
+                case EModelClassification.MEETING:
+                    cntAccount = DBUtil.GetMaxId(DBTableNames.Meeting, "meetingId");
                     break;
                 case EModelClassification.COMMENT:
                     cntAccount = DBUtil.GetMaxId(DBTableNames.Comment, "commentId");
@@ -36,9 +48,6 @@ namespace ProjectManagement.Utils
                     break;
                 case EModelClassification.NOTIFICATION:
                     cntAccount = DBUtil.GetMaxId(DBTableNames.Notification, "notificationId");
-                    break;
-                case EModelClassification.MEETING:
-                    cntAccount = DBUtil.GetMaxId(DBTableNames.Meeting, "idmeeting");
                     break;
             }
 

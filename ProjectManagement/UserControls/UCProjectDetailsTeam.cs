@@ -19,7 +19,7 @@ namespace ProjectManagement
         
         private Team team = new Team();
         private Project project = new Project();
-        private List<Student> members = new List<Student>();
+        private List<Users> members = new List<Users>();
 
         public UCProjectDetailsTeam()
         {

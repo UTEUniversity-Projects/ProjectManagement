@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ProjectManagement.DAOs;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.Utils;
@@ -24,10 +25,10 @@ namespace ProjectManagement
 
             this.project = project;
             // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
-            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             gTextBoxTopic.Text = project.Topic;
-            gTextBoxField.Text = project.FieldId.ToString();
+            gTextBoxField.Text = FieldDAO.SelectOnlyById(project.FieldId).Name;
         }
         public void SetColorViewState(Color color)
         {

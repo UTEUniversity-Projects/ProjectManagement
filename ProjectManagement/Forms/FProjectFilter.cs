@@ -15,6 +15,7 @@ namespace ProjectManagement
         
         private Users user = new Users();
         private List<Project> listProject = new List<Project>();
+        private List<Field> fields = new List<Field>();
 
         private UCUserMiniLine uCCreatorLine = new UCUserMiniLine();
         private UCUserMiniLine uCInstructorLine = new UCUserMiniLine();
@@ -53,11 +54,12 @@ namespace ProjectManagement
         public void SetUpFilter(Users user)
         {
             this.user = user;
+            this.fields = FieldDAO.SelectList();
             InitUserControl();
         }
         private void InitUserControl()
         {
-            EnumUtil.AddEnumsToComboBox(gComboBoxField, typeof(EField));
+            GunaControlUtil.SetComboBoxDisplayAndValue(gComboBoxField, fields, "Name", "FieldId");
             EnumUtil.AddEnumsToComboBox(gComboBoxStatus, typeof(EProjectStatus));
             flagAllTopic = false;
             gButtonTopicSelectAll.PerformClick();
@@ -74,11 +76,11 @@ namespace ProjectManagement
             List<string> list = new List<string>();
 
             cmbIDInstructor.Items.Clear();
-            list.AddRange(UserDAO.SelectListID(EUserRole.LECTURE));
+            list.AddRange(UserDAO.SelectListId(EUserRole.LECTURE));
             foreach (var item in list) cmbIDInstructor.Items.Add(item);
 
             cmbIDCreator.Items.Clear();
-            list.AddRange(UserDAO.SelectListID(EUserRole.STUDENT));
+            list.AddRange(UserDAO.SelectListId(EUserRole.STUDENT));
             foreach (var item in list) cmbIDCreator.Items.Add(item);
 
             cmbIDCreator.Text = string.Empty;

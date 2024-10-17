@@ -169,7 +169,7 @@ namespace ProjectManagement
                 string content = Notification.GetContentTypeMeeting(meeting.Title, host.FullName);
                 var peoples = new List<Users> { instructor };
                 peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
-                NotificationDAO.InsertFollowListUser(this.team.TeamId, content, ENotificationType.MEETING);
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.MEETING);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);
                 gButtonCancel.PerformClick();
@@ -187,7 +187,7 @@ namespace ProjectManagement
                 string content = Notification.GetContentTypeMeetingUpdated(meeting.Title);
                 var peoples = new List<Users> { instructor };
                 peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
-                NotificationDAO.InsertFollowListUser(this.team.TeamId, content, ENotificationType.COMMENT);
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.COMMENT);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);
                 gButtonCancel.PerformClick();

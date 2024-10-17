@@ -91,10 +91,10 @@ namespace ProjectManagement
                 flpComment.ScrollControlIntoView(line);
                 CommentDAO.Insert(comment);
 
-                List<Student> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
-                // peoples.Add(this.instructor);
+                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
+                peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeComment(user.FullName, comment.Content, task.Title);
-                NotificationDAO.InsertFollowListUser(this.team.TeamId, content, Enums.ENotificationType.COMMENT);
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, Enums.ENotificationType.COMMENT);
 
                 gTextBoxComment.Clear();
             }

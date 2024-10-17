@@ -45,28 +45,6 @@ namespace ProjectManagement.DAOs
 
             return DBGetModel.GetModelList(sqlStr, parameters, new TaskMapper());
         }
-        public static Tasks SelectFromComment(string commentId)
-        {
-            string sqlStr = $"SELECT taskId FROM {DBTableNames.Comment} WHERE commentId = @CommentId";
-
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@CommentId", commentId) };
-
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
-
-            if (dt.Rows.Count > 0) return SelectOnly(dt.Rows[0]["taskId"].ToString());
-            return new Tasks();
-        }
-        public static Tasks SelectFromEvaluation(string evaluationId)
-        {
-            string sqlStr = $"SELECT taskId FROM {DBTableNames.Evaluation} WHERE evaluationId = @EvaluationId";
-
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@EvaluationId", evaluationId) };
-
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
-
-            if (dt.Rows.Count > 0) return SelectOnly(dt.Rows[0]["taskId"].ToString());
-            return new Tasks();
-        }
 
         #endregion
 
@@ -76,11 +54,27 @@ namespace ProjectManagement.DAOs
         {
             DBExecution.Insert(task, DBTableNames.Task);
         }
-        public static void Delete(Tasks task)
+
+        public static void Delete(string taskId)
         {
-            EvaluationDAO.DeleteFollowTask(task);
-            DBExecution.Delete(DBTableNames.Task, "taskId", task.TaskId);
+            DBExecution.Delete(DBTableNames.Evaluation, "taskId", taskId);
+            DBExecution.Delete(DBTableNames.TaskStudent, "taskId", taskId);
+            DBExecution.Delete(DBTableNames.Task, "taskId", taskId);
         }
+        public static void DeleteFollowProject(string projectId)
+        {
+            string sqlStr = string.Format("SELECT taskId FROM {0} WHERE projectId = @ProjectId", DBTableNames.Task);
+
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@ProjectId", projectId) };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Delete(row["taskId"].ToString());
+            }
+        }
+
         public static void Update(Tasks task)
         {
             DBExecution.Update(task, DBTableNames.Task, "taskId", task.TaskId);

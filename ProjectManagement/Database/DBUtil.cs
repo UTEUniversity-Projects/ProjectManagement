@@ -1,4 +1,5 @@
 ﻿using ProjectManagement.Mappers;
+using ProjectManagement.Utils;
 using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
@@ -17,6 +18,42 @@ namespace ProjectManagement.Database
             {
                 string paramName = "@" + property.Name;
                 object value = property.GetValue(model);
+
+                if (property.PropertyType.IsEnum)
+                {
+                    value = EnumUtil.GetDisplayName((Enum)value);
+                } 
+                else if (property.PropertyType == typeof(DateTime))
+                {
+                    DateTime dateTime = (DateTime)value;
+                    value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                }
+                else if (property.PropertyType == typeof(DateTime?))
+                {
+                    value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                }
+                else if (property.PropertyType == typeof(bool)) 
+                {
+                    bool boolValue = (bool)value;
+                    value = boolValue ? 1 : 0;
+                }
+                else if (property.PropertyType == typeof(int))
+                {
+                    value = (int)value;
+                }
+                else if(property.PropertyType == typeof(long))
+                {
+                    value = (long)value;
+                }
+                else if (property.PropertyType == typeof(float))
+                {
+                    value = Convert.ToSingle(value);
+                }
+                else if (property == typeof(double))
+                {
+                    value = Convert.ToDouble(value);
+                }
+
                 SqlParameter parameter = new SqlParameter(paramName, value ?? DBNull.Value);
 
                 parameters.Add(parameter);

@@ -22,7 +22,7 @@ namespace ProjectManagement.DAOs
 
         public static Team SelectOnly(string teamId)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE teamId = @TeamId", DBTableNames.Member);
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE teamId = @TeamId", DBTableNames.Team);
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -50,31 +50,21 @@ namespace ProjectManagement.DAOs
         }
         public static Team SelectFollowProject(string projectId)
         {
-            string sqlStr = $"SELECT * FROM {DBTableNames.Team} WHERE projectId = @ProjectId AND status = @Accepted";
+            string sqlStr = $"SELECT * FROM {DBTableNames.Team} WHERE projectId = @ProjectId";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
-                new SqlParameter("@ProjectId", projectId),
-                new SqlParameter("@Accepted", EnumUtil.GetDisplayName(ETeamStatus.ACCEPTED))
+                new SqlParameter("@ProjectId", projectId)
             };
 
             DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
             return SelectOnly(dt.Rows[0]["teamId"].ToString());
         }
-        public static string SelectTeamByIdProject(string projectId)
-        {
-            string sqlStr = $"SELECT teamId FROM {DBTableNames.ProjectStatus} WHERE projectId = @ProjectId";
-
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@projectId", projectId) };
-
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
-            return dt.Rows[0]["teamId"].ToString();
-        }
-        public static List<Team> SelectFollowUser(Users user)
+        public static List<Team> SelectFollowUser(string userId)
         {
             string sqlStr = $"SELECT teamId FROM {DBTableNames.JoinTeam} WHERE studentId = @StudentId";
 
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@StudentId", user.UserId) };
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@StudentId", userId) };
 
             DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
             List<Team> list = new List<Team>();
@@ -92,28 +82,31 @@ namespace ProjectManagement.DAOs
 
         #region TEAM DAO EXECUTION
 
-        public static void Insert(Team team)
+        public static void Insert(Team team, List<Users> members)
         {
             DBExecution.Insert(team, DBTableNames.Team);
+
+            string sqlStr = string.Format("INSERT INTO {0} (teamId, studentId, role, joinAt) " +
+                "VALUES (@TeamId, @StudentId, @Role, @JoinAt)", DBTableNames.JoinTeam);
+
+            foreach (Users student in members)
+            {
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@TeamId", team.TeamId),
+                    new SqlParameter("@StudentId", student.UserId),
+                    new SqlParameter("@Role", EnumUtil.GetDisplayName(ETeamRole.MEMBER)),
+                    new SqlParameter("@JoinAt", DateTime.Now.ToString("yyyy-MM-dd hh:MM:ss"))
+                };
+
+                DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            }
         }
 
-        public static void Delete(Team team)
+        public static void Delete(string teamId)
         {
-            DeleteMember(team.TeamId);
-
-            string sqlStr = string.Format("DELETE FROM {0} WHERE teamId = @TeamId", DBTableNames.Team);
-
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", team.TeamId) };
-
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
-        }
-        private static void DeleteMember(string teamId)
-        {
-            string sqlStr = string.Format("DELETE FROM {0} WHERE teamId = @TeamId", DBTableNames.JoinTeam);
-
-            List<SqlParameter> parameters = new List<SqlParameter>{ new SqlParameter("@TeamId", teamId) };
-
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.Delete(DBTableNames.JoinTeam, "teamId", teamId);
+            DBExecution.Delete(DBTableNames.Team, "teamId", teamId);
         }
         public static void DeleteListTeam(List<Team> listTeam)
         {
@@ -148,18 +141,18 @@ namespace ProjectManagement.DAOs
 
         #region GET MEMBERS
 
-        public static List<Student> GetMembersByTeamId(string teamId)
+        public static List<Users> GetMembersByTeamId(string teamId)
         {
             string sqlStr = $"SELECT * FROM {DBTableNames.JoinTeam} WHERE teamId = @TeamId";
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
 
             DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
-            List<Student> list = new List<Student>();
+            List<Users> list = new List<Users>();
 
             foreach (DataRow row in dataTable.Rows)
             {
-                Student student = StudentDAO.SelectOnlyByID(row["studentId"].ToString());
+                Users student = UserDAO.SelectOnlyByID(row["studentId"].ToString());
                 list.Add(student);
             }
 
@@ -170,15 +163,15 @@ namespace ProjectManagement.DAOs
 
         #region TEAM UTILS
 
-        public static int CountTeamFollowState(Project project)
+        public static int CountTeamFollowState(string projectId, EProjectStatus status)
         {
-            string sqlStr = $"SELECT COUNT(*) AS NumTeams FROM {DBTableNames.ProjectStatus} " +
+            string sqlStr = $"SELECT COUNT(*) AS NumTeams FROM {DBTableNames.Team} " +
                 $"WHERE projectId = @ProjectId and status = @Status";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
-                new SqlParameter("@ProjectId", project.ProjectId),
-                new SqlParameter("@Status", EnumUtil.GetDisplayName(project.Status))
+                new SqlParameter("@ProjectId", projectId),
+                new SqlParameter("@Status", EnumUtil.GetDisplayName(status))
             };
 
             DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);

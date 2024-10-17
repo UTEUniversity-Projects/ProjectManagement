@@ -11,8 +11,6 @@ namespace ProjectManagement
     public partial class UCAccount : UserControl
     {
         private Users user = new Users();
-        private Lecture lecture = new Lecture();
-        private Student student = new Student();
         private Users dynamicUser = new Users();
         private int totalContributions = 0;
 
@@ -28,8 +26,6 @@ namespace ProjectManagement
         public void SetInformation(Users user)
         {
             this.user = user;
-            if (user is Lecture) this.lecture = LectureDAO.SelectOnlyByID(user.UserId);
-            else if (user is Student) this.student = StudentDAO.SelectOnlyByID(user.UserId);
             this.dynamicUser = user.Clone();
             EnumUtil.AddEnumsToComboBox(gComboBoxGender, typeof(EUserGender));
             SetupComboBoxSelectYear();
@@ -39,7 +35,7 @@ namespace ProjectManagement
         {
             gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(user.Avatar);
             lblViewHandle.Text = user.UserName;
-            lblViewRole.Text = user.Role.ToString();
+            lblViewRole.Text = EnumUtil.GetDisplayName(user.Role);
 
             gTextBoxFullname.Text = user.FullName;
             gTextBoxCitizencode.Text = user.CitizenCode;
@@ -48,6 +44,8 @@ namespace ProjectManagement
             gTextBoxEmail.Text = user.Email;
             gTextBoxPhonenumber.Text = user.PhoneNumber;
             gTextBoxUserName.Text = user.UserName;
+            gTextBoxUniversity.Text = user.University;
+            gTextBoxFaculty.Text = user.Faculty;
             gTextBoxWorkcode.Text = user.WorkCode;
 
             GunaControlUtil.SetTextBoxState(gTextBoxUniversity, true);
@@ -94,7 +92,7 @@ namespace ProjectManagement
                 return;
             }
 
-            List<Team> list = TeamDAO.SelectFollowUser(user);
+            List<Team> list = TeamDAO.SelectFollowUser(user.UserId);
             foreach (Team team in list)
             {
                 UCTeamMiniLine line = new UCTeamMiniLine(team);
@@ -107,23 +105,20 @@ namespace ProjectManagement
         public void RunCheckInformation()
         {
             WinformControlUtil.RunCheckDataValid(dynamicUser.CheckFullName() || flagCheck, erpFullName, gTextBoxFullname, "Name cannot be empty");
-            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckCitizenCode() || flagCheck || user.CitizenCode == dynamicUser.CitizenCode,
-                erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckCitizenCode() || flagCheck || user.CitizenCode == dynamicUser.CitizenCode, erpCitizenCode, gTextBoxCitizencode, "Citizen code is already exists or empty");
             WinformControlUtil.RunCheckDataValid(dynamicUser.CheckBirthday() || flagCheck, erpBirthday, gDateTimePickerBirthday, "Not yet 18 years old");
             WinformControlUtil.RunCheckDataValid(dynamicUser.CheckGender() || flagCheck, erpGender, gComboBoxGender, "Gender cannot be empty");
-            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckEmail() || flagCheck || user.Email == dynamicUser.Email,
-                erpEmail, gTextBoxEmail, "Email is already exists or invalid");
-            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckPhoneNumber() || flagCheck || user.PhoneNumber == dynamicUser.PhoneNumber,
-                erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
-            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckUserName() || flagCheck || user.UserName == dynamicUser.UserName,
-                erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckEmail() || flagCheck || user.Email == dynamicUser.Email, erpEmail, gTextBoxEmail, "Email is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckPhoneNumber() || flagCheck || user.PhoneNumber == dynamicUser.PhoneNumber, erpPhonenumber, gTextBoxPhonenumber, "Phone number is already exists or invalid");
+            WinformControlUtil.RunCheckDataValid(dynamicUser.CheckUserName() || flagCheck || user.UserName == dynamicUser.UserName, erpHandle, gTextBoxUserName, "UserName is already exists or invalid");
         }
         private bool CheckInformationValid()
         {
             RunCheckInformation();
 
-            return dynamicUser.CheckFullName() && (dynamicUser.CheckCitizenCode() || user.CitizenCode == dynamicUser.CitizenCode)
-                   && dynamicUser.CheckBirthday() && dynamicUser.CheckGender() && (dynamicUser.CheckEmail() || user.Email == dynamicUser.Email)
+            return dynamicUser.CheckFullName() && dynamicUser.CheckBirthday() && dynamicUser.CheckGender()
+                   && (dynamicUser.CheckCitizenCode() || user.CitizenCode == dynamicUser.CitizenCode)                   
+                   && (dynamicUser.CheckEmail() || user.Email == dynamicUser.Email)
                    && (dynamicUser.CheckPhoneNumber() || user.PhoneNumber == dynamicUser.PhoneNumber)
                    && (dynamicUser.CheckUserName() || user.UserName == dynamicUser.UserName);
         }

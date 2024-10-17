@@ -2,15 +2,18 @@
 {
     public enum EModelClassification
     {
-        MEETING = 11,
         LECTURE = 22,
         STUDENT = 33,
+        FIELD = 88,
+        TECHNOLOGY = 99,
+        MEDIA = 45,
         PROJECT = 44,
         TEAM = 55,
         TASK = 66,
+        MEETING = 11,
         COMMENT = 77,
-        EVALUATION = 88,
-        NOTIFICATION = 99
+        EVALUATION = 85,
+        NOTIFICATION = 95
     }
 
     public enum EDatabaseOperation

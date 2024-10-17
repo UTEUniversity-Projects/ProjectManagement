@@ -11,4 +11,12 @@ namespace ProjectManagement.Enums
         [Display(Name = "Rejected")]
         REJECTED
     }
+
+    public enum ETeamRole
+    {
+        [Display(Name = "Leader")]
+        LEADER,
+        [Display(Name = "Member")]
+        MEMBER
+    }
 }

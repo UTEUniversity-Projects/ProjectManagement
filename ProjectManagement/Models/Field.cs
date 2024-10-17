@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProjectManagement.Models
 {
-    internal class Field
+    public class Field
     {
 
         #region FIELD ATTRIBUTES

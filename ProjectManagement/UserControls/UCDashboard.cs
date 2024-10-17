@@ -16,8 +16,6 @@ namespace ProjectManagement
         private List<Project> currentList = new List<Project>();
         private List<Project> listProject = new List<Project>();
 
-        private ProjectDAO ProjectDAO = new ProjectDAO();
-
         private UCProjectList uCProjectList = new UCProjectList();
         private UCProjectCreate uCProjectCreate = new UCProjectCreate();
         private UCProjectDetails uCProjectDetails = new UCProjectDetails();
@@ -98,7 +96,7 @@ namespace ProjectManagement
         }
         private void UpdateProjectListStuMyTheses()
         {
-            this.currentList = ProjectDAO.SelectListModeMyTheses(this.user.UserId);
+            this.currentList = ProjectDAO.SelectListModeMyProjects(this.user.UserId);
             this.listProject = currentList;
         }
         private void AllButtonStandardColor()

@@ -80,11 +80,10 @@ namespace ProjectManagement
             this.project = ProjectDAO.SelectOnly(project.ProjectId);
 
             // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
-            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             gTextBoxTopic.Text = project.Topic;
-            gTextBoxField.Text = project.FieldId.ToString();
-            // gTextBoxLevel.Text = project.Level.ToString();
+            gTextBoxField.Text = FieldDAO.SelectOnlyById(project.FieldId).Name;
             gTextBoxMembers.Text = project.MaxMember.ToString();
             gTextBoxDescription.Text = project.Description;
         }
@@ -93,7 +92,6 @@ namespace ProjectManagement
             GunaControlUtil.SetTextBoxState(gTextBoxTopic, flagReadOnly);
             GunaControlUtil.SetTextBoxState(gTextBoxDescription, flagReadOnly);
             GunaControlUtil.SetTextBoxState(gTextBoxField, flagReadOnly);
-            GunaControlUtil.SetTextBoxState(gTextBoxLevel, flagReadOnly);
             GunaControlUtil.SetTextBoxState(gTextBoxMembers, flagReadOnly);
         }
         private void SetInitialSate()
@@ -458,11 +456,11 @@ namespace ProjectManagement
                     this.flagEdited = true;
                     this.project.Status = EProjectStatus.PROCESSING;
                     TeamDAO.DeleteListTeam(this.listTeam);
-                    TeamDAO.Insert(team);
+                    TeamDAO.Insert(team, new List<Users>());
                     ProjectDAO.UpdateStatus(this.project, EProjectStatus.PROCESSING);
 
                     string content = Notification.GetContentTypeAccepted(host.FullName, project.Topic);
-                    NotificationDAO.InsertFollowListUser(team.TeamId, content, ENotificationType.PROJECT);
+                    NotificationDAO.InsertFollowTeam(team.TeamId, content, ENotificationType.PROJECT);
 
                     SetInitialSate();
                     SetButtonComplete();

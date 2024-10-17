@@ -86,10 +86,10 @@ namespace ProjectManagement
                 TaskDAO.Insert(task);
                 EvaluationDAO.InsertFollowTeam(instructor.UserId, task.TaskId, team.TeamId);
 
-                List<Student> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
-                // peoples.Add(this.instructor);
+                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
+                peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeTask(creator.FullName, task.Title, project.Topic);
-                NotificationDAO.InsertFollowListUser(this.team.TeamId, content, Enums.ENotificationType.TASK);
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, Enums.ENotificationType.TASK);
 
                 this.flagCheck = true;
                 InitUserControl();

@@ -25,14 +25,13 @@ namespace ProjectManagement.Forms
         }
         private void SetInformation(Project project)
         {
-            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             gTextBoxTopic.Text = project.Topic;
-            gTextBoxField.Text = project.FieldId.ToString();
-            // gTextBoxLevel.Text = project.Level.ToString();
+            gTextBoxField.Text = FieldDAO.SelectOnlyById(project.FieldId).Name;
             gTextBoxMembers.Text = project.MaxMember.ToString();
             gTextBoxDescription.Text = project.Description;
-            // gTextBoxTechnology.Text = project.Technology;
+            gTextBoxTechnology.Text =TechnologyDAO.GetListTechnology(project.ProjectId);
             gTextBoxFunctions.Text = project.Feature;
             gTextBoxRequirements.Text = project.Requirement;
 
@@ -40,7 +39,7 @@ namespace ProjectManagement.Forms
             AddUserLine(UserDAO.SelectOnlyByID(project.InstructorId), flpInstructor);
 
             gTextBoxTeamRegistered.FillColor = gTextBoxStatus.FillColor;
-            gTextBoxTeamRegistered.Text = TeamDAO.CountTeamFollowState(project).ToString() + " teams";
+            gTextBoxTeamRegistered.Text = TeamDAO.CountTeamFollowState(project.ProjectId, project.Status).ToString() + " teams";
 
             // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
         }

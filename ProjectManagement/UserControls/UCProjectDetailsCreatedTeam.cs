@@ -175,18 +175,20 @@ namespace ProjectManagement
             {
                 this.project.Status = EProjectStatus.REGISTERED;
 
-                ProjectDAO.UpdateStatus(this.project, EProjectStatus.REGISTERED);
                 Team team = new Team(gTextBoxTeamName.Text, WinformControlUtil.ImageToName(pictureAvatar), DateTime.Now, this.user.UserId,
                     this.project.ProjectId, ETeamStatus.REGISTERED);
-                TeamDAO.Insert(team);
+
+                TeamDAO.Insert(team, this.members);
+                ProjectDAO.UpdateStatus(this.project, EProjectStatus.REGISTERED);
 
                 string content = Notification.GetContentTypeRegistered(team.TeamName, project.Topic);
-                NotificationDAO.Insert(new Notification("xxx", content, Notification.GetNotificationType(project.ProjectId), DateTime.Now));
+                Notification notification = new Notification(team.TeamName + " just registered", content, Notification.GetNotificationType(project.ProjectId), DateTime.Now);
+                NotificationDAO.Insert(notification, project.InstructorId);
 
                 string message = Notification.GetContentRegisteredMembers(user.FullName, team.TeamName, project.Topic);
-                NotificationDAO.InsertFollowListUser(team.TeamId, message, ENotificationType.PROJECT);
+                NotificationDAO.InsertFollowTeam(team.TeamId, message, ENotificationType.PROJECT);
 
-                MessageBox.Show("Registered successfuly", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                MessageBox.Show("Registered successfully", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                 this.gGradientButtonRegister.Enabled = false;
                 gGradientButtonPerform.PerformClick();
             } 

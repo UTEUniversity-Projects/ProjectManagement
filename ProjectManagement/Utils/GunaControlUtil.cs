@@ -1,4 +1,5 @@
 ﻿using Guna.UI2.WinForms;
+using ProjectManagement.Models;
 
 namespace ProjectManagement.Utils
 {
@@ -26,6 +27,12 @@ namespace ProjectManagement.Utils
                 comboBox.FillColor = Color.White;
                 comboBox.Enabled = true;
             }
+        }
+        public static void SetComboBoxDisplayAndValue<T>(Guna2ComboBox comboBox, List<T> list, string displayMember, string valueMember)
+        {
+            comboBox.DataSource = list;
+            comboBox.DisplayMember = displayMember;
+            comboBox.ValueMember = valueMember;
         }
         public static void SetDatePickerState(Guna2DateTimePicker datePicker, bool onlyView)
         {

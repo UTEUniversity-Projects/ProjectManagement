@@ -1,10 +1,10 @@
-﻿-- DROP DATABASE ProjectManagement;
+﻿--DROP DATABASE ProjectManagement;
 
-CREATE DATABASE ProjectManagement;
-GO
+--CREATE DATABASE ProjectManagement;
+--GO
 
-USE ProjectManagement;
-GO
+--USE ProjectManagement;
+--GO
 
 --DROP TABLE FieldTechnology, FavoriteProject, FavoriteTask, FavoriteNotification, GiveUp, TaskStudent, ProjectTechnology, ProjectMedia, ViewNotification, 
 --Notification, JoinTeam, Evaluation, Comment, Meeting, Task, Team, Project, Media, Technology, Field, Users;
@@ -274,20 +274,20 @@ VALUES
 	
 -- Insert data into Field Table
 INSERT INTO Field (fieldId, name) VALUES
-    ('248800001', 'SoftwareDevelopment'),
-    ('248800002', 'Cybersecurity'),
-    ('248800003', 'DataScienceAndAnalytics'),
-    ('248800004', 'ArtificialIntelligenceAndMachineLearning'),
-    ('248800005', 'CloudComputing'),
-    ('248800006', 'InternetOfThings'),
-    ('248800007', 'MobileDevelopment'),
-    ('248800008', 'WebDevelopment'),
-	('248800009', 'BlockchainTechnology'),
-    ('248800010', 'HumanComputerInteraction'),
-    ('248800011', 'ComputerNetworking'),
-    ('248800012', 'VirtualRealityAndAugmentedReality'),
-    ('248800013', 'BigData'),
-    ('248800014', 'QuantumComputing'),
+    ('248800001', 'Software Development'),
+    ('248800002', 'Cyber Security'),
+    ('248800003', 'Data Science And Analytics'),
+    ('248800004', 'Artificial Intelligence And Machine Learning'),
+    ('248800005', 'Cloud Computing'),
+    ('248800006', 'Internet Of Things'),
+    ('248800007', 'Mobile Development'),
+    ('248800008', 'Web Development'),
+	('248800009', 'Blockchain Technology'),
+    ('248800010', 'Human Computer Interaction'),
+    ('248800011', 'Computer Networking'),
+    ('248800012', 'Virtual Reality And Augmented Reality'),
+    ('248800013', 'Big Data'),
+    ('248800014', 'Quantum Computing'),
     ('248800015', 'Bioinformatics');
 
 -- Insert data into Technology table
@@ -1248,11 +1248,11 @@ VALUES
 INSERT INTO Notification (notificationId, title, content, type, createdAt)
 VALUES
     ('249500001', 'Notification', 
-        'Chris Evans has suggested the [Enhancing Software Security Through Machine Learning] thesis to you', 
-        'Thesis', '2024-04-12 19:12:05'),
+        'Chris Evans has suggested the [Enhancing Software Security Through Machine Learning] project to you', 
+        'Project', '2024-04-12 19:12:05'),
 
     ('249500002', 'Notification', 
-        'David Lee has created a [Research cloud storage solutions] task in the [Implementing cloud computing solutions for efficient data storage and processing] thesis', 
+        'David Lee has created a [Research cloud storage solutions] task in the [Implementing cloud computing solutions for efficient data storage and processing] project', 
         'Task', '2024-04-07 08:15:25'),
 
     ('249500003', 'Notification', 

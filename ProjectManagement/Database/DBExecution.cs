@@ -103,20 +103,28 @@ namespace ProjectManagement.Database
 
         public static void Insert<T>(T model, string tableName)
         {
-            string sqlStr = $"INSERT INTO {tableName} ({string.Join(", ", typeof(T).GetProperties().Select(p => p.Name))}) " +
+            string sqlStr = $"INSERT INTO {tableName} ({string.Join(", ", typeof(T).GetProperties().Select(p => char.ToLower(p.Name[0]) + p.Name.Substring(1)))}) " +
                             $"VALUES ({string.Join(", ", typeof(T).GetProperties().Select(p => "@" + p.Name))})";
 
             List<SqlParameter> parameters = DBUtil.GetSqlParameters(model);
             ExecuteNonQuery(sqlStr, parameters);
         }
-
-        public static void Update<T>(T model, string tableName, string primaryKeyName, object primaryKeyValue)
+        public static void Insert<T>(T model, string tableName, string typeExecution)
         {
-            string sqlStr = $"UPDATE {tableName} SET {string.Join(", ", typeof(T).GetProperties().Select(p => p.Name + " = @" + p.Name))} " +
-                            $"WHERE {primaryKeyName} = @{primaryKeyName}";
+            string sqlStr = $"INSERT INTO {tableName} ({string.Join(", ", typeof(T).GetProperties().Select(p => char.ToLower(p.Name[0]) + p.Name.Substring(1)))}) " +
+                            $"VALUES ({string.Join(", ", typeof(T).GetProperties().Select(p => "@" + p.Name))})";
 
             List<SqlParameter> parameters = DBUtil.GetSqlParameters(model);
-            parameters.Add(new SqlParameter("@" + primaryKeyName, primaryKeyValue));
+            ExecuteNonQuery(sqlStr, parameters, typeExecution);
+        }
+
+        public static void Update<T>(T model, string tableName, string primaryKeyName, string primaryKeyValue)
+        {
+            string sqlStr = $"UPDATE {tableName} SET {string.Join(", ", typeof(T).GetProperties().Select(p => char.ToLower(p.Name[0]) + p.Name.Substring(1) + " = @" + p.Name))} " +
+                            $"WHERE {primaryKeyName} = @{primaryKeyName + "KEY"}";
+
+            List<SqlParameter> parameters = DBUtil.GetSqlParameters(model);
+            parameters.Add(new SqlParameter("@" + primaryKeyName + "KEY", primaryKeyValue));
 
             ExecuteNonQuery(sqlStr, parameters);
         }

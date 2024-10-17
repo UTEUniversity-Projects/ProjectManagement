@@ -61,18 +61,6 @@ namespace ProjectManagement.DAOs
             DBExecution.Update(evaluation, DBTableNames.Evaluation, "evaluationId", evaluation.EvaluationId);
         }
 
-        public static void DeleteFollowTask(Tasks task)
-        {
-            string sqlStr = string.Format("DELETE FROM {0} WHERE taskId = @TaskId", DBTableNames.Evaluation);
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@TaskId", task.TaskId)
-            };
-
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
-        }
-
         #endregion
 
     }

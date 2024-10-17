@@ -12,6 +12,10 @@ namespace ProjectManagement.DAOs
 {
     internal class FieldDAO
     {
+        public static Field SelectOnlyById(string fieldId)
+        {
+            return DBGetModel.GetModel(DBTableNames.Field, "fieldId", fieldId, new FieldMapper());
+        }
         public static List<Field> SelectList()
         {
             string sqlStr = string.Format("SELECT * FROM {0}", DBTableNames.Field);

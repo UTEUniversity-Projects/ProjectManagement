@@ -34,25 +34,38 @@ namespace ProjectManagement.DAOs
 
         #region NOTIFICATION DAO EXECUTION
 
-        public static void Insert(Notification notification)
+        public static void Insert(Notification notification, string userId)
         {
             DBExecution.Insert(notification, DBTableNames.Notification);
+            InsertViewNotification(userId, notification.NotificationId, false);
         }
-        public static void InsertFollowListUser(string teamId, string content, ENotificationType type)
+        public static void InsertFollowTeam(string teamId, string content, ENotificationType type)
         {
             Notification notification = new Notification("Notification", content, type, DateTime.Now);
             DBExecution.Insert(notification, DBTableNames.Notification);
 
-            string sqlStr = string.Format("INSERT INTO {0} VALUES (@UserId, )");
-
-            List<Student> students = TeamDAO.GetMembersByTeamId(teamId);
-
+            List<Users> students = TeamDAO.GetMembersByTeamId(teamId);
 
             foreach (Student student in students)
             {
-
+                InsertViewNotification(student.UserId, notification.NotificationId, false);
             }
         }
+        private static void InsertViewNotification(string userId, string notificationId, bool seen)
+        {
+            string sqlStr = string.Format("INSERT INTO {0} (userId, notificationId, seen) " +
+                "VALUES (@UserId, @NotificationId, @Seen)", DBTableNames.ViewNotification);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("NotificationId", notificationId),
+                new SqlParameter("@Seen", seen == true ? 1 : 0)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }
+
         public static void Delete(Notification notification)
         {
             DBExecution.Delete(DBTableNames.Notification, "notificationId", notification.NotificationId);

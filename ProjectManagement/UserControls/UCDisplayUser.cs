@@ -51,7 +51,7 @@ namespace ProjectManagement
         {
             gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(user.Avatar);
             lblHandle.Text = user.UserName;
-            lblRole.Text = user.Role.ToString();
+            lblRole.Text = EnumUtil.GetDisplayName(user.Role);
             GunaControlUtil.AllButtonStandardColor(this.listButton, this.listImage);
 
             pnlAddUserControl.Controls.Clear();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProjectManagement.Models
 {
-    internal class Technology
+    public class Technology
     {
 
         #region TECHNOLOGY ATTRIBUTES

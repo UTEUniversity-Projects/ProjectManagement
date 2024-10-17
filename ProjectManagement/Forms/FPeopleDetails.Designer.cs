@@ -198,7 +198,7 @@
             gTextBoxGender.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxGender.IconLeft = Properties.Resources.PicGender;
             gTextBoxGender.IconLeftOffset = new Point(5, 0);
-            gTextBoxGender.Location = new Point(21, 196);
+            gTextBoxGender.Location = new Point(21, 244);
             gTextBoxGender.Margin = new Padding(3, 4, 3, 4);
             gTextBoxGender.Name = "gTextBoxGender";
             gTextBoxGender.PasswordChar = '\0';
@@ -238,7 +238,7 @@
             gTextBoxPhonenumber.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxPhonenumber.IconLeft = (Image)resources.GetObject("gTextBoxPhonenumber.IconLeft");
             gTextBoxPhonenumber.IconLeftOffset = new Point(5, 0);
-            gTextBoxPhonenumber.Location = new Point(21, 292);
+            gTextBoxPhonenumber.Location = new Point(21, 148);
             gTextBoxPhonenumber.Margin = new Padding(3, 4, 3, 4);
             gTextBoxPhonenumber.Name = "gTextBoxPhonenumber";
             gTextBoxPhonenumber.PasswordChar = '\0';
@@ -268,7 +268,7 @@
             gTextBoxEmail.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxEmail.IconLeft = (Image)resources.GetObject("gTextBoxEmail.IconLeft");
             gTextBoxEmail.IconLeftOffset = new Point(5, 0);
-            gTextBoxEmail.Location = new Point(21, 244);
+            gTextBoxEmail.Location = new Point(21, 100);
             gTextBoxEmail.Margin = new Padding(3, 4, 3, 4);
             gTextBoxEmail.Name = "gTextBoxEmail";
             gTextBoxEmail.PasswordChar = '\0';
@@ -298,7 +298,7 @@
             gTextBoxBirthday.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxBirthday.IconLeft = (Image)resources.GetObject("gTextBoxBirthday.IconLeft");
             gTextBoxBirthday.IconLeftOffset = new Point(5, 0);
-            gTextBoxBirthday.Location = new Point(21, 148);
+            gTextBoxBirthday.Location = new Point(21, 196);
             gTextBoxBirthday.Margin = new Padding(3, 4, 3, 4);
             gTextBoxBirthday.Name = "gTextBoxBirthday";
             gTextBoxBirthday.PasswordChar = '\0';
@@ -328,7 +328,7 @@
             gTextBoxCitizencode.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxCitizencode.IconLeft = (Image)resources.GetObject("gTextBoxCitizencode.IconLeft");
             gTextBoxCitizencode.IconLeftOffset = new Point(5, 0);
-            gTextBoxCitizencode.Location = new Point(21, 100);
+            gTextBoxCitizencode.Location = new Point(21, 292);
             gTextBoxCitizencode.Margin = new Padding(3, 4, 3, 4);
             gTextBoxCitizencode.Name = "gTextBoxCitizencode";
             gTextBoxCitizencode.PasswordChar = '\0';

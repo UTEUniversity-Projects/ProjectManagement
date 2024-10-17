@@ -29,9 +29,6 @@ namespace ProjectManagement
         private Team team = new Team();
         private Users host = new Users();
 
-        private TeamDAO TeamDAO = new TeamDAO();
-        private TaskDAO TaskDAO = new TaskDAO();
-
         private bool isProcessing = false;
 
         public UCTaskMiniLine(Users host, Users instructor, Project project, Tasks task, bool isProcessing)
@@ -105,7 +102,7 @@ namespace ProjectManagement
                                                     "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                TaskDAO.Delete(task);
+                TaskDAO.Delete(task.TaskId);
                 OnTasksDeleteClicked(EventArgs.Empty);
             }
         }

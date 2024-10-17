@@ -109,8 +109,6 @@
             gButtonLoadLogin = new Guna.UI2.WinForms.Guna2Button();
             erpUniversity = new ErrorProvider(components);
             erpFaculty = new ErrorProvider(components);
-            erpSchoolYear = new ErrorProvider(components);
-            erpMajor = new ErrorProvider(components);
             gShadowPanelRegister.SuspendLayout();
             gShadowPanelAccount.SuspendLayout();
             gShadowPanelPersonalInfo.SuspendLayout();
@@ -130,8 +128,6 @@
             ((System.ComponentModel.ISupportInitialize)erpWorkCode).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpUniversity).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpFaculty).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)erpSchoolYear).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)erpMajor).BeginInit();
             SuspendLayout();
             // 
             // gShadowPanelRegister
@@ -166,7 +162,7 @@
             gButtonRegister.FillColor = Color.FromArgb(2, 0, 214);
             gButtonRegister.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Bold, GraphicsUnit.Point, 0);
             gButtonRegister.ForeColor = Color.White;
-            gButtonRegister.Location = new Point(1029, 467);
+            gButtonRegister.Location = new Point(1029, 452);
             gButtonRegister.Name = "gButtonRegister";
             gButtonRegister.ShadowDecoration.CustomizableEdges = customizableEdges2;
             gButtonRegister.Size = new Size(133, 45);
@@ -190,7 +186,7 @@
             gShadowPanelAccount.Controls.Add(lblUserName);
             gShadowPanelAccount.Controls.Add(gTextBoxEmail);
             gShadowPanelAccount.FillColor = Color.White;
-            gShadowPanelAccount.Location = new Point(506, 26);
+            gShadowPanelAccount.Location = new Point(510, 26);
             gShadowPanelAccount.Name = "gShadowPanelAccount";
             gShadowPanelAccount.Radius = 7;
             gShadowPanelAccount.ShadowColor = Color.Black;
@@ -521,6 +517,7 @@
             gTextBoxFaculty.Size = new Size(320, 40);
             gTextBoxFaculty.TabIndex = 35;
             gTextBoxFaculty.TextOffset = new Point(5, 0);
+            gTextBoxFaculty.TextChanged += gTextBoxFaculty_TextChanged;
             // 
             // gTextBoxUniversity
             // 
@@ -550,6 +547,7 @@
             gTextBoxUniversity.Size = new Size(320, 40);
             gTextBoxUniversity.TabIndex = 34;
             gTextBoxUniversity.TextOffset = new Point(5, 0);
+            gTextBoxUniversity.TextChanged += gTextBoxUniversity_TextChanged;
             // 
             // gTextBoxWorkcode
             // 
@@ -846,16 +844,6 @@
             erpFaculty.ContainerControl = this;
             erpFaculty.Icon = (Icon)resources.GetObject("erpFaculty.Icon");
             // 
-            // erpSchoolYear
-            // 
-            erpSchoolYear.ContainerControl = this;
-            erpSchoolYear.Icon = (Icon)resources.GetObject("erpSchoolYear.Icon");
-            // 
-            // erpMajor
-            // 
-            erpMajor.ContainerControl = this;
-            erpMajor.Icon = (Icon)resources.GetObject("erpMajor.Icon");
-            // 
             // UCDisplayRegister
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -889,8 +877,6 @@
             ((System.ComponentModel.ISupportInitialize)erpWorkCode).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpUniversity).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpFaculty).EndInit();
-            ((System.ComponentModel.ISupportInitialize)erpSchoolYear).EndInit();
-            ((System.ComponentModel.ISupportInitialize)erpMajor).EndInit();
             ResumeLayout(false);
         }
 
@@ -940,7 +926,5 @@
         private Label lblContact;
         private ErrorProvider erpUniversity;
         private ErrorProvider erpFaculty;
-        private ErrorProvider erpSchoolYear;
-        private ErrorProvider erpMajor;
     }
 }

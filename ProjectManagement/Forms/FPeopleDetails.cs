@@ -9,8 +9,6 @@ namespace ProjectManagement
     public partial class FUserDetails : Form
     {
         private Users user = new Users();
-        private Lecture lecture = new Lecture();
-        private Student student = new Student();
 
         private UCStatisticalStudent uCStatisticalStudent = new UCStatisticalStudent();
         private UCStatisticalLecture uCstatisticalLecture = new UCStatisticalLecture();
@@ -26,15 +24,13 @@ namespace ProjectManagement
         public void SetInformation(Users user)
         {
             this.user = user;
-            if (user is Lecture) this.lecture = LectureDAO.SelectOnlyByID(user.UserId);
-            else if (user is Student) this.student = StudentDAO.SelectOnlyByID(user.UserId);
             InitUserControl();
         }
         private void InitUserControl()
         {
             gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(user.Avatar);
             lblViewHandle.Text = user.UserName;
-            lblViewRole.Text = user.Role.ToString();
+            lblViewRole.Text = EnumUtil.GetDisplayName(user.Role);
 
             Action setupRole = (this.user.Role == EUserRole.LECTURE) ? new Action(SetupLectureRole) : new Action(SetupStudentRole);
             setupRole();
@@ -42,7 +38,7 @@ namespace ProjectManagement
             gTextBoxFullname.Text = user.FullName;
             gTextBoxCitizencode.Text = user.CitizenCode;
             gTextBoxBirthday.Text = user.DateOfBirth.ToString("dd/MM/yyyy");   
-            gTextBoxGender.Text = user.Gender.ToString();
+            gTextBoxGender.Text = EnumUtil.GetDisplayName(user.Gender);
             gTextBoxEmail.Text = user.Email;
             gTextBoxPhonenumber.Text = user.PhoneNumber;
 

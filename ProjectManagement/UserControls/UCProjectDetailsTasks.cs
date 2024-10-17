@@ -21,7 +21,6 @@ namespace ProjectManagement
         private Project project = new Project();
         private List<Tasks> listTask = new List<Tasks>();
 
-        private TaskDAO TaskDAO = new TaskDAO();
         private UCTaskCreate uCTaskCreate = new UCTaskCreate();
         private bool isProcessing = true;
 

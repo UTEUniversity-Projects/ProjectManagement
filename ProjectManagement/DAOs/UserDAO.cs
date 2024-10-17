@@ -62,7 +62,7 @@ namespace ProjectManagement.DAOs
 
         #region SELECT LIST ID USER
 
-        public static List<string> SelectListID(EUserRole role)
+        public static List<string> SelectListId(EUserRole role)
         {
             string sqlStr = $"SELECT userId FROM {DBTableNames.User} WHERE role = @Role";
 

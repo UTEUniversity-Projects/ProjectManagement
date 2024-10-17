@@ -121,7 +121,7 @@ namespace ProjectManagement
         private void DRegisterBack_Click(object sender, EventArgs e)
         {
             uCDisplayRegister.FlagCheck = true;
-            uCDisplayRegister.RunCheckInformation();
+            uCDisplayRegister.RunCheckUserInfor();
             SetDisplay(uCDisplayWelcome);
         }
 
