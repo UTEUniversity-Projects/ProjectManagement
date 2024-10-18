@@ -23,7 +23,6 @@ namespace ProjectManagement
         private Users host = new Users();
         private Users creator = new Users();
         private Meeting meeting = new Meeting();
-        private MeetingDAO MeetingDAO = new MeetingDAO();
 
         public UCMeetingCard()
         {
@@ -53,7 +52,7 @@ namespace ProjectManagement
             lblTimeEnd.Text = meeting.TheEnd.ToString("dd/MM/yyyy HH:mm:ss tt");
 
             this.creator = UserDAO.SelectOnlyByID(meeting.CreatedBy);
-            lblCre.Text = "CreatedAt by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
+            lblCre.Text = "Created by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
 
             if (meeting.CreatedBy == host.UserId) gButtonDelete.Show();
             else gButtonDelete.Hide();

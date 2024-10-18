@@ -99,7 +99,7 @@ namespace ProjectManagement
             gDateTimePickerStart.Enabled = false;
 
             Users creator = UserDAO.SelectOnlyByID(meeting.CreatedBy);
-            lblCre.Text = "CreatedAt by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
+            lblCre.Text = "Created by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
             gButtonCancel.Location = new Point(531, 447);
             gButtonCancel.Text = "Close";
             gButtonCancel.Show();
@@ -138,7 +138,7 @@ namespace ProjectManagement
             WinformControlUtil.RunCheckDataValid(meeting.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
             WinformControlUtil.RunCheckDataValid(meeting.CheckLocation() || flagCheck, erpLocation, gTextBoxLocation, "Location cannot be empty");
 
-            return meeting.CheckTitle() && meeting.CheckDescription() && meeting.CheckStart() && meeting.CheckTheEnd() && meeting.CheckLocation();
+            return meeting.CheckTitle() && meeting.CheckDescription() && meeting.CheckStart() && meeting.CheckLocation();
         }
 
         #endregion

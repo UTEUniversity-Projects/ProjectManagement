@@ -61,9 +61,17 @@
             lblAssignStudent = new Label();
             flpMembers = new FlowLayoutPanel();
             gShadowPanelAccountAvatar = new Guna.UI2.WinForms.Guna2ShadowPanel();
+            erpStart = new ErrorProvider(components);
+            erpEnd = new ErrorProvider(components);
+            erpAssign = new ErrorProvider(components);
+            erpPriority = new ErrorProvider(components);
             ((System.ComponentModel.ISupportInitialize)erpTitle).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).BeginInit();
             gShadowPanelAccountAvatar.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)erpStart).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)erpEnd).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)erpAssign).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)erpPriority).BeginInit();
             SuspendLayout();
             // 
             // lblDescription
@@ -229,6 +237,7 @@
             gDateTimePickerEnd.Size = new Size(230, 45);
             gDateTimePickerEnd.TabIndex = 85;
             gDateTimePickerEnd.Value = new DateTime(2024, 5, 8, 8, 42, 56, 890);
+            gDateTimePickerEnd.ValueChanged += gDateTimePickerEnd_ValueChanged;
             // 
             // lblStart
             // 
@@ -258,6 +267,7 @@
             gDateTimePickerStart.Size = new Size(230, 45);
             gDateTimePickerStart.TabIndex = 86;
             gDateTimePickerStart.Value = new DateTime(2024, 5, 8, 8, 42, 56, 890);
+            gDateTimePickerStart.ValueChanged += gDateTimePickerStart_ValueChanged;
             // 
             // gComboBoxPriority
             // 
@@ -323,6 +333,26 @@
             gShadowPanelAccountAvatar.Size = new Size(326, 230);
             gShadowPanelAccountAvatar.TabIndex = 93;
             // 
+            // erpStart
+            // 
+            erpStart.ContainerControl = this;
+            erpStart.Icon = (Icon)resources.GetObject("erpStart.Icon");
+            // 
+            // erpEnd
+            // 
+            erpEnd.ContainerControl = this;
+            erpEnd.Icon = (Icon)resources.GetObject("erpEnd.Icon");
+            // 
+            // erpAssign
+            // 
+            erpAssign.ContainerControl = this;
+            erpAssign.Icon = (Icon)resources.GetObject("erpAssign.Icon");
+            // 
+            // erpPriority
+            // 
+            erpPriority.ContainerControl = this;
+            erpPriority.Icon = (Icon)resources.GetObject("erpPriority.Icon");
+            // 
             // UCTaskCreate
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -348,6 +378,10 @@
             ((System.ComponentModel.ISupportInitialize)erpTitle).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).EndInit();
             gShadowPanelAccountAvatar.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)erpStart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)erpEnd).EndInit();
+            ((System.ComponentModel.ISupportInitialize)erpAssign).EndInit();
+            ((System.ComponentModel.ISupportInitialize)erpPriority).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -371,5 +405,9 @@
         private Label lblAssignStudent;
         private FlowLayoutPanel flpMembers;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelAccountAvatar;
+        private ErrorProvider erpStart;
+        private ErrorProvider erpEnd;
+        private ErrorProvider erpAssign;
+        private ErrorProvider erpPriority;
     }
 }

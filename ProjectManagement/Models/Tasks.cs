@@ -135,6 +135,14 @@ namespace ProjectManagement.Models
         {
             return this.progress >= 0 && this.progress <= 100;
         }
+        public bool CheckStart()
+        {
+            return this.startAt >= DateTime.Now;
+        }
+        public bool CheckEnd()
+        {
+            return this.startAt < this.endAt;
+        }
 
         #endregion
 
