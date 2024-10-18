@@ -134,8 +134,7 @@ namespace ProjectManagement
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                this.task = new Tasks(DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
-                    0.0D, Enums.ETaskPriority.LOW, DateTime.Now, this.creator.UserId, this.project.ProjectId);
+                this.task = new Tasks(gDateTimePickerStart.Value, gDateTimePickerEnd.Value, gTextBoxTitle.Text, gTextBoxDescription.Text, 0.0D, EnumUtil.GetEnumFromDisplayName<ETaskPriority>(gComboBoxPriority.SelectedItem.ToString()), DateTime.Now, this.creator.UserId, this.project.ProjectId);
                 TaskDAO.Insert(task);
                 EvaluationDAO.InsertFollowTeam(instructor.UserId, task.TaskId, team.TeamId);
 
@@ -178,8 +177,17 @@ namespace ProjectManagement
             this.task.EndAt = gDateTimePickerEnd.Value;
             WinformControlUtil.RunCheckDataValid(task.CheckEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "The end time must be after the start time");
         }
+        private void gComboBoxPriority_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (gComboBoxPriority.SelectedItem != null &&
+            Enum.TryParse<ETaskPriority>(gComboBoxPriority.SelectedItem.ToString(), out var priority))
+            {
+                this.task.Priority = priority;
+            }
 
+        }
         #endregion
+
 
     }
 }
