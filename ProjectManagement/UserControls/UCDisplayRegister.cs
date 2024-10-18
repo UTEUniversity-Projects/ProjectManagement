@@ -238,5 +238,33 @@ namespace ProjectManagement
 
         #endregion
 
+        #region Radio Button Checked Changed
+
+        private void gRadioButtonStudent_CheckedChanged(object sender, EventArgs e)
+        {
+            if (gRadioButtonStudent.Checked)
+            {
+                gTextBoxWorkcode.PlaceholderText = "Student code";
+            }
+            else
+            {
+                gTextBoxWorkcode.PlaceholderText = "Lecture code";
+            }
+        }
+
+        private void gRadioButtonLecture_CheckedChanged(object sender, EventArgs e)
+        {
+            if (gRadioButtonLecture.Checked)
+            {
+                gTextBoxWorkcode.PlaceholderText = "Lecture code";
+            }
+            else
+            {
+                gTextBoxWorkcode.PlaceholderText = "Student code";
+            }
+        }
+
+        #endregion
+
     }
 }

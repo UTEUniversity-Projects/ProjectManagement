@@ -26,9 +26,11 @@ namespace ProjectManagement.Database
         public static string ProjectMedia = "ProjectMedia";
         public static string ProjectTechnology = "ProjectTechnology";
         public static string TaskStudent = "TaskStudent";
-        public static string FavoriteProject = "FavoriteProject";
-        public static string FieldTechnology = "FieldTechnology ";
         public static string GiveUp = "GiveUp";
+        public static string FavoriteProject = "FavoriteProject";
+        public static string FavoriteTask = "FavoriteTask";
+        public static string FavoriteNotification = "FavoriteNotification";
+        public static string FieldTechnology = "FieldTechnology ";
 
         public static string Member = "Member";
         public static string ProjectStatus = "ProjectStatus";

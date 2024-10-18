@@ -71,10 +71,10 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Role", EnumUtil.GetDisplayName(role)) 
             };
 
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
             List<string> list = new List<string>();
 
-            foreach (DataRow row in dt.Rows)
+            foreach (DataRow row in dataTable.Rows)
             {
                 list.Add(row["userId"].ToString());
             }
