@@ -12,6 +12,7 @@ using ProjectManagement.Mappers.Implement;
 using System.Data.SqlClient;
 using ProjectManagement.Utils;
 using ProjectManagement.Enums;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement.DAOs
 {
@@ -158,22 +159,24 @@ namespace ProjectManagement.DAOs
 
         #region GET MEMBERS
 
-        public static List<Users> GetMembersByTeamId(string teamId)
+        public static List<Member> GetMembersByTeamId(string teamId)
         {
             string sqlStr = $"SELECT * FROM {DBTableNames.JoinTeam} WHERE teamId = @TeamId";
-
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
-
             DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
-            List<Users> list = new List<Users>();
+
+            List<Member> list = new List<Member>();
 
             foreach (DataRow row in dataTable.Rows)
             {
                 Users student = UserDAO.SelectOnlyByID(row["studentId"].ToString());
-                list.Add(student);
+                ETeamRole role = EnumUtil.GetEnumFromDisplayName<ETeamRole>(row["role"].ToString());
+                DateTime joinAt = DateTime.Parse(row["joinAt"].ToString());
+
+                list.Add(new Member(student, role, joinAt));
             }
 
-            return list;
+            return list.OrderBy(m => m.Role).ToList();
         }
 
         #endregion

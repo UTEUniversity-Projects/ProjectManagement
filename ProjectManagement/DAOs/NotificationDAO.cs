@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 using Microsoft.VisualBasic.ApplicationServices;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement.DAOs
 {
@@ -45,11 +46,11 @@ namespace ProjectManagement.DAOs
             Notification notification = new Notification("Notification", content, type, DateTime.Now);
             DBExecution.Insert(notification, DBTableNames.Notification);
 
-            List<Users> students = TeamDAO.GetMembersByTeamId(teamId);
+            List<Member> members = TeamDAO.GetMembersByTeamId(teamId);
 
-            foreach (Users student in students)
+            foreach (Member member in members)
             {
-                InsertViewNotification(student.UserId, notification.NotificationId, false);
+                InsertViewNotification(member.User.UserId, notification.NotificationId, false);
             }
         }
         private static void InsertViewNotification(string userId, string notificationId, bool seen)

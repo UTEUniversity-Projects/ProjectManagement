@@ -111,7 +111,7 @@ namespace ProjectManagement.Forms
 
                     string content = Notification.GetContentTypeGiveUp(team.TeamName, project.Topic);
                     var peoples = new List<Users>();
-                    peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
+                    peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User));
                     peoples.Add(UserDAO.SelectOnlyByID(project.InstructorId));
                     NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.PROJECT);
 

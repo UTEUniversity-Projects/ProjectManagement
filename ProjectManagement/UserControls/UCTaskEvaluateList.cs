@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.DAOs;
 using ProjectManagement.Enums;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -41,9 +42,9 @@ namespace ProjectManagement
         }
         private void LoadListRoleLecture()
         {
-            foreach (Users user in TeamDAO.GetMembersByTeamId(this.team.TeamId))
+            foreach (Member member in TeamDAO.GetMembersByTeamId(this.team.TeamId))
             {
-                AddUserMiniLine(user);
+                AddUserMiniLine(member.User);
             }
         }
         private void AddUserMiniLine(Users student)

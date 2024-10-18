@@ -1,7 +1,8 @@
 ﻿using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -12,7 +13,8 @@ namespace ProjectManagement
         private Project project = new Project();
 
         private int progress = 0;
-        private List<Tasks> listTasks;
+        private List<Member> members = new List<Member>();
+        private List<Tasks> listTasks = new List<Tasks>();
 
         public FTeamDetails(Team team, Project project)
         {
@@ -26,6 +28,7 @@ namespace ProjectManagement
         {
             this.team = team;
             this.project = project;
+            this.members = TeamDAO.GetMembersByTeamId(team.TeamId);
             this.listTasks = TaskDAO.SelectListByTeam(this.team.TeamId);
             InitUserControl();
         }
@@ -52,15 +55,13 @@ namespace ProjectManagement
             lblViewHandle.Text = DataTypeUtil.FormatStringLength(team.TeamName, 20);
             gTextBoxTeamCode.Text = team.TeamId;
             gTextBoxCreated.Text = team.CreatedAt.ToString("dd/MM/yyyy");
-            gTextBoxTeamMemebrs.Text = TeamDAO.GetMembersByTeamId(team.TeamId).Count.ToString() + " members";
+            gTextBoxTeamMemebrs.Text = this.members.Count.ToString() + " members";
 
             flpMembers.Controls.Clear();
-            foreach (Users user in TeamDAO.GetMembersByTeamId(team.TeamId))
+            foreach (Member member in this.members)
             {
-                UCUserMiniLine line = new UCUserMiniLine(user);
-                line.SetBackGroundColor(SystemColors.ButtonFace);
-                line.SetSize(new Size(340, 60));
-                line.GButtonAdd.Hide();
+                UCUserMiniLine line = new UCUserMiniLine(member.User);
+                line.SetMemberMode(new Size(340, 60), SystemColors.ButtonFace, member.Role);
                 flpMembers.Controls.Add(line);
             }
         }

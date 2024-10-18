@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
+using ProjectManagement.MetaData;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Utils;
@@ -19,7 +20,7 @@ namespace ProjectManagement
 
         private Team team = new Team();
         private Project project = new Project();
-        private List<Users> members = new List<Users>();
+        private List<Member> members = new List<Member>();
 
         public UCProjectDetailsTeam()
         {
