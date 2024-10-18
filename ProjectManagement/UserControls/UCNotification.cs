@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -17,34 +18,34 @@ namespace ProjectManagement
     {
         public event EventHandler NotificationJump;
 
-        private Users host = new Users();
+        private Users current = new Users();
         private Notification notificationClicked = new Notification();
-        private List<Notification> notificationList = new List<Notification>();
+        private List<NotificationMeta> notifications = new List<NotificationMeta>();
 
         public UCNotification()
         {
             InitializeComponent();
         }
-        public void SetInformation(Users host)
+        public void SetInformation(Users current)
         {
-            this.host = host;
+            this.current = current;
             InitUserControl();
         }
         private void InitUserControl()
         {
-            this.notificationList = NotificationDAO.SelectList(host);
+            this.notifications = NotificationDAO.SelectList(current.UserId);
             LoadNotificationList();
         }
         public bool HasNewNotification()
         {
-            return false; // notificationList.Count(n => n.IsSaw == false) > 0;
+            return notifications.Count(n => n.IsSaw == false) > 0;
         }
         private void LoadNotificationList()
         {
             flpNotificationList.Controls.Clear();
-            foreach (Notification notification in notificationList)
+            foreach (NotificationMeta notificationMeta in notifications)
             {
-                UCNotificationLine line = new UCNotificationLine(notification);
+                UCNotificationLine line = new UCNotificationLine(this.current, notificationMeta);
                 line.NotificationDeleteClicked += NotificationDelete_Clicked;
                 line.NotificationLineClicked += NotificationLine_Clicked;
                 flpNotificationList.Controls.Add(line);
