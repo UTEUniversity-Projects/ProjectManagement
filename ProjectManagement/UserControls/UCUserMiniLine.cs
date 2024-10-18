@@ -92,8 +92,7 @@ namespace ProjectManagement
                 gPictureBoxMemRole.Size = new Size(23, 23);
             }
 
-            gPictureBoxMemRole.Location = new Point(220, 15);
-            lblMemRole.Location = new Point(gPictureBoxMemRole.Location.X + 30, 17);
+            gPictureBoxMemRole.Location = new Point(this.Size.Width - 125, 15);
             lblMemRole.Location = new Point(gPictureBoxMemRole.Location.X + 30, 17);
         }
         public void SetDeleteMode(bool deleteMode)

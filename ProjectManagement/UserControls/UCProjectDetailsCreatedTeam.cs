@@ -14,6 +14,7 @@ using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -25,7 +26,7 @@ namespace ProjectManagement
         private Users user = new Users();
         private Project project = new Project();
         private List<Users> listUser = new List<Users>();
-        private List<Users> members = new List<Users>();
+        private List<Member> members = new List<Member>();
 
         private Image pictureAvatar;
         private bool flagCheck = false;
@@ -43,7 +44,9 @@ namespace ProjectManagement
             this.user = user;
             this.project = project;
             InitUserControl();
-            AddMember(this.user);
+            UCUserMiniLine line = new UCUserMiniLine(user);
+            line.SetMemberMode(new Size(310, 60), Color.White, ETeamRole.LEADER);
+            flpTeam.Controls.Add(line);
         }
 
         #endregion
@@ -72,8 +75,9 @@ namespace ProjectManagement
             if (members.Count < this.project.MaxMember)
             {
                 UCUserMiniLine line = new UCUserMiniLine(user);
-                line.SetBackGroundColor(Color.White);
                 line.SetSize(new Size(310, 60));
+                line.SetBackGroundColor(Color.White);
+
                 if (user.UserId == this.user.UserId)
                 {
                     line.SetDeleteMode(false);
@@ -84,7 +88,7 @@ namespace ProjectManagement
                     line.ButtonDeleteClicked += (sender, e) => ButtonDelete_Clicked(sender, e, line);
                 }
                 flpTeam.Controls.Add(line);
-                members.Add(user);
+                members.Add(new Member(user, ETeamRole.MEMBER, DateTime.Now));
             }
             else
             {
@@ -96,14 +100,15 @@ namespace ProjectManagement
         {
             flpSearch.Controls.Clear();
             int maxLine = 4;
-            foreach (Users user in members)
+            foreach (Member member in members)
             {
-                Users foundUser = listUser.Find(p => p.UserId == user.UserId);
+                Users foundUser = listUser.Find(p => p.UserId == member.User.UserId);
                 if (foundUser != null)
                 {
                     listUser.Remove(foundUser);
                 }
             }
+
             int size = Math.Min(maxLine, listUser.Count);
             for (int i = 0; i < size; i++)
             {
@@ -129,12 +134,13 @@ namespace ProjectManagement
             AddMember(user);
             gTextBoxSearch.Text = string.Empty;
         }
-        private void ButtonDelete_Clicked(object sender, EventArgs e, UCUserMiniLine user)
+        private void ButtonDelete_Clicked(object sender, EventArgs e, UCUserMiniLine line)
         {
-            if (user.GetUser.UserId != this.user.UserId)
+            if (line.GetUser.UserId != this.user.UserId)
             {
-                members.Remove(user.GetUser);
-                flpTeam.Controls.Remove(user);
+                Member memberToRemove = this.members.FirstOrDefault(m => m.User.UserId == line.GetUser.UserId);
+                members.Remove(memberToRemove);
+                flpTeam.Controls.Remove(line);
             }
             else
             {
@@ -173,13 +179,16 @@ namespace ProjectManagement
         {
             if (CheckEmpty(gTextBoxTeamName.Text))
             {
-                this.project.Status = EProjectStatus.REGISTERED;
+                this.members.Add(new Member(user, ETeamRole.LEADER, DateTime.Now));
 
                 Team team = new Team(gTextBoxTeamName.Text, WinformControlUtil.ImageToName(pictureAvatar), DateTime.Now, this.user.UserId,
                     this.project.ProjectId, ETeamStatus.REGISTERED);
 
                 TeamDAO.Insert(team, this.members);
                 ProjectDAO.UpdateStatus(this.project, EProjectStatus.REGISTERED);
+
+                this.gGradientButtonRegister.Enabled = false;
+                this.project.Status = EProjectStatus.REGISTERED;
 
                 string content = Notification.GetContentTypeRegistered(team.TeamName, project.Topic);
                 Notification notification = new Notification(team.TeamName + " just registered", content, Notification.GetNotificationType(project.ProjectId), DateTime.Now);
@@ -189,7 +198,7 @@ namespace ProjectManagement
                 NotificationDAO.InsertFollowTeam(team.TeamId, message, ENotificationType.PROJECT);
 
                 MessageBox.Show("Registered successfully", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
-                this.gGradientButtonRegister.Enabled = false;
+
                 gGradientButtonPerform.PerformClick();
             } 
             else
