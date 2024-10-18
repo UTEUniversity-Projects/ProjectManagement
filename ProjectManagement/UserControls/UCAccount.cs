@@ -40,7 +40,7 @@ namespace ProjectManagement
             gTextBoxFullname.Text = user.FullName;
             gTextBoxCitizencode.Text = user.CitizenCode;
             gDateTimePickerBirthday.Value = user.DateOfBirth;
-            gComboBoxGender.SelectedItem = user.Gender.ToString();
+            gComboBoxGender.SelectedItem = EnumUtil.GetDisplayName(user.Gender);
             gTextBoxEmail.Text = user.Email;
             gTextBoxPhonenumber.Text = user.PhoneNumber;
             gTextBoxUserName.Text = user.UserName;

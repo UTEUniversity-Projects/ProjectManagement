@@ -57,8 +57,8 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@ProjectId", projectId)
             };
 
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
-            return SelectOnly(dt.Rows[0]["teamId"].ToString());
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            return SelectOnly(dataTable.Rows[0]["teamId"].ToString());
         }
         public static List<Team> SelectFollowUser(string userId)
         {
@@ -108,6 +108,23 @@ namespace ProjectManagement.DAOs
             DBExecution.Delete(DBTableNames.JoinTeam, "teamId", teamId);
             DBExecution.Delete(DBTableNames.Team, "teamId", teamId);
         }
+        public static void DeleteFollowProject(string projectId)
+        {
+            string sqlStr = $"SELECT teamId FROM {DBTableNames.Team} WHERE projectId = @ProjectId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", projectId)
+            };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Delete(row["teamId"].ToString());
+            }
+        }
+
         public static void DeleteListTeam(List<Team> listTeam)
         {
             foreach (Team team in listTeam)
@@ -174,9 +191,9 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Status", EnumUtil.GetDisplayName(status))
             };
 
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
             int num = 0;
-            int.TryParse(dt.Rows[0]["NumTeams"].ToString(), out num);
+            int.TryParse(dataTable.Rows[0]["NumTeams"].ToString(), out num);
             return num;
         }
 

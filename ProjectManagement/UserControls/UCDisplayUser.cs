@@ -3,6 +3,7 @@ using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.DAOs;
 
 namespace ProjectManagement
 {
@@ -100,6 +101,7 @@ namespace ProjectManagement
         private void gPanelBackAvatar_Click(object sender, EventArgs e)
         {
             GunaControlUtil.AllButtonStandardColor(this.listButton, this.listImage);
+            this.user = UserDAO.SelectOnlyByID(user.UserId);
             pnlAddUserControl.Controls.Clear();
             pnlAddUserControl.Controls.Add(new UCWelcome(this.user));
         }
