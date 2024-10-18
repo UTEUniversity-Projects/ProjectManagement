@@ -138,10 +138,6 @@ namespace ProjectManagement.Models
         {
             return this.startAt >= DateTime.Now;
         }
-        public bool CheckTheEnd()
-        {
-            return true;
-        }
         public bool CheckLocation()
         {
             return this.location != string.Empty;

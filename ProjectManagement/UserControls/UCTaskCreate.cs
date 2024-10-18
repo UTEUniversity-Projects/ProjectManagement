@@ -64,8 +64,11 @@ namespace ProjectManagement
             gTextBoxDescription.Text = string.Empty;
             EnumUtil.AddEnumsToComboBox(gComboBoxPriority, typeof(ETaskPriority));
 
+            gDateTimePickerStart.Value = DateTime.Now.AddMinutes(5);
             gDateTimePickerStart.Format = DateTimePickerFormat.Custom;
             gDateTimePickerStart.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
+
+            gDateTimePickerEnd.Value = DateTime.Now.AddMinutes(5);
             gDateTimePickerEnd.Format = DateTimePickerFormat.Custom;
             gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
 
@@ -93,22 +96,32 @@ namespace ProjectManagement
                 if (WinformControlUtil.ImageEquals(line.GButtonAdd.Image, Properties.Resources.PicItemComplete))
                 {
                     line.GButtonAdd.Image = Properties.Resources.PicItemAdd;
-                    this.students.Add(user);
+                    this.students.Remove(user);
                 }
                 else
                 {
                     line.GButtonAdd.Image = Properties.Resources.PicItemComplete;
-                    this.students.Remove(user);
+                    this.students.Add(user);
                 }
+
+                WinformControlUtil.RunCheckDataValid(CheckAssignStudent(), erpAssign, lblAssignStudent, "You must assign at least one student");
             }
+        }
+
+        private bool CheckAssignStudent()
+        {
+            return this.students.Count > 0;
         }
 
         private bool CheckInformationValid()
         {
             WinformControlUtil.RunCheckDataValid(task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
             WinformControlUtil.RunCheckDataValid(task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(task.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
+            WinformControlUtil.RunCheckDataValid(task.CheckEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "The end time must be after the start time");
+            WinformControlUtil.RunCheckDataValid(CheckAssignStudent() || flagCheck, erpAssign, lblAssignStudent, "You must assign at least one student");
 
-            return task.CheckTitle() && task.CheckDescription();
+            return task.CheckTitle() && task.CheckDescription() && task.CheckStart() && task.CheckEnd() && CheckAssignStudent();
         }
 
         #endregion
@@ -142,7 +155,7 @@ namespace ProjectManagement
 
         #endregion
 
-        #region EVENT TEXTCHANGED
+        #region EVENT TEXT CHANGED and VALUE CHANGED
 
         private void gTextBoxTitle_TextChanged(object sender, EventArgs e)
         {
@@ -153,6 +166,16 @@ namespace ProjectManagement
         {
             this.task.Description = gTextBoxDescription.Text;
             WinformControlUtil.RunCheckDataValid(task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+        }
+        private void gDateTimePickerStart_ValueChanged(object sender, EventArgs e)
+        {
+            this.task.StartAt = gDateTimePickerStart.Value;
+            WinformControlUtil.RunCheckDataValid(task.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
+        }
+        private void gDateTimePickerEnd_ValueChanged(object sender, EventArgs e)
+        {
+            this.task.EndAt = gDateTimePickerEnd.Value;
+            WinformControlUtil.RunCheckDataValid(task.CheckEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "The end time must be after the start time");
         }
 
         #endregion
