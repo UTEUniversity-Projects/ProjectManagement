@@ -2,6 +2,7 @@
 using ProjectManagement.DAOs;
 using ProjectManagement.Enums;
 using ProjectManagement.Forms;
+using ProjectManagement.MetaData;
 using ProjectManagement.Models;
 using ProjectManagement.Utils;
 
@@ -9,14 +10,13 @@ namespace ProjectManagement
 {
     public partial class UCProjectDetails : UserControl
     {
-        
 
         private Project project = new Project();
         private Users host = new Users();
         private Team team = new Team();
         private Users instructor = new Users();
         private Notification notification = new Notification();
-        private List<Team> listTeam = new List<Team>();
+        private List<Team> teams = new List<Team>();
 
         private UCProjectDetailsTeam showTeam = new UCProjectDetailsTeam();
         private UCProjectDetailsRegistered uCProjectDetailsRegistered = new UCProjectDetailsRegistered();
@@ -430,10 +430,10 @@ namespace ProjectManagement
             GunaControlUtil.ButtonSettingColor(gGradientButtonRegistered);
             gPanelDataView.Controls.Clear();
 
-            this.listTeam = TeamDAO.SelectList(this.project.ProjectId);
+            this.teams = TeamDAO.SelectList(this.project.ProjectId);
 
             uCProjectDetailsRegistered.Clear();
-            foreach (Team team in listTeam)
+            foreach (Team team in teams)
             {
                 UCTeamLine line = new UCTeamLine(team);
                 line.ProjectAddAccepted += ProjectAddAccepted_Clicked;
@@ -453,11 +453,13 @@ namespace ProjectManagement
                                                         "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.OK)
                 {
+                    this.teams.Remove(team);
+
+                    TeamDAO.DeleteListTeam(this.teams);
+                    ProjectDAO.UpdateStatus(this.project, EProjectStatus.PROCESSING);
+
                     this.flagEdited = true;
                     this.project.Status = EProjectStatus.PROCESSING;
-                    TeamDAO.DeleteListTeam(this.listTeam);
-                    TeamDAO.Insert(team, new List<Users>());
-                    ProjectDAO.UpdateStatus(this.project, EProjectStatus.PROCESSING);
 
                     string content = Notification.GetContentTypeAccepted(host.FullName, project.Topic);
                     NotificationDAO.InsertFollowTeam(team.TeamId, content, ENotificationType.PROJECT);

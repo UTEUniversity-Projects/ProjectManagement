@@ -83,21 +83,21 @@ namespace ProjectManagement.DAOs
 
         #region TEAM DAO EXECUTION
 
-        public static void Insert(Team team, List<Users> members)
+        public static void Insert(Team team, List<Member> members)
         {
             DBExecution.Insert(team, DBTableNames.Team);
 
             string sqlStr = string.Format("INSERT INTO {0} (teamId, studentId, role, joinAt) " +
                 "VALUES (@TeamId, @StudentId, @Role, @JoinAt)", DBTableNames.JoinTeam);
 
-            foreach (Users student in members)
+            foreach (Member member in members)
             {
                 List<SqlParameter> parameters = new List<SqlParameter>
                 {
                     new SqlParameter("@TeamId", team.TeamId),
-                    new SqlParameter("@StudentId", student.UserId),
-                    new SqlParameter("@Role", EnumUtil.GetDisplayName(ETeamRole.MEMBER)),
-                    new SqlParameter("@JoinAt", DateTime.Now.ToString("yyyy-MM-dd hh:MM:ss"))
+                    new SqlParameter("@StudentId", member.User.UserId),
+                    new SqlParameter("@Role", EnumUtil.GetDisplayName(member.Role)),
+                    new SqlParameter("@JoinAt", member.JoinAt.ToString("yyyy-MM-dd hh:MM:ss"))
                 };
 
                 DBExecution.ExecuteNonQuery(sqlStr, parameters);
@@ -106,8 +106,22 @@ namespace ProjectManagement.DAOs
 
         public static void Delete(string teamId)
         {
-            DBExecution.Delete(DBTableNames.JoinTeam, "teamId", teamId);
-            DBExecution.Delete(DBTableNames.Team, "teamId", teamId);
+            string sqlStr = string.Format("UPDATE {0} SET status = @Rejected WHERE teamId = @TeamId", DBTableNames.Team);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TeamId", teamId),
+                new SqlParameter("@Rejected", EnumUtil.GetDisplayName(ETeamStatus.REJECTED))
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }
+        public static void DeleteListTeam(List<Team> teams)
+        {
+            foreach (Team team in teams)
+            {
+                Delete(team.TeamId);
+            }
         }
         public static void DeleteFollowProject(string projectId)
         {
@@ -124,23 +138,7 @@ namespace ProjectManagement.DAOs
             {
                 Delete(row["teamId"].ToString());
             }
-        }
-
-        public static void DeleteListTeam(List<Team> listTeam)
-        {
-            foreach (Team team in listTeam)
-            {
-                string sqlStr = string.Format("UPDATE {0} SET status = @Rejected WHERE teamId = @TeamId", DBTableNames.Team);
-
-                List<SqlParameter> parameters = new List<SqlParameter>
-                {
-                    new SqlParameter("@TeamId", team.TeamId),
-                    new SqlParameter("@Rejected", EnumUtil.GetDisplayName(ETeamStatus.REJECTED))
-                };
-
-                DBExecution.ExecuteNonQuery(sqlStr, parameters);
-            }
-        }
+        }        
 
         public static void UpdateStatus(string teamId, string status)
         {
