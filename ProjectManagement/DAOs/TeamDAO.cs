@@ -190,7 +190,6 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@ProjectId", projectId),
                 new SqlParameter("@Status", EnumUtil.GetDisplayName(status))
             };
-
             DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
             int num = 0;
             int.TryParse(dataTable.Rows[0]["NumTeams"].ToString(), out num);

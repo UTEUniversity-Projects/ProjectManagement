@@ -183,7 +183,7 @@ namespace ProjectManagement.DAOs
             DBExecution.Delete(DBTableNames.GiveUp, "projectId", projectId);
             DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", projectId);
             DBExecution.Delete(DBTableNames.FavoriteProject, "projectId", projectId);
-
+            
             DBExecution.Delete(DBTableNames.Project, "projectId", projectId);
         }
 
