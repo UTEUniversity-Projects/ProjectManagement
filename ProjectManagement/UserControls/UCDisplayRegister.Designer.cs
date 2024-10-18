@@ -339,7 +339,6 @@
             gRadioButtonStudent.UncheckedState.FillColor = Color.Transparent;
             gRadioButtonStudent.UncheckedState.InnerColor = Color.Transparent;
             gRadioButtonStudent.CheckedChanged += gRadioButtonStudent_CheckedChanged;
-
             // 
             // gTextBoxPhonenumber
             // 
@@ -420,7 +419,6 @@
             gRadioButtonLecture.UncheckedState.FillColor = Color.Transparent;
             gRadioButtonLecture.UncheckedState.InnerColor = Color.Transparent;
             gRadioButtonLecture.CheckedChanged += gRadioButtonLecture_CheckedChanged;
-
             // 
             // lblUserName
             // 

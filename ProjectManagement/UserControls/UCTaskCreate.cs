@@ -12,6 +12,7 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Utils;
 using ProjectManagement.Enums;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -73,15 +74,15 @@ namespace ProjectManagement
             gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
 
             flpMembers.Controls.Clear();
-            foreach (Users user in TeamDAO.GetMembersByTeamId(team.TeamId))
+            foreach (Member member in TeamDAO.GetMembersByTeamId(team.TeamId))
             {
-                UCUserMiniLine line = new UCUserMiniLine(user);
+                UCUserMiniLine line = new UCUserMiniLine(member.User);
                 line.SetBackGroundColor(SystemColors.ButtonFace);
                 line.SetSize(new Size(305, 60));
                 line.GButtonAdd.Location = new Point(250, 10);
                 line.GButtonAdd.HoverState.FillColor = SystemColors.ButtonFace;
                 line.GButtonAdd.HoverState.Image = null;
-                line.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, user);
+                line.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, member.User);
                 line.GButtonAdd.Show();
                 flpMembers.Controls.Add(line);
             }
@@ -138,7 +139,7 @@ namespace ProjectManagement
                 TaskDAO.Insert(task);
                 EvaluationDAO.InsertFollowTeam(instructor.UserId, task.TaskId, team.TeamId);
 
-                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
+                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User).ToList();
                 peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeTask(creator.FullName, task.Title, project.Topic);
                 NotificationDAO.InsertFollowTeam(this.team.TeamId, content, Enums.ENotificationType.TASK);

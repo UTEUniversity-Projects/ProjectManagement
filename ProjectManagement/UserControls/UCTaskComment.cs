@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using ProjectManagement.DAOs;
 using ProjectManagement.Database;
+using ProjectManagement.MetaData;
 using ProjectManagement.Models;
 using ProjectManagement.Utils;
 
@@ -91,7 +92,7 @@ namespace ProjectManagement
                 flpComment.ScrollControlIntoView(line);
                 CommentDAO.Insert(comment);
 
-                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
+                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User).ToList();
                 peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeComment(user.FullName, comment.Content, task.Title);
                 NotificationDAO.InsertFollowTeam(this.team.TeamId, content, Enums.ENotificationType.COMMENT);
