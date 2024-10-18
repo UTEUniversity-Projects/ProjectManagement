@@ -31,11 +31,11 @@ namespace ProjectManagement.DAOs
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
 
-            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
 
-            if (dt.Rows.Count > 0)
+            if (dataTable.Rows.Count > 0)
             {
-                return SelectOnly(dt.Rows[0]["projectId"].ToString());
+                return SelectOnly(dataTable.Rows[0]["projectId"].ToString());
             }
             return new Project();
         }
@@ -176,16 +176,14 @@ namespace ProjectManagement.DAOs
 
         public static void Delete(string projectId)
         {
-            Team team = TeamDAO.SelectFollowProject(projectId);
-            TeamDAO.Delete(team.TeamId);
-
+            TeamDAO.DeleteFollowProject(projectId);
             TaskDAO.DeleteFollowProject(projectId);
 
             DBExecution.Delete(DBTableNames.Meeting, "projectId", projectId);
-            DBExecution.Delete(DBTableNames.ProjectMedia, "projectId", projectId);
-            DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", projectId);
             DBExecution.Delete(DBTableNames.GiveUp, "projectId", projectId);
+            DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", projectId);
             DBExecution.Delete(DBTableNames.FavoriteProject, "projectId", projectId);
+            
             DBExecution.Delete(DBTableNames.Project, "projectId", projectId);
         }
 

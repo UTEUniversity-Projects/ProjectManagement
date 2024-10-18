@@ -743,6 +743,16 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PicItemLeaderKey {
+            get {
+                object obj = ResourceManager.GetObject("PicItemLeaderKey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PicItemLinked {
             get {
                 object obj = ResourceManager.GetObject("PicItemLinked", resourceCulture);
@@ -763,9 +773,10 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap PicItemMember {
+
+        internal static System.Drawing.Bitmap PicItemMemberKey {
             get {
-                object obj = ResourceManager.GetObject("PicItemMember", resourceCulture);
+                object obj = ResourceManager.GetObject("PicItemMemberKey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -946,6 +957,16 @@ namespace ProjectManagement.Properties {
         internal static System.Drawing.Bitmap PicItemUploadWhite32 {
             get {
                 object obj = ResourceManager.GetObject("PicItemUploadWhite32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PicMember {
+            get {
+                object obj = ResourceManager.GetObject("PicMember", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

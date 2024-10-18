@@ -338,6 +338,8 @@
             gRadioButtonStudent.UncheckedState.BorderThickness = 2;
             gRadioButtonStudent.UncheckedState.FillColor = Color.Transparent;
             gRadioButtonStudent.UncheckedState.InnerColor = Color.Transparent;
+            gRadioButtonStudent.CheckedChanged += gRadioButtonStudent_CheckedChanged;
+
             // 
             // gTextBoxPhonenumber
             // 
@@ -417,6 +419,8 @@
             gRadioButtonLecture.UncheckedState.BorderThickness = 2;
             gRadioButtonLecture.UncheckedState.FillColor = Color.Transparent;
             gRadioButtonLecture.UncheckedState.InnerColor = Color.Transparent;
+            gRadioButtonLecture.CheckedChanged += gRadioButtonLecture_CheckedChanged;
+
             // 
             // lblUserName
             // 
@@ -571,7 +575,7 @@
             gTextBoxWorkcode.Name = "gTextBoxWorkcode";
             gTextBoxWorkcode.PasswordChar = '\0';
             gTextBoxWorkcode.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxWorkcode.PlaceholderText = "Work code";
+            gTextBoxWorkcode.PlaceholderText = "Student code";
             gTextBoxWorkcode.SelectedText = "";
             gTextBoxWorkcode.ShadowDecoration.CustomizableEdges = customizableEdges20;
             gTextBoxWorkcode.Size = new Size(320, 40);

@@ -448,9 +448,6 @@
   <data name="PictureTaskGradient" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PictureTaskGradient.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="PicItemMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PicItemMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="PicMiniLineGradientEssay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PicMiniLineGradientEssay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -498,5 +495,14 @@
   </data>
   <data name="PicItemSchoolYear" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PicItemSchoolYear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PicItemLeaderKey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PicItemLeader.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PicMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PicItemMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PicItemMemberKey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PicItemMembers.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

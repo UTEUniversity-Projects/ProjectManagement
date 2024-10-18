@@ -258,7 +258,7 @@ namespace ProjectManagement
         private void SetNewState(EProjectStatus status, Image image, string notification)
         {
             this.project.Status = status;
-            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             gButtonEdit.Hide();
             SetButtonComplete();
@@ -465,7 +465,7 @@ namespace ProjectManagement
                     SetInitialSate();
                     SetButtonComplete();
                     SetButtonEditOrDetails();
-                    gTextBoxStatus.Text = project.Status.ToString();
+                    gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
                     gTextBoxStatus.FillColor = project.GetStatusColor();
                 }
             }
@@ -480,7 +480,7 @@ namespace ProjectManagement
             SetSuccessfullyRegistered();
             this.flagDeleted = true;
             this.project = ProjectDAO.SelectOnly(project.ProjectId);
-            gTextBoxStatus.Text = project.Status.ToString();
+            gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
         }
 
