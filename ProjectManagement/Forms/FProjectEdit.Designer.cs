@@ -45,7 +45,7 @@
             gPanelEdit.Size = new Size(1280, 750);
             gPanelEdit.TabIndex = 0;
             // 
-            // FThesisEdit
+            // FProjectEdit
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -54,9 +54,9 @@
             Controls.Add(gPanelEdit);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            Name = "FThesisEdit";
+            Name = "FProjectEdit";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Thesis Edit";
+            Text = "Project Edit";
             ResumeLayout(false);
         }
 

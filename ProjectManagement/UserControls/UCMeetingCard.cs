@@ -11,25 +11,24 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCMeetingCard : UserControl
     {
         public event EventHandler MeetingCardDeleted;
-        private MyProcess myProcess = new MyProcess();
+        
 
-        private User host = new User();
-        private User creator = new User();
+        private Users host = new Users();
+        private Users creator = new Users();
         private Meeting meeting = new Meeting();
-        private UserDAO peopleDAO = new UserDAO();
-        private MeetingDAO meetingDAO = new MeetingDAO();
 
         public UCMeetingCard()
         {
             InitializeComponent();
         }
-        public UCMeetingCard(Meeting meeting, User host)
+        public UCMeetingCard(Meeting meeting, Users host)
         {
             InitializeComponent();
 
@@ -43,19 +42,19 @@ namespace ProjectManagement
         }
         private void SetInformation()
         {
-            DateTime start = meeting.Start;
+            DateTime start = meeting.StartAt;
             gTextBoxWeekdays.Text = start.ToString("dddd").ToUpper();
             gTextBoxDay.Text = start.ToString("dd");
             gTextBoxMonth.Text = start.ToString("MMMM").ToUpper();
-            lblTitle.Text = myProcess.FormatStringLength(meeting.Title, 30);
+            lblTitle.Text = DataTypeUtil.FormatStringLength(meeting.Title, 30);
             gTextBoxLocation.Text = meeting.Location;
-            lblTimeStart.Text = meeting.Start.ToString("dd/MM/yyyy HH:mm:ss tt");
+            lblTimeStart.Text = meeting.StartAt.ToString("dd/MM/yyyy HH:mm:ss tt");
             lblTimeEnd.Text = meeting.TheEnd.ToString("dd/MM/yyyy HH:mm:ss tt");
 
-            this.creator = peopleDAO.SelectOnlyByID(meeting.IdCreator);
-            lblCre.Text = "Created by " + creator.FullName + " at " + meeting.Created.ToString("dd/MM/yyyy HH:mm:ss tt");
+            this.creator = UserDAO.SelectOnlyByID(meeting.CreatedBy);
+            lblCre.Text = "Created by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
 
-            if (meeting.IdCreator == host.IdAccount) gButtonDelete.Show();
+            if (meeting.CreatedBy == host.UserId) gButtonDelete.Show();
             else gButtonDelete.Hide();
         }
         private void ShowMeetingInformation()
@@ -66,7 +65,7 @@ namespace ProjectManagement
         }
         private void FMeetingDetails_MeetingUpdated(object? sender, EventArgs e)
         {
-            this.meeting = meetingDAO.SelectOnly(this.meeting.IdMeeting);
+            this.meeting = MeetingDAO.SelectOnly(this.meeting.MeetingId);
             SetInformation();
         }
         private void gShadowPanelTeam_Click(object sender, EventArgs e)

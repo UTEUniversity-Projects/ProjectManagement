@@ -4,89 +4,96 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
 {
     public class Team
     {
-        private MyProcess myProcess = new MyProcess();
 
         #region TEAM ATTRIBUTES
 
-        private string idteam;
+        private string teamId;
         private string teamName;
-        private string avatarName;
-        private DateTime created;
-        private List<User> members;
+        private string avatar;
+        private DateTime createdAt;
+        private string createdBy;
+        private string projectId;
+        private ETeamStatus status;
 
         #endregion
 
-        #region TEAM CONTRUCTOR
+        #region TEAM CONTRUCTORS
 
         public Team()
         {
-            this.idteam = string.Empty;
-            this.teamName = "Anonymous";
-            this.avatarName = "PicAvatarDemoUser";
-            this.created = DateTime.Now;
-            this.members = new List<User>();
+            teamId = string.Empty;
+            teamName = "Anonymous";
+            avatar = "PicAvatarDemoUser";
+            createdAt = DateTime.Now;
+            createdBy = string.Empty;
+            projectId = string.Empty;
+            status = default;
         }
-        public Team(List<User> members)
+        public Team(string teamId, string teamName, string avatar, DateTime createdAt, string createdBy, string projectId, ETeamStatus status)
         {
-            this.idteam = myProcess.GenIDClassify(EClassify.Team);
-            this.teamName = "Anonymous";
-            this.avatarName = "PicAvatarDemoUser";
-            this.created = DateTime.Now;
-            this.members = members;
-        }
-        public Team(string teamName, string avatarName, List<User> members)
-        {
-            this.idteam = myProcess.GenIDClassify(EClassify.Team);
+            this.teamId = teamId;
             this.teamName = teamName;
-            this.avatarName = avatarName;
-            this.created = DateTime.Now;
-            this.members = members;
+            this.avatar = avatar;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.projectId = projectId;
+            this.status = status;
         }
-        public Team(string teamName, string avatarName, DateTime created, List<User> members)
+        public Team(string teamName, string avatar, DateTime createdAt, string createdBy, string projectId, ETeamStatus status)
         {
-            this.idteam = myProcess.GenIDClassify(EClassify.Team);
+            this.teamId = ModelUtil.GenerateModelId(EModelClassification.TEAM);
             this.teamName = teamName;
-            this.avatarName = avatarName;
-            this.created = created;
-            this.members = members;
-        }
-        public Team(string idteam, string teamName, string avatarName, DateTime created, List<User> members)
-        {
-            this.idteam = idteam;
-            this.teamName = teamName;
-            this.avatarName = avatarName;
-            this.created = created;
-            this.members = members;
+            this.avatar = avatar;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.projectId = projectId;
+            this.status = status;
         }
 
         #endregion
 
         #region TEAM PROPERTIES
 
-        public string IdTeam
+        public string TeamId
         {
-            get { return this.idteam; }
+            get { return this.teamId; }
+            set { this.teamId = value; }
         }
         public string TeamName
         {
             get { return this.teamName; }
         }
-        public string AvatarName
+        public string Avatar
         {
-            get { return this.avatarName; }
+            get { return this.avatar; }
+            set { this.avatar = value; }
         }
-        public DateTime Created
+        public DateTime CreatedAt
         {
-            get { return this.created; }
+            get { return this.createdAt; }
+            set { this.createdAt = value; }
         }
-        public List<User> Members
+        public string CreatedBy
         {
-            get { return this.members; }
+            get { return this.createdBy; }
+            set { this.createdBy = value; }
+        }
+        public string ProjectId
+        {
+            get { return this.projectId; }
+            set { this.projectId = value; }
+        }
+        public ETeamStatus Status
+        {
+            get { return this.status; }
+            set { this.status = value; }
         }
 
         #endregion

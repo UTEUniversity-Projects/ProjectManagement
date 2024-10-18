@@ -25,8 +25,8 @@ namespace ProjectManagement.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DESKTOP-4FIVTNT\\SQLEXPRESS;Initial Catalog=ThesisManagement;Integrate" +
-            "d Security=True;Encrypt=False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DESKTOP-4FIVTNT\\SQLEXPRESS;Initial Catalog=ProjectManagement;Integrat" +
+            "ed Security=True;Encrypt=False")]
         public string conStr {
             get {
                 return ((string)(this["conStr"]));

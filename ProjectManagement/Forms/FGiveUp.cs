@@ -9,25 +9,19 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Forms
 {
     public partial class FGiveUp : Form
     {
-        public event EventHandler ConfirmedGivingUp;
-        private MyProcess myProcess = new MyProcess();
+        public event EventHandler ConfirmedGivingUp;        
 
-        private Project thesis = new Project();
-        private User represent = new User();
+        private Project project = new Project();
+        private Users represent = new Users();
         private Team team = new Team();
         private GiveUp giveUp = new GiveUp();
-
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private UserDAO peopleDAO = new UserDAO();
-        private ProjectStatusDAO thesisStatusDAO = new ProjectStatusDAO();
-        private GiveUpDAO giveUpDAO = new GiveUpDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
 
         private bool flagCheck = false;
 
@@ -35,49 +29,49 @@ namespace ProjectManagement.Forms
         {
             InitializeComponent();
         }
-        public FGiveUp(Project thesis, User represent, Team team)
+        public FGiveUp(Project project, Users represent, Team team)
         {
             InitializeComponent();
 
-            this.thesis = thesis;
+            this.project = project;
             this.represent = represent;
             this.team = team;
-            this.giveUp = new GiveUp(thesis.IdThesis, represent.IdAccount, team.IdTeam, string.Empty, DateTime.Now);
+            this.giveUp = new GiveUp(project.ProjectId, represent.UserId, gTextBoxReason.Text, DateTime.Now, EGiveUpStatus.PENDING);
             this.flagCheck = false;
             SetUpUserControl();
         }
         public void SetUpUserControl()
         {
-            SetThesis();
+            SetProject();
             SetRepresent();
             SetTeam();
         }
-        private void SetThesis()
+        private void SetProject()
         {
-            UCProjectMiniBoard uCThesisMiniBoard = new UCProjectMiniBoard(thesis);
-            uCThesisMiniBoard.SetColorViewState(SystemColors.ButtonFace);
-            gPanelThesis.Controls.Clear();
-            gPanelThesis.Controls.Add(uCThesisMiniBoard);
+            UCProjectMiniBoard uCProjectMiniBoard = new UCProjectMiniBoard(project);
+            uCProjectMiniBoard.SetColorViewState(SystemColors.ButtonFace);
+            gPanelProject.Controls.Clear();
+            gPanelProject.Controls.Add(uCProjectMiniBoard);
         }
         private void SetRepresent()
         {
-            UCUserMiniLine uCPeopleMiniLine = new UCUserMiniLine(represent);
-            uCPeopleMiniLine.SetSize(new Size(275, 60));
-            uCPeopleMiniLine.SetBackGroundColor(SystemColors.ButtonFace);
-            uCPeopleMiniLine.GButtonAdd.Hide();
+            UCUserMiniLine uCUserMiniLine = new UCUserMiniLine(represent);
+            uCUserMiniLine.SetSize(new Size(275, 60));
+            uCUserMiniLine.SetBackGroundColor(SystemColors.ButtonFace);
+            uCUserMiniLine.GButtonAdd.Hide();
             gPanelRepresent.Controls.Clear();
-            gPanelRepresent.Controls.Add(uCPeopleMiniLine);
+            gPanelRepresent.Controls.Add(uCUserMiniLine);
         }
         private void SetTeam()
         {
-            UCTeamMiniLine uCTeamMiniLine = new UCTeamMiniLine(team);
+            UCTeamLine uCTeamMiniLine = new UCTeamLine(team);
             uCTeamMiniLine.SetSize(new Size(275, 60));
             gPanelTeam.Controls.Clear();
             gPanelTeam.Controls.Add(uCTeamMiniLine);
         }
         public void SetReadOnly(GiveUp giveUp)
         {
-            this.represent = peopleDAO.SelectOnlyByID(giveUp.IdRepresent);
+            this.represent = UserDAO.SelectOnlyByID(giveUp.UserId);
             this.giveUp = giveUp;
             SetReasonReadOnly();
             SetRepresent();
@@ -95,7 +89,7 @@ namespace ProjectManagement.Forms
         }
         private bool CheckInformationValid()
         {
-            myProcess.RunCheckDataValid(giveUp.CheckReason() || flagCheck, erpReason, gTextBoxReason, "Reason cannot be empty");
+            WinformControlUtil.RunCheckDataValid(giveUp.CheckReason() || flagCheck, erpReason, gTextBoxReason, "Reason cannot be empty");
 
             return giveUp.CheckReason();
         }
@@ -108,19 +102,18 @@ namespace ProjectManagement.Forms
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                DialogResult result = MessageBox.Show("The " + team.TeamName + " team definitely refused to complete the " + thesis.Topic + " thesis",
+                DialogResult result = MessageBox.Show("The " + team.TeamName + " team definitely refused to complete the " + project.Topic + " project",
                                                         "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.OK)
                 {
-                    thesisDAO.UpdateStatus(this.thesis, EThesisStatus.GiveUp);
-                    thesisStatusDAO.UpdateThesisStatus(this.team.IdTeam, this.thesis.IdThesis, EThesisStatus.GiveUp);
-                    giveUpDAO.Insert(this.giveUp);
+                    ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
+                    GiveUpDAO.Insert(this.giveUp);
 
-                    string content = Notification.GetContentTypeGiveUp(team.TeamName, thesis.Topic);
-                    var peoples = new List<User>();
-                    peoples.AddRange(team.Members);
-                    peoples.Add(peopleDAO.SelectOnlyByID(thesis.IdInstructor));
-                    notificationDAO.InsertFollowListPeople(represent.IdAccount, thesis.IdThesis, thesis.IdThesis, content, peoples);
+                    string content = Notification.GetContentTypeGiveUp(team.TeamName, project.Topic);
+                    var peoples = new List<Users>();
+                    peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
+                    peoples.Add(UserDAO.SelectOnlyByID(project.InstructorId));
+                    NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.PROJECT);
 
                     ConfirmedGivingUp?.Invoke(this, e);
                     this.Close();
@@ -130,7 +123,7 @@ namespace ProjectManagement.Forms
         private void gTextBoxReason_TextChanged(object sender, EventArgs e)
         {
             giveUp.Reason = gTextBoxReason.Text;
-            myProcess.RunCheckDataValid(giveUp.CheckReason() || flagCheck, erpReason, gTextBoxReason, "Reason cannot be empty");
+            WinformControlUtil.RunCheckDataValid(giveUp.CheckReason() || flagCheck, erpReason, gTextBoxReason, "Reason cannot be empty");
         }
     }
 }

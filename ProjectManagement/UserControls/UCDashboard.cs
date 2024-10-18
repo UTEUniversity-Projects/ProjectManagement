@@ -1,38 +1,27 @@
 ﻿using Guna.UI2.WinForms;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCDashboard : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
-        private Project thesisClicked = new Project();
-        private User people = new User();
+        
+        private Project projectClicked = new Project();
+        private Users user = new Users();
         private List<Project> currentList = new List<Project>();
-        private List<Project> listThesis = new List<Project>();
+        private List<Project> listProject = new List<Project>();
 
-        private ProjectDAO thesisDAO = new ProjectDAO();
-
-        private UCProjectList uCThesisList = new UCProjectList();
-        private UCProjectCreate uCThesisCreate = new UCProjectCreate();
-        private UCProjectDetails uCThesisDetails = new UCProjectDetails();
-        private UCProjectLine thesisLineClicked = new UCProjectLine();
+        private UCProjectList uCProjectList = new UCProjectList();
+        private UCProjectCreate uCProjectCreate = new UCProjectCreate();
+        private UCProjectDetails uCProjectDetails = new UCProjectDetails();
+        private UCProjectLine projectLineClicked = new UCProjectLine();
         private UCDashboardStatistics uCDashboardStatistical = new UCDashboardStatistics();
-        private FProjectFilter fThesisFilter = new FProjectFilter();
+        private FProjectFilter fProjectFilter = new FProjectFilter();
 
         private bool flagStuMyTheses = false;
 
@@ -40,18 +29,18 @@ namespace ProjectManagement
         {
             InitializeComponent();
 
-            #region Record EVENT User control
+            #region Record EVENT Users control
 
-            uCThesisDetails.GButtonBack.Click += ThesisDetailsBack_Clicked;
+            uCProjectDetails.GButtonBack.Click += ProjectDetailsBack_Clicked;
 
-            uCThesisList.GButtonCreateThesis.Click += gGradientButtonCreateThesis_Click;
-            uCThesisList.GButtonFavorite.Click += ByFavorite_Clicked;
-            uCThesisList.GButtonTopic.Click += ByTopic_Clicked;
-            uCThesisList.GButtonFilter.Click += ByFilter_Clicked;
-            uCThesisList.GButtonReset.Click += ResetThesisList_Clicked;
-            uCThesisList.GTextBoxSearch.TextChanged += SearchThesisTopic_TextChanged;
+            uCProjectList.GButtonCreateProject.Click += gGradientButtonCreateProject_Click;
+            uCProjectList.GButtonFavorite.Click += ByFavorite_Clicked;
+            uCProjectList.GButtonTopic.Click += ByTopic_Clicked;
+            uCProjectList.GButtonFilter.Click += ByFilter_Clicked;
+            uCProjectList.GButtonReset.Click += ResetProjectList_Clicked;
+            uCProjectList.GTextBoxSearch.TextChanged += SearchProjectTopic_TextChanged;
 
-            uCThesisCreate.GButtonCancel.Click += gGradientButtonViewThesis_Click;
+            uCProjectCreate.GButtonCancel.Click += gGradientButtonViewProject_Click;
 
             #endregion
 
@@ -68,95 +57,95 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetInformation(User people)
+        public void SetInformation(Users user)
         {
-            this.people = people;
+            this.user = user;
             gGradientButtonProjects.PerformClick();
-            fThesisFilter.SetUpFilter(people);
-            fThesisFilter.ListThesis = this.currentList;
-            fThesisFilter.GButtonFilter.Click += GFilter_Click;
+            fProjectFilter.SetUpFilter(user);
+            fProjectFilter.ListProject = this.currentList;
+            fProjectFilter.GButtonFilter.Click += GFilter_Click;
         }
-        private void UpdateThesisList()
+        private void UpdateProjectList()
         {
             if (flagStuMyTheses)
             {
-                UpdateThesisListStuMyTheses();
+                UpdateProjectListStuMyTheses();
             }
             else
             {
-                if (people.Role == ERole.Lecture) UpdateThesisListLecture();
-                else UpdateThesisListStudent();
+                if (user.Role == EUserRole.LECTURE) UpdateProjectListLecture();
+                else UpdateProjectListStudent();
             }
         }
-        private void UpdateUCThesisLine(bool flag, Project newThesis)
+        private void UpdateUCProjectLine(bool flag, Project newProject)
         {
             if (flag)
             {
-                this.thesisLineClicked.SetInformation(newThesis);
+                this.projectLineClicked.SetInformation(newProject);
             }
         }
-        private void UpdateThesisListLecture()
+        private void UpdateProjectListLecture()
         {
-            this.currentList = thesisDAO.SelectListRoleLecture(this.people.IdAccount);
-            this.listThesis = currentList;
+            this.currentList = ProjectDAO.SelectListRoleLecture(this.user.UserId);
+            this.listProject = currentList;
         }
-        private void UpdateThesisListStudent()
+        private void UpdateProjectListStudent()
         {
-            this.currentList = thesisDAO.SelectListRoleStudent(this.people.IdAccount);
-            this.listThesis = currentList;
+            this.currentList = ProjectDAO.SelectListRoleStudent(this.user.UserId);
+            this.listProject = currentList;
         }
-        private void UpdateThesisListStuMyTheses()
+        private void UpdateProjectListStuMyTheses()
         {
-            this.currentList = thesisDAO.SelectListModeMyTheses(this.people.IdAccount);
-            this.listThesis = currentList;
+            this.currentList = ProjectDAO.SelectListModeMyProjects(this.user.UserId);
+            this.listProject = currentList;
         }
         private void AllButtonStandardColor()
         {
-            myProcess.ButtonStandardColor(gGradientButtonProjects);
-            myProcess.ButtonStandardColor(gGradientButtonStatistics);
+            GunaControlUtil.ButtonStandardColor(gGradientButtonProjects);
+            GunaControlUtil.ButtonStandardColor(gGradientButtonStatistics);
         }
         private void AddUserControl(Guna2GradientButton button, UserControl userControl)
         {
             AllButtonStandardColor();
-            myProcess.ButtonSettingColor(button);
+            GunaControlUtil.ButtonSettingColor(button);
             gPanelDataView.Controls.Clear();
             gPanelDataView.Controls.Add(userControl);
         }
-        private void LoadThesisList()
+        private void LoadProjectList()
         {
-            uCThesisList.Clear();
+            uCProjectList.Clear();
 
-            for (int i = 0; i < listThesis.Count; i++)
+            for (int i = 0; i < listProject.Count; i++)
             {
-                UCProjectLine thesisLine = new UCProjectLine();
-                thesisLine.SetInformation(listThesis[i]);
-                thesisLine.ThesisLineClicked += ThesisLine_Clicked;
-                thesisLine.NotificationJump += ThesisLine_NotificationJump;
-                if (people.Role == ERole.Student) thesisLine.HideToolBar();
-                uCThesisList.AddThesis(thesisLine);
+                UCProjectLine projectLine = new UCProjectLine();
+                projectLine.SetInformation(listProject[i]);
+                projectLine.ProjectLineClicked += ProjectLine_Clicked;
+                projectLine.NotificationJump += ProjectLine_NotificationJump;
+                if (user.Role == EUserRole.STUDENT) projectLine.HideToolBar();
+                uCProjectList.AddProject(projectLine);
             }
-            uCThesisList.SetNumThesis(listThesis.Count, true);
+            uCProjectList.SetNumProject(listProject.Count, true);
         }
         public void NotificationJump(Notification notification) 
         {
-            uCThesisList.NotificationJump(notification);
+            uCProjectList.NotificationJump(notification);
         }
 
         #endregion
 
-        #region EVENT gGradientButtonViewThesis
+        #region EVENT gGradientButtonViewProject
 
-        private void gGradientButtonViewThesis_Click(object sender, EventArgs e)
+        private void gGradientButtonViewProject_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();
-            myProcess.ButtonSettingColor(gGradientButtonProjects);
-            UpdateThesisList();
+            GunaControlUtil.ButtonSettingColor(gGradientButtonProjects);
+            UpdateProjectList();
 
             gPanelDataView.Controls.Clear();
-            uCThesisList.SetFilter(false);
-            gPanelDataView.Controls.Add(uCThesisList);
+            uCProjectList.SetFilter(false);
+            gPanelDataView.Controls.Add(uCProjectList);
             ByStatus_Clicked(sender, e);
-            fThesisFilter.SetUpFilter(people);
+            fProjectFilter.SetUpFilter(user);
         }
 
         #endregion
@@ -166,141 +155,141 @@ namespace ProjectManagement
         private void gGradientButtonStatistical_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();
-            myProcess.ButtonSettingColor(gGradientButtonStatistics);
-            UpdateThesisList();
+            GunaControlUtil.ButtonSettingColor(gGradientButtonStatistics);
+            UpdateProjectList();
 
             gPanelDataView.Controls.Clear();
-            uCDashboardStatistical.SetInformation(this.listThesis);
+            uCDashboardStatistical.SetInformation(this.listProject);
             gPanelDataView.Controls.Add(uCDashboardStatistical);
         }
 
         #endregion
 
-        #region EVENT gGradientButtonCreateThesis
+        #region EVENT gGradientButtonCreateProject
 
-        private void gGradientButtonCreateThesis_Click(object sender, EventArgs e)
+        private void gGradientButtonCreateProject_Click(object sender, EventArgs e)
         {
-            uCThesisCreate.SetCreateState(people);
-            AddUserControl(new Guna2GradientButton(), uCThesisCreate);
+            uCProjectCreate.SetCreateState(user);
+            AddUserControl(new Guna2GradientButton(), uCProjectCreate);
         }
 
         #endregion
 
-        #region THESIS DETAILS
+        #region PROJECT DETAILS
 
-        private void ThesisDetailsBack_Clicked(object sender, EventArgs e)
+        private void ProjectDetailsBack_Clicked(object sender, EventArgs e)
         {
-            UpdateUCThesisLine(uCThesisDetails.ThesisEdited, uCThesisDetails.GetThesis);
-            if (uCThesisDetails.ThesisDeleted) uCThesisList.ThesisDelete_Clicked(this.thesisLineClicked, e);
+            UpdateUCProjectLine(uCProjectDetails.ProjectEdited, uCProjectDetails.GetProject);
+            if (uCProjectDetails.ProjectDeleted) uCProjectList.ProjectDelete_Clicked(this.projectLineClicked, e);
             gPanelDataView.Controls.Clear();
-            gPanelDataView.Controls.Add(uCThesisList);
+            gPanelDataView.Controls.Add(uCProjectList);
         }
 
         #endregion
 
-        #region THESIS LINE 
+        #region PROJECT LINE 
 
-        private void ThesisDetailsShow(UCProjectLine thesisLine)
+        private void ProjectDetailsShow(UCProjectLine projectLine)
         {
             gPanelDataView.Controls.Clear();
-            this.thesisClicked = thesisDAO.SelectOnly(thesisLine.GetIdThesis);
-            this.thesisLineClicked = thesisLine;
-            uCThesisDetails.SetInformation(this.thesisClicked, people, this.flagStuMyTheses);
-            gPanelDataView.Controls.Add(uCThesisDetails);
+            this.projectClicked = ProjectDAO.SelectOnly(projectLine.GetIdProject);
+            this.projectLineClicked = projectLine;
+            uCProjectDetails.SetInformation(this.projectClicked, user, this.flagStuMyTheses);
+            gPanelDataView.Controls.Add(uCProjectDetails);
             
         }
-        private void ThesisLine_Clicked(object sender, EventArgs e)
+        private void ProjectLine_Clicked(object sender, EventArgs e)
         {
-            UCProjectLine thesisLine = sender as UCProjectLine;
+            UCProjectLine projectLine = sender as UCProjectLine;
 
-            if (thesisLine != null)
+            if (projectLine != null)
             {
-                ThesisDetailsShow(thesisLine);
+                ProjectDetailsShow(projectLine);
             }
         }
-        private void ThesisLine_NotificationJump(object sender, EventArgs e)
+        private void ProjectLine_NotificationJump(object sender, EventArgs e)
         {
-            UCProjectLine thesisLine = sender as UCProjectLine;
+            UCProjectLine projectLine = sender as UCProjectLine;
 
-            if (thesisLine != null)
+            if (projectLine != null)
             {
-                ThesisDetailsShow(thesisLine);
-                uCThesisDetails.PerformNotificationClick(thesisLine.GetNotification);
+                ProjectDetailsShow(projectLine);
+                uCProjectDetails.PerformNotificationClick(projectLine.GetNotification);
             }
         }
 
         #endregion
 
-        #region THESIS LIST
+        #region PROJECT LIST
 
         private void ByFavorite_Clicked(object sender, EventArgs e)
         {
-            listThesis.Sort((a, b) => a.IsFavorite == true ? -1 : b.IsFavorite == true ? 1 : 0);
-            LoadThesisList();
+            // listProject.Sort((a, b) => a.IsFavorite == true ? -1 : b.IsFavorite == true ? 1 : 0);
+            LoadProjectList();
         }
         private void ByTopic_Clicked(object sender, EventArgs e)
         {
-            listThesis = listThesis.OrderBy(thesis => thesis.Topic).ToList();
-            LoadThesisList();
+            listProject = listProject.OrderBy(project => project.Topic).ToList();
+            LoadProjectList();
         }
         private void ByFilter_Clicked(object sender, EventArgs e)
         {
-            this.fThesisFilter = new FProjectFilter();
+            this.fProjectFilter = new FProjectFilter();
 
-            fThesisFilter.SetUpFilter(people);
-            fThesisFilter.ListThesis = this.currentList;
-            fThesisFilter.GButtonFilter.Click += GFilter_Click;
-            this.fThesisFilter.ShowDialog();
+            fProjectFilter.SetUpFilter(user);
+            fProjectFilter.ListProject = this.currentList;
+            fProjectFilter.GButtonFilter.Click += GFilter_Click;
+            this.fProjectFilter.ShowDialog();
         }
         private void ByStatus_Clicked(object sender, EventArgs e)
         {
-            listThesis.Sort((a, b) => a.GetPriority().CompareTo(b.GetPriority()));
-            LoadThesisList();
+            listProject.Sort((a, b) => a.GetPriority().CompareTo(b.GetPriority()));
+            LoadProjectList();
         }
-        private void ByThesisCode_Clicked(object sender, EventArgs e)
+        private void ByProjectCode_Clicked(object sender, EventArgs e)
         {
-            listThesis = listThesis.OrderBy(thesis => thesis.IdThesis).ToList();
-            LoadThesisList();
+            listProject = listProject.OrderBy(project => project.ProjectId).ToList();
+            LoadProjectList();
         }
         private void GFilter_Click(object sender, EventArgs e)
         {
-            uCThesisList.SetFilter(true);
-            List<Project> listFilter = fThesisFilter.ListThesis;
-            this.listThesis = currentList.Where(t => listFilter.Any(t2 => t2.IdThesis == t.IdThesis)).ToList();
-            LoadThesisList();
+            uCProjectList.SetFilter(true);
+            List<Project> listFilter = fProjectFilter.ListProject;
+            this.listProject = currentList.Where(t => listFilter.Any(t2 => t2.ProjectId == t.ProjectId)).ToList();
+            LoadProjectList();
         }
-        private void ResetThesisList_Clicked(object sender, EventArgs e)
+        private void ResetProjectList_Clicked(object sender, EventArgs e)
         {
-            gGradientButtonViewThesis_Click(sender, e);
+            gGradientButtonViewProject_Click(sender, e);
         }
 
         #endregion
 
         #region FUNCTIONS SEARCH
 
-        private List<Project> GetThesisListByTopic(Guna2TextBox textBox)
+        private List<Project> GetProjectListByTopic(Guna2TextBox textBox)
         {
-            if (people.Role == ERole.Lecture)
+            if (user.Role == EUserRole.LECTURE)
             {
 
-                return thesisDAO.SearchRoleLecture(this.people.IdAccount, textBox.Text);
+                return ProjectDAO.SearchRoleLecture(this.user.UserId, textBox.Text);
             }
             else
             {
-                return thesisDAO.SearchRoleStudent(textBox.Text);
+                return ProjectDAO.SearchRoleStudent(textBox.Text);
             }
         }
-        private void SearchThesisTopic_TextChanged(object sender, EventArgs e)
+        private void SearchProjectTopic_TextChanged(object sender, EventArgs e)
         {
             Guna2TextBox textBox = sender as Guna2TextBox;
 
             if (textBox != null)
             {
-                List<Project> listFilter = GetThesisListByTopic(textBox);
-                List<Project> temp = this.listThesis;
-                this.listThesis = listThesis.Where(t => listFilter.Any(t2 => t2.IdThesis == t.IdThesis)).ToList();
-                LoadThesisList();
-                this.listThesis = temp;
+                List<Project> listFilter = GetProjectListByTopic(textBox);
+                List<Project> temp = this.listProject;
+                this.listProject = listProject.Where(t => listFilter.Any(t2 => t2.ProjectId == t.ProjectId)).ToList();
+                LoadProjectList();
+                this.listProject = temp;
             }
         }
 

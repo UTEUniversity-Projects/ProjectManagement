@@ -65,9 +65,9 @@
             lblOrganization = new Label();
             gShadowPanelMemberList = new Guna.UI2.WinForms.Guna2ShadowPanel();
             flpMembers = new FlowLayoutPanel();
-            lblThesisTopic = new Label();
+            lblProjectTopic = new Label();
             lblMember = new Label();
-            gShadowPanelThesis = new Guna.UI2.WinForms.Guna2ShadowPanel();
+            gShadowPanelProject = new Guna.UI2.WinForms.Guna2ShadowPanel();
             gShadowPanelTotalProcess = new Guna.UI2.WinForms.Guna2ShadowPanel();
             gTextBoxTeamMemebrs = new Guna.UI2.WinForms.Guna2TextBox();
             lblViewHandle = new Label();
@@ -183,7 +183,7 @@
             gTextBoxCreated.Name = "gTextBoxCreated";
             gTextBoxCreated.PasswordChar = '\0';
             gTextBoxCreated.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxCreated.PlaceholderText = "Created date";
+            gTextBoxCreated.PlaceholderText = "CreatedAt date";
             gTextBoxCreated.ReadOnly = true;
             gTextBoxCreated.SelectedText = "";
             gTextBoxCreated.ShadowDecoration.CustomizableEdges = customizableEdges6;
@@ -235,9 +235,9 @@
             // 
             gShadowPanelMemberList.BackColor = Color.Transparent;
             gShadowPanelMemberList.Controls.Add(flpMembers);
-            gShadowPanelMemberList.Controls.Add(lblThesisTopic);
+            gShadowPanelMemberList.Controls.Add(lblProjectTopic);
             gShadowPanelMemberList.Controls.Add(lblMember);
-            gShadowPanelMemberList.Controls.Add(gShadowPanelThesis);
+            gShadowPanelMemberList.Controls.Add(gShadowPanelProject);
             gShadowPanelMemberList.Controls.Add(gShadowPanelTotalProcess);
             gShadowPanelMemberList.FillColor = Color.White;
             gShadowPanelMemberList.Location = new Point(22, 380);
@@ -258,15 +258,15 @@
             flpMembers.Size = new Size(355, 266);
             flpMembers.TabIndex = 12;
             // 
-            // lblThesisTopic
+            // lblProjectTopic
             // 
-            lblThesisTopic.AutoSize = true;
-            lblThesisTopic.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblThesisTopic.Location = new Point(361, 25);
-            lblThesisTopic.Name = "lblThesisTopic";
-            lblThesisTopic.Size = new Size(155, 28);
-            lblThesisTopic.TabIndex = 11;
-            lblThesisTopic.Text = "THESIS TOPIC";
+            lblProjectTopic.AutoSize = true;
+            lblProjectTopic.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblProjectTopic.Location = new Point(361, 25);
+            lblProjectTopic.Name = "lblProjectTopic";
+            lblProjectTopic.Size = new Size(155, 28);
+            lblProjectTopic.TabIndex = 11;
+            lblProjectTopic.Text = "PROJECT TOPIC";
             // 
             // lblMember
             // 
@@ -278,18 +278,18 @@
             lblMember.TabIndex = 11;
             lblMember.Text = "MEMBERS";
             // 
-            // gShadowPanelThesis
+            // gShadowPanelProject
             // 
-            gShadowPanelThesis.BackColor = Color.Transparent;
-            gShadowPanelThesis.FillColor = Color.White;
-            gShadowPanelThesis.Location = new Point(344, 54);
-            gShadowPanelThesis.Name = "gShadowPanelThesis";
-            gShadowPanelThesis.Radius = 10;
-            gShadowPanelThesis.ShadowColor = Color.Black;
-            gShadowPanelThesis.ShadowShift = 0;
-            gShadowPanelThesis.ShadowStyle = Guna.UI2.WinForms.Guna2ShadowPanel.ShadowMode.ForwardDiagonal;
-            gShadowPanelThesis.Size = new Size(399, 266);
-            gShadowPanelThesis.TabIndex = 63;
+            gShadowPanelProject.BackColor = Color.Transparent;
+            gShadowPanelProject.FillColor = Color.White;
+            gShadowPanelProject.Location = new Point(344, 54);
+            gShadowPanelProject.Name = "gShadowPanelProject";
+            gShadowPanelProject.Radius = 10;
+            gShadowPanelProject.ShadowColor = Color.Black;
+            gShadowPanelProject.ShadowShift = 0;
+            gShadowPanelProject.ShadowStyle = Guna.UI2.WinForms.Guna2ShadowPanel.ShadowMode.ForwardDiagonal;
+            gShadowPanelProject.Size = new Size(399, 266);
+            gShadowPanelProject.TabIndex = 63;
             // 
             // gShadowPanelTotalProcess
             // 
@@ -557,8 +557,8 @@
         private FlowLayoutPanel flpMembers;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelTotalProcess;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxTeamMemebrs;
-        private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelThesis;
-        private Label lblThesisTopic;
+        private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelProject;
+        private Label lblProjectTopic;
         private Guna.UI2.WinForms.Guna2ShadowPanel guna2ShadowPanel2;
         private Label lblTotalProgress;
         private Guna.UI2.WinForms.Guna2ProgressBar gProgressBar;

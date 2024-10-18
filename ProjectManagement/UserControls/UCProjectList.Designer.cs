@@ -50,17 +50,17 @@
             gGradientButtonActions = new Guna.UI2.WinForms.Guna2GradientButton();
             gShadowPanelProjects = new Guna.UI2.WinForms.Guna2ShadowPanel();
             lblNoteStatisProjects = new Label();
-            gPictureBoxItemThesis = new Guna.UI2.WinForms.Guna2PictureBox();
-            lblNumThesis = new Label();
+            gPictureBoxItemProject = new Guna.UI2.WinForms.Guna2PictureBox();
+            lblNumProject = new Label();
             gShadowPanelSearch = new Guna.UI2.WinForms.Guna2ShadowPanel();
             gButtonResetList = new Guna.UI2.WinForms.Guna2Button();
             gTextBoxSearch = new Guna.UI2.WinForms.Guna2TextBox();
             lblResetList = new Label();
             gGradientButtonTag = new Guna.UI2.WinForms.Guna2GradientButton();
-            flpThesisList = new FlowLayoutPanel();
+            flpProjectList = new FlowLayoutPanel();
             gGradientButtonCreateProject = new Guna.UI2.WinForms.Guna2GradientButton();
             gShadowPanelProjects.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemThesis).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemProject).BeginInit();
             gShadowPanelSearch.SuspendLayout();
             SuspendLayout();
             // 
@@ -139,8 +139,8 @@
             // 
             gShadowPanelProjects.BackColor = Color.Transparent;
             gShadowPanelProjects.Controls.Add(lblNoteStatisProjects);
-            gShadowPanelProjects.Controls.Add(gPictureBoxItemThesis);
-            gShadowPanelProjects.Controls.Add(lblNumThesis);
+            gShadowPanelProjects.Controls.Add(gPictureBoxItemProject);
+            gShadowPanelProjects.Controls.Add(lblNumProject);
             gShadowPanelProjects.FillColor = Color.White;
             gShadowPanelProjects.Location = new Point(63, 7);
             gShadowPanelProjects.Name = "gShadowPanelProjects";
@@ -162,29 +162,29 @@
             lblNoteStatisProjects.TabIndex = 9;
             lblNoteStatisProjects.Text = "projects";
             // 
-            // gPictureBoxItemThesis
+            // gPictureBoxItemProject
             // 
-            gPictureBoxItemThesis.CustomizableEdges = customizableEdges7;
-            gPictureBoxItemThesis.FillColor = Color.Transparent;
-            gPictureBoxItemThesis.Image = (Image)resources.GetObject("gPictureBoxItemThesis.Image");
-            gPictureBoxItemThesis.ImageRotate = 0F;
-            gPictureBoxItemThesis.Location = new Point(17, 12);
-            gPictureBoxItemThesis.Name = "gPictureBoxItemThesis";
-            gPictureBoxItemThesis.ShadowDecoration.CustomizableEdges = customizableEdges8;
-            gPictureBoxItemThesis.Size = new Size(50, 50);
-            gPictureBoxItemThesis.SizeMode = PictureBoxSizeMode.StretchImage;
-            gPictureBoxItemThesis.TabIndex = 10;
-            gPictureBoxItemThesis.TabStop = false;
+            gPictureBoxItemProject.CustomizableEdges = customizableEdges7;
+            gPictureBoxItemProject.FillColor = Color.Transparent;
+            gPictureBoxItemProject.Image = (Image)resources.GetObject("gPictureBoxItemProject.Image");
+            gPictureBoxItemProject.ImageRotate = 0F;
+            gPictureBoxItemProject.Location = new Point(17, 12);
+            gPictureBoxItemProject.Name = "gPictureBoxItemProject";
+            gPictureBoxItemProject.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            gPictureBoxItemProject.Size = new Size(50, 50);
+            gPictureBoxItemProject.SizeMode = PictureBoxSizeMode.StretchImage;
+            gPictureBoxItemProject.TabIndex = 10;
+            gPictureBoxItemProject.TabStop = false;
             // 
-            // lblNumThesis
+            // lblNumProject
             // 
-            lblNumThesis.AutoSize = true;
-            lblNumThesis.Font = new Font("Trebuchet MS", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNumThesis.Location = new Point(78, 12);
-            lblNumThesis.Name = "lblNumThesis";
-            lblNumThesis.Size = new Size(44, 32);
-            lblNumThesis.TabIndex = 11;
-            lblNumThesis.Text = "24";
+            lblNumProject.AutoSize = true;
+            lblNumProject.Font = new Font("Trebuchet MS", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblNumProject.Location = new Point(78, 12);
+            lblNumProject.Name = "lblNumProject";
+            lblNumProject.Size = new Size(44, 32);
+            lblNumProject.TabIndex = 11;
+            lblNumProject.Text = "24";
             // 
             // gShadowPanelSearch
             // 
@@ -287,13 +287,13 @@
             gGradientButtonTag.TabIndex = 17;
             gGradientButtonTag.Text = "#";
             // 
-            // flpThesisList
+            // flpProjectList
             // 
-            flpThesisList.AutoScroll = true;
-            flpThesisList.Location = new Point(8, 135);
-            flpThesisList.Name = "flpThesisList";
-            flpThesisList.Size = new Size(1262, 605);
-            flpThesisList.TabIndex = 21;
+            flpProjectList.AutoScroll = true;
+            flpProjectList.Location = new Point(8, 135);
+            flpProjectList.Name = "flpProjectList";
+            flpProjectList.Size = new Size(1262, 605);
+            flpProjectList.TabIndex = 21;
             // 
             // gGradientButtonCreateProject
             // 
@@ -329,7 +329,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ButtonFace;
             Controls.Add(gGradientButtonCreateProject);
-            Controls.Add(flpThesisList);
+            Controls.Add(flpProjectList);
             Controls.Add(gShadowPanelSearch);
             Controls.Add(gShadowPanelProjects);
             Controls.Add(gGradientButtonProjectTopic);
@@ -340,7 +340,7 @@
             Size = new Size(1280, 750);
             gShadowPanelProjects.ResumeLayout(false);
             gShadowPanelProjects.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemThesis).EndInit();
+            ((System.ComponentModel.ISupportInitialize)gPictureBoxItemProject).EndInit();
             gShadowPanelSearch.ResumeLayout(false);
             gShadowPanelSearch.PerformLayout();
             ResumeLayout(false);
@@ -352,12 +352,12 @@
         private Guna.UI2.WinForms.Guna2GradientButton gGradientButtonActions;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelProjects;
         private Label lblNoteStatisProjects;
-        private Guna.UI2.WinForms.Guna2PictureBox gPictureBoxItemThesis;
-        private Label lblNumThesis;
+        private Guna.UI2.WinForms.Guna2PictureBox gPictureBoxItemProject;
+        private Label lblNumProject;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelSearch;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxSearch;
         private Guna.UI2.WinForms.Guna2GradientButton gGradientButtonTag;
-        private FlowLayoutPanel flpThesisList;
+        private FlowLayoutPanel flpProjectList;
         private Guna.UI2.WinForms.Guna2Button gButtonResetList;
         private Label lblResetList;
         private Guna.UI2.WinForms.Guna2GradientButton gGradientButtonCreateProject;

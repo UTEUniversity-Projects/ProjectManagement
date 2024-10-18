@@ -4,115 +4,108 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic.ApplicationServices;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Mappers.Implement;
+using System.Data.SqlClient;
+using ProjectManagement.Utils;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace ProjectManagement.DAOs
 {
     internal class UserDAO : DBConnection
     {
-        private MyProcess myProcess = new MyProcess();
 
-        public UserDAO() { }
+        #region SELECT USER
 
-        #region SELECT PEOPLE
-
-        public List<User> SelectListByUserName(string username, ERole role)
+        public static List<Users> SelectListByUserName(string userName, EUserRole role)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE handle LIKE '{1}%' and role = '{2}'",
-                                DBTableNames.DBPeople, username, role);
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE userName LIKE @UserNameSyntax AND role = @Role",
+                                DBTableNames.User);
 
-            DataTable dataTable = Select(command);
-
-            List<User> list = new List<User>();
-            foreach (DataRow row in dataTable.Rows)
+            List<SqlParameter> parameters = new List<SqlParameter>
             {
-                list.Add(GetFromDataRow(row));
-            }
+                new SqlParameter("@UserNameSyntax", userName + "%"),
+                new SqlParameter("@Role", EnumUtil.GetDisplayName(role))
+            };
 
-            return list;
+            return DBGetModel.GetModelList(sqlStr, parameters, new UserMapper());
         }
-        public User SelectOnlyByID(string idPeople)
+        public static Users SelectOnlyByID(string userId)
         {
-            DataTable dt = Select(string.Format("SELECT * FROM {0} WHERE idaccount = '{1}'", DBTableNames.DBPeople, idPeople));
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE userId = @UserId", DBTableNames.User);
 
-            if (dt.Rows.Count > 0) return GetFromDataRow(dt.Rows[0]);
-            return new User();
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId)
+            };
+
+            return DBGetModel.GetModel(sqlStr, parameters, new UserMapper());
         }
-        public User SelectOnlyByEmailAndPassword(string email, string password)
+        public static Users SelectOnlyByEmailAndPassword(string email, string password)
         {
-            DataTable dt = Select(string.Format("SELECT * FROM {0} WHERE email = '{1}' and password = '{2}'",
-                                        DBTableNames.DBPeople, email, password));
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE email = @Email AND password = @Password",
+                                        DBTableNames.User);
 
-            if (dt.Rows.Count > 0) return GetFromDataRow(dt.Rows[0]);
-            return null;
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Email", email),
+                new SqlParameter("@Password", password)
+            };
+
+            return DBGetModel.GetModel(sqlStr, parameters, new UserMapper());
         }        
 
         #endregion
 
-        #region SELECT LIST ID PEOPLE
+        #region SELECT LIST ID USER
 
-        public List<string> SelectListID(ERole role)
+        public static List<string> SelectListId(EUserRole role)
         {
-            string command = string.Format("SELECT idaccount FROM {0} WHERE role = '{1}'", DBTableNames.DBPeople, role.ToString());
-            DataTable table = Select(command);
+            string sqlStr = $"SELECT userId FROM {DBTableNames.User} WHERE role = @Role";
+
+            List<SqlParameter> parameters = new List<SqlParameter> 
+            { 
+                new SqlParameter("@Role", EnumUtil.GetDisplayName(role)) 
+            };
+
+            DataTable dt = DBExecution.ExecuteQuery(sqlStr, parameters);
             List<string> list = new List<string>();
 
-            foreach (DataRow row in table.Rows)
+            foreach (DataRow row in dt.Rows)
             {
-                list.Add(row["idaccount"].ToString());
+                list.Add(row["userId"].ToString());
             }
+
             return list;
         }
 
         #endregion
 
-        #region PEOPLE DAO EXECUTION
+        #region USER DAO EXECUTION
 
-        public void Insert(User people)
+        public static void Insert(Users user)
         {
-            ExecuteQueryPeople(people,
-                    "INSERT INTO {0} VALUES ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}'," +
-                    " '{10}', '{11}', '{12}', '{13}', '{14}')", "Register", false);
+            DBExecution.Insert(user, DBTableNames.User);
         }
-        public void Update(User people)
+        public static void Update(Users user)
         {
-            ExecuteQueryPeople(people, "UPDATE {0} SET " +
-                "idaccount = '{1}', fullname = '{2}', citizencode = '{3}', birthday = {4}, gender = '{5}', " +
-                "email = '{6}', phonenumber = '{7}', handle = '{8}', role = '{9}', university = '{10}', " +
-                "faculty = '{11}', workcode = {12}, password = '{13}', avatarname = '{14}' WHERE idaccount = '{1}'",
-                "Update", true);
+            DBExecution.Update(user, DBTableNames.User, "userId", user.UserId);
         }
-        public bool CheckNonExist(string field, string information)
+        public static bool CheckNonExist(string tableName, string field, string information)
         {
-            return SQLCheckNonExist(string.Format("SELECT * FROM {0} WHERE {1} = '{2}'",
-                                    DBTableNames.DBPeople, field, information));
-        }
+            string sqlStr = string.Format("SELECT 1 FROM {0} WHERE {1} = @Information", tableName, field);
 
-        #endregion
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Information", information)
+            };
 
-        #region Get From Data Row
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
 
-        public User GetFromDataRow(DataRow row)
-        {
-            string idaccount = row["idaccount"].ToString();
-            string fullname = row["fullname"].ToString();
-            string citizenCode = row["citizencode"].ToString();
-            DateTime birthday = DateTime.Parse(row["birthday"].ToString());
-            EGender gender = myProcess.GetEnumFromDisplayName<EGender>(row["gender"].ToString());
-            string email = row["email"].ToString();
-            string phoneNumber = row["phonenumber"].ToString();
-            string handle = row["handle"].ToString();
-            ERole role = myProcess.GetEnumFromDisplayName<ERole>(row["role"].ToString());
-            string workCode = row["workcode"].ToString();
-            string password = row["password"].ToString();
-            string avatarName = row["avatarname"].ToString();
-
-            User people = new User(idaccount, fullname, citizenCode, birthday, gender,
-                                        email, phoneNumber, handle, role, workCode, password, avatarName);
-
-            return people;
+            return dataTable.Rows.Count == 0;
         }
 
         #endregion

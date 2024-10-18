@@ -6,46 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using ProjectManagement.Process;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
 {
-    #region NOTIFICATION ENUM
-
-    public enum ENotificationType
-    {
-        [Display(Name = "Thesis")]
-        Thesis,
-        [Display(Name = "Task")]
-        Task,
-        [Display(Name = "Evaluation")]
-        Evaluation,
-        [Display(Name = "Comment")]
-        Comment,
-        [Display(Name = "Meeting")]
-        Meeting,
-        [Display(Name = "Null")]
-        Null,
-    }
-
-    #endregion
-
     public class Notification
     {
-        private MyProcess myProcess = new MyProcess();
 
         #region NOTIFICATION ATTRIBUTES
 
-        private string idNotification;
-        private string idHost;
-        private string idSender;
-        private string idThesis;
-        private string idObject;
+        private string notificationId;
+        private string title;
         private string content;
         private ENotificationType type;
-        private DateTime created;
-        private bool isFavorite;
-        private bool isSaw;
+        private DateTime createdAt;
 
         #endregion
 
@@ -53,68 +28,42 @@ namespace ProjectManagement.Models
 
         public Notification()
         {
-            this.idNotification = string.Empty;
-            this.idHost = string.Empty;
-            this.idSender = string.Empty;
-            this.idThesis = string.Empty;
-            this.idObject = string.Empty;
-            this.content = string.Empty;
-            this.type = ENotificationType.Null;
-            this.created = DateTime.MinValue;
-            this.isFavorite = false;
-            this.isSaw = false;
+            notificationId = string.Empty;
+            title = string.Empty;
+            content = string.Empty;
+            type = default;
+            createdAt = DateTime.MinValue;
         }
-        public Notification(string idNotification, string idHost, string idSender, string idThesis, string idObject, string content, 
-                            ENotificationType type, DateTime created, bool isFavorite, bool isSaw)
+        public Notification(string notificationId, string title, string content, ENotificationType type, DateTime createdAt)
         {
-            this.idNotification = idNotification;
-            this.idHost = idHost;
-            this.idSender = idSender;
-            this.idThesis = idThesis;
-            this.idObject= idObject;
+            this.notificationId = notificationId;
+            this.title = title;
             this.content = content;
             this.type = type;
-            this.created = created;
-            this.isFavorite = isFavorite;
-            this.isSaw = isSaw;
+            this.createdAt = createdAt;
         }
-        public Notification(string idHost, string idSender, string idThesis, string idOject, string content, DateTime created, bool isFavorite, bool isSaw)
+        public Notification(string title, string content, ENotificationType type, DateTime createdAt)
         {
-            this.idNotification = myProcess.GenIDClassify(EClassify.Notification);
-            this.idHost = idHost;
-            this.idSender = idSender;
-            this.idThesis = idThesis;
-            this.idObject = idOject; 
+            this.notificationId = ModelUtil.GenerateModelId(EModelClassification.NOTIFICATION);
+            this.title = title;
             this.content = content;
-            this.type = GetNotificationType();
-            this.created = created;
-            this.isFavorite = isFavorite;
-            this.isSaw = isSaw;
+            this.type = type;
+            this.createdAt = createdAt;
         }
 
         #endregion
 
         #region PROPERTIES
 
-        public string IdNotification
+        public string NotificationId
         {
-            get { return this.idNotification; }
+            get { return notificationId; }
+            set { notificationId = value; }
         }
-        public string IdHost
+        public string Title
         {
-            get { return this.idHost; }
-        }
-        public string IdSender
-        {
-            get { return this.idSender; }
-        }
-        public string IdThesis
-        {
-            get { return this.idThesis; }
-        }
-        public string IdObject
-        {
-            get { return this.idObject; }
+            get { return title; }
+            set { title = value; }
         }
         public string Content
         {
@@ -124,38 +73,29 @@ namespace ProjectManagement.Models
         {
             get { return this.type; }
         }
-        public DateTime Created
+        public DateTime CreatedAt
         {
-            get { return this.created; }
-        }
-        public bool IsFavorite
-        {
-            get { return this.isFavorite; }
-            set { this.isFavorite = value; }
-        }
-        public bool IsSaw
-        {
-            get { return this.isSaw; }
-            set { this.isSaw = value; }
+            get { return createdAt; }
+            set { createdAt = value; }
         }
 
         #endregion
 
         #region FUNCTIONS 
 
-        private ENotificationType GetNotificationType()
+        public static ENotificationType GetNotificationType(string objectId)
         {
-            if (this.idObject.Length < 4) return ENotificationType.Null;
+            if (objectId.Length < 4) return default;
 
-            string pattern = this.idObject.Substring(2, 2);
-            if (pattern == ConvertEClassifyToString(EClassify.Thesis))  return ENotificationType.Thesis;
-            if (pattern == ConvertEClassifyToString(EClassify.Task)) return ENotificationType.Task;
-            if (pattern == ConvertEClassifyToString(EClassify.Evaluation)) return ENotificationType.Evaluation;
-            if (pattern == ConvertEClassifyToString(EClassify.Comment)) return ENotificationType.Comment;
-            if (pattern == ConvertEClassifyToString(EClassify.Meeting)) return ENotificationType.Meeting;
-            return ENotificationType.Null;
+            string pattern = objectId.Substring(2, 2);
+            if (pattern == ConvertEClassifyToString(EModelClassification.PROJECT)) return ENotificationType.PROJECT;
+            if (pattern == ConvertEClassifyToString(EModelClassification.TASK)) return ENotificationType.TASK;
+            if (pattern == ConvertEClassifyToString(EModelClassification.EVALUATION)) return ENotificationType.EVALUATION;
+            if (pattern == ConvertEClassifyToString(EModelClassification.COMMENT)) return ENotificationType.COMMENT;
+            if (pattern == ConvertEClassifyToString(EModelClassification.MEETING)) return ENotificationType.MEETING;
+            return default;
         }
-        private string ConvertEClassifyToString(EClassify eClassify)
+        private static string ConvertEClassifyToString(EModelClassification eClassify)
         {
             return ((int)eClassify).ToString().PadLeft(2, '0');
         }
@@ -163,37 +103,37 @@ namespace ProjectManagement.Models
         {
             switch (this.type)
             {
-                case ENotificationType.Thesis:
+                case ENotificationType.PROJECT:
                     return Color.FromArgb(255, 87, 87);
-                case ENotificationType.Task:
+                case ENotificationType.TASK:
                     return Color.FromArgb(94, 148, 255);
-                case ENotificationType.Evaluation:
+                case ENotificationType.EVALUATION:
                     return Color.FromArgb(45, 237, 55);
-                case ENotificationType.Meeting:
+                case ENotificationType.MEETING:
                     return Color.FromArgb(252, 182, 3);
                 default:
                     return Color.Gray;
             }
         }
-        public static string GetContentTypeThesis(string senderName, string thesisTopic)
+        public static string GetContentTypeProject(string senderName, string projectTopic)
         {
-            return string.Format("{0} has suggested the [{1}] thesis to you", senderName, thesisTopic);
+            return string.Format("{0} has suggested the [{1}] project to you", senderName, projectTopic);
         }
-        public static string GetContentTypeRegistered(string teamName, string thesisTopic)
+        public static string GetContentTypeRegistered(string teamName, string projectTopic)
         {
-            return string.Format("{0} team has registered for the [{1}] thesis", teamName, thesisTopic);
+            return string.Format("{0} team has registered for the [{1}] project", teamName, projectTopic);
         }
-        public static string GetContentRegisteredMembers(string senderName, string teamName, string thesisTopic)
+        public static string GetContentRegisteredMembers(string senderName, string teamName, string projectTopic)
         {
-            return string.Format("{0} has registered team [{1}] with you for the thesis [{2}]", senderName, teamName, thesisTopic);
+            return string.Format("{0} has registered team [{1}] with you for the project [{2}]", senderName, teamName, projectTopic);
         }
-        public static string GetContentTypeAccepted(string senderName, string thesisTopic)
+        public static string GetContentTypeAccepted(string senderName, string projectTopic)
         {
-            return string.Format("{0} has agreed with your team for the thesis [{1}]", senderName, thesisTopic);
+            return string.Format("{0} has agreed with your team for the project [{1}]", senderName, projectTopic);
         }
-        public static string GetContentTypeTask(string senderName, string taskTitle, string thesisTopic)
+        public static string GetContentTypeTask(string senderName, string taskTitle, string projectTopic)
         {
-            return string.Format("{0} has created a [{1}] task in the [{2}] thesis", senderName, taskTitle, thesisTopic);
+            return string.Format("{0} has createdAt a [{1}] task in the [{2}] project", senderName, taskTitle, projectTopic);
         }
         public static string GetContentTypeEvaluation(string senderName, string taskTitle)
         {
@@ -205,15 +145,15 @@ namespace ProjectManagement.Models
         }
         public static string GetContentTypeMeeting(string meetingTitle, string creator)
         {
-            return string.Format("[{0}] was created by [{1}]", meetingTitle, creator);
+            return string.Format("[{0}] was createdAt by [{1}]", meetingTitle, creator);
         }
         public static string GetContentTypeMeetingUpdated(string meetingTitle)
         {
             return string.Format("[{0}] meeting has content edited", meetingTitle);
         }
-        public static string GetContentTypeGiveUp(string teamName, string thesisTopic)
+        public static string GetContentTypeGiveUp(string teamName, string projectTopic)
         {
-            return string.Format("The [{0}] team abandoned the the [{1}] thesis", teamName, thesisTopic);
+            return string.Format("The [{0}] team abandoned the the [{1}] project", teamName, projectTopic);
         }
 
         #endregion

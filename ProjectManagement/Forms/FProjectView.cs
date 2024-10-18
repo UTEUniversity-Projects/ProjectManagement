@@ -11,50 +11,47 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Forms
 {
     public partial class FProjectView : Form
     {
-        private MyProcess myProcess = new MyProcess();
-        private UserDAO peopleDAO = new UserDAO();
-        private ProjectStatusDAO thesisStatusDAO = new ProjectStatusDAO();
 
-        public FProjectView(Project thesis)
+        public FProjectView(Project project)
         {
             InitializeComponent();
-            SetInformation(thesis);
+            SetInformation(project);
         }
-        private void SetInformation(Project thesis)
+        private void SetInformation(Project project)
         {
-            gTextBoxStatus.Text = thesis.Status.ToString();
-            gTextBoxStatus.FillColor = thesis.GetStatusColor();
-            gTextBoxTopic.Text = thesis.Topic;
-            gTextBoxField.Text = thesis.Field.ToString();
-            gTextBoxLevel.Text = thesis.Level.ToString();
-            gTextBoxMembers.Text = thesis.MaxMembers.ToString();
-            gTextBoxDescription.Text = thesis.Description;
-            gTextBoxTechnology.Text = thesis.Technology;
-            gTextBoxFunctions.Text = thesis.Functions;
-            gTextBoxRequirements.Text = thesis.Requirements;
+            gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
+            gTextBoxStatus.FillColor = project.GetStatusColor();
+            gTextBoxTopic.Text = project.Topic;
+            gTextBoxField.Text = FieldDAO.SelectOnlyById(project.FieldId).Name;
+            gTextBoxMembers.Text = project.MaxMember.ToString();
+            gTextBoxDescription.Text = project.Description;
+            gTextBoxTechnology.Text =TechnologyDAO.GetListTechnology(project.ProjectId);
+            gTextBoxFunctions.Text = project.Feature;
+            gTextBoxRequirements.Text = project.Requirement;
 
-            AddPeopleLine(peopleDAO.SelectOnlyByID(thesis.IdCreator), flpCreator);
-            AddPeopleLine(peopleDAO.SelectOnlyByID(thesis.IdInstructor), flpInstructor);
+            AddUserLine(UserDAO.SelectOnlyByID(project.CreatedBy), flpCreator);
+            AddUserLine(UserDAO.SelectOnlyByID(project.InstructorId), flpInstructor);
 
             gTextBoxTeamRegistered.FillColor = gTextBoxStatus.FillColor;
-            gTextBoxTeamRegistered.Text = thesisStatusDAO.CountTeamFollowState(thesis).ToString() + " teams";
+            gTextBoxTeamRegistered.Text = TeamDAO.CountTeamFollowState(project.ProjectId, project.Status).ToString() + " teams";
 
-            myProcess.SetItemFavorite(gButtonStar, thesis.IsFavorite);
+            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
         }
-        private void AddPeopleLine(User people, FlowLayoutPanel flowLayoutPanel)
+        private void AddUserLine(Users user, FlowLayoutPanel flowLayoutPanel)
         {
-            UCUserMiniLine uCPeople = new UCUserMiniLine();
-            uCPeople.GButtonAdd.Hide();
-            uCPeople.SetBackGroundColor(SystemColors.ButtonFace);
-            uCPeople.SetInformation(people);
-            uCPeople.SetSize(new Size(270, 60));
+            UCUserMiniLine uCUser = new UCUserMiniLine();
+            uCUser.GButtonAdd.Hide();
+            uCUser.SetBackGroundColor(SystemColors.ButtonFace);
+            uCUser.SetInformation(user);
+            uCUser.SetSize(new Size(270, 60));
             flowLayoutPanel.Controls.Clear();
-            flowLayoutPanel.Controls.Add(uCPeople);
+            flowLayoutPanel.Controls.Add(uCUser);
         }
     }
 }

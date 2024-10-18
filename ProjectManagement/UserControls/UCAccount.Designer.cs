@@ -63,10 +63,10 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges19 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges20 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges21 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges22 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges23 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
@@ -112,7 +112,7 @@
             gTextBoxFullname = new Guna.UI2.WinForms.Guna2TextBox();
             gButtonCancel = new Guna.UI2.WinForms.Guna2Button();
             gGradientButtonSave = new Guna.UI2.WinForms.Guna2GradientButton();
-            gPanelThesisList = new Guna.UI2.WinForms.Guna2Panel();
+            gPanelProjectList = new Guna.UI2.WinForms.Guna2Panel();
             flpTeams = new FlowLayoutPanel();
             lblTeams = new Label();
             erpFullName = new ErrorProvider(components);
@@ -131,7 +131,7 @@
             gShadowPanelHandle.SuspendLayout();
             gShadowPanelPersonalInfor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gPictureBoxGender).BeginInit();
-            gPanelThesisList.SuspendLayout();
+            gPanelProjectList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)erpFullName).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpCitizenCode).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpBirthday).BeginInit();
@@ -371,7 +371,7 @@
             gTextBoxFaculty.Name = "gTextBoxFaculty";
             gTextBoxFaculty.PasswordChar = '\0';
             gTextBoxFaculty.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxFaculty.PlaceholderText = "Faculty of Information Technology";
+            gTextBoxFaculty.PlaceholderText = "Faculty";
             gTextBoxFaculty.ReadOnly = true;
             gTextBoxFaculty.SelectedText = "";
             gTextBoxFaculty.ShadowDecoration.CustomizableEdges = customizableEdges8;
@@ -430,7 +430,7 @@
             gTextBoxUniversity.Name = "gTextBoxUniversity";
             gTextBoxUniversity.PasswordChar = '\0';
             gTextBoxUniversity.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxUniversity.PlaceholderText = "HCM City University of Technology and Education";
+            gTextBoxUniversity.PlaceholderText = "University";
             gTextBoxUniversity.ReadOnly = true;
             gTextBoxUniversity.SelectedText = "";
             gTextBoxUniversity.ShadowDecoration.CustomizableEdges = customizableEdges12;
@@ -485,7 +485,7 @@
             gTextBoxUserName.Name = "gTextBoxUserName";
             gTextBoxUserName.PasswordChar = '\0';
             gTextBoxUserName.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxUserName.PlaceholderText = "User name";
+            gTextBoxUserName.PlaceholderText = "Users name";
             gTextBoxUserName.SelectedText = "";
             gTextBoxUserName.ShadowDecoration.CustomizableEdges = customizableEdges14;
             gTextBoxUserName.Size = new Size(411, 40);
@@ -507,9 +507,9 @@
             // 
             gShadowPanelPersonalInfor.BackColor = Color.Transparent;
             gShadowPanelPersonalInfor.Controls.Add(gDateTimePickerBirthday);
+            gShadowPanelPersonalInfor.Controls.Add(gTextBoxPhonenumber);
             gShadowPanelPersonalInfor.Controls.Add(gPictureBoxGender);
             gShadowPanelPersonalInfor.Controls.Add(lblPersonalInfor);
-            gShadowPanelPersonalInfor.Controls.Add(gTextBoxPhonenumber);
             gShadowPanelPersonalInfor.Controls.Add(gComboBoxGender);
             gShadowPanelPersonalInfor.Controls.Add(gTextBoxEmail);
             gShadowPanelPersonalInfor.Controls.Add(gTextBoxCitizencode);
@@ -535,7 +535,7 @@
             gDateTimePickerBirthday.FocusedColor = Color.White;
             gDateTimePickerBirthday.Font = new Font("Segoe UI", 9F);
             gDateTimePickerBirthday.Format = DateTimePickerFormat.Long;
-            gDateTimePickerBirthday.Location = new Point(21, 144);
+            gDateTimePickerBirthday.Location = new Point(21, 192);
             gDateTimePickerBirthday.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
             gDateTimePickerBirthday.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             gDateTimePickerBirthday.Name = "gDateTimePickerBirthday";
@@ -549,13 +549,13 @@
             // gPictureBoxGender
             // 
             gPictureBoxGender.BackColor = Color.White;
-            gPictureBoxGender.CustomizableEdges = customizableEdges17;
+            gPictureBoxGender.CustomizableEdges = customizableEdges19;
             gPictureBoxGender.FillColor = SystemColors.ControlLight;
             gPictureBoxGender.Image = (Image)resources.GetObject("gPictureBoxGender.Image");
             gPictureBoxGender.ImageRotate = 0F;
-            gPictureBoxGender.Location = new Point(30, 204);
+            gPictureBoxGender.Location = new Point(30, 252);
             gPictureBoxGender.Name = "gPictureBoxGender";
-            gPictureBoxGender.ShadowDecoration.CustomizableEdges = customizableEdges18;
+            gPictureBoxGender.ShadowDecoration.CustomizableEdges = customizableEdges20;
             gPictureBoxGender.Size = new Size(19, 19);
             gPictureBoxGender.SizeMode = PictureBoxSizeMode.StretchImage;
             gPictureBoxGender.TabIndex = 11;
@@ -576,7 +576,7 @@
             gTextBoxPhonenumber.BackColor = Color.Transparent;
             gTextBoxPhonenumber.BorderColor = Color.FromArgb(74, 97, 94);
             gTextBoxPhonenumber.BorderRadius = 5;
-            gTextBoxPhonenumber.CustomizableEdges = customizableEdges19;
+            gTextBoxPhonenumber.CustomizableEdges = customizableEdges17;
             gTextBoxPhonenumber.DefaultText = "";
             gTextBoxPhonenumber.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             gTextBoxPhonenumber.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -588,14 +588,14 @@
             gTextBoxPhonenumber.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxPhonenumber.IconLeft = (Image)resources.GetObject("gTextBoxPhonenumber.IconLeft");
             gTextBoxPhonenumber.IconLeftOffset = new Point(5, 0);
-            gTextBoxPhonenumber.Location = new Point(21, 287);
+            gTextBoxPhonenumber.Location = new Point(21, 145);
             gTextBoxPhonenumber.Margin = new Padding(3, 4, 3, 4);
             gTextBoxPhonenumber.Name = "gTextBoxPhonenumber";
             gTextBoxPhonenumber.PasswordChar = '\0';
             gTextBoxPhonenumber.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
             gTextBoxPhonenumber.PlaceholderText = "Phone number";
             gTextBoxPhonenumber.SelectedText = "";
-            gTextBoxPhonenumber.ShadowDecoration.CustomizableEdges = customizableEdges20;
+            gTextBoxPhonenumber.ShadowDecoration.CustomizableEdges = customizableEdges18;
             gTextBoxPhonenumber.Size = new Size(277, 40);
             gTextBoxPhonenumber.TabIndex = 10;
             gTextBoxPhonenumber.TextOffset = new Point(5, 0);
@@ -614,7 +614,7 @@
             gComboBoxGender.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             gComboBoxGender.ForeColor = Color.Black;
             gComboBoxGender.ItemHeight = 34;
-            gComboBoxGender.Location = new Point(21, 192);
+            gComboBoxGender.Location = new Point(21, 240);
             gComboBoxGender.Name = "gComboBoxGender";
             gComboBoxGender.ShadowDecoration.CustomizableEdges = customizableEdges22;
             gComboBoxGender.Size = new Size(277, 40);
@@ -639,7 +639,7 @@
             gTextBoxEmail.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxEmail.IconLeft = (Image)resources.GetObject("gTextBoxEmail.IconLeft");
             gTextBoxEmail.IconLeftOffset = new Point(5, 0);
-            gTextBoxEmail.Location = new Point(21, 239);
+            gTextBoxEmail.Location = new Point(21, 97);
             gTextBoxEmail.Margin = new Padding(3, 4, 3, 4);
             gTextBoxEmail.Name = "gTextBoxEmail";
             gTextBoxEmail.PasswordChar = '\0';
@@ -669,7 +669,7 @@
             gTextBoxCitizencode.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxCitizencode.IconLeft = (Image)resources.GetObject("gTextBoxCitizencode.IconLeft");
             gTextBoxCitizencode.IconLeftOffset = new Point(5, 0);
-            gTextBoxCitizencode.Location = new Point(21, 97);
+            gTextBoxCitizencode.Location = new Point(21, 287);
             gTextBoxCitizencode.Margin = new Padding(3, 4, 3, 4);
             gTextBoxCitizencode.Name = "gTextBoxCitizencode";
             gTextBoxCitizencode.PasswordChar = '\0';
@@ -754,18 +754,18 @@
             gGradientButtonSave.Text = "Save";
             gGradientButtonSave.Click += gGradientButtonSave_Click;
             // 
-            // gPanelThesisList
+            // gPanelProjectList
             // 
-            gPanelThesisList.BorderRadius = 20;
-            gPanelThesisList.Controls.Add(flpTeams);
-            gPanelThesisList.Controls.Add(lblTeams);
-            gPanelThesisList.CustomizableEdges = customizableEdges35;
-            gPanelThesisList.FillColor = SystemColors.ButtonFace;
-            gPanelThesisList.Location = new Point(894, 408);
-            gPanelThesisList.Name = "gPanelThesisList";
-            gPanelThesisList.ShadowDecoration.CustomizableEdges = customizableEdges36;
-            gPanelThesisList.Size = new Size(418, 406);
-            gPanelThesisList.TabIndex = 5;
+            gPanelProjectList.BorderRadius = 20;
+            gPanelProjectList.Controls.Add(flpTeams);
+            gPanelProjectList.Controls.Add(lblTeams);
+            gPanelProjectList.CustomizableEdges = customizableEdges35;
+            gPanelProjectList.FillColor = SystemColors.ButtonFace;
+            gPanelProjectList.Location = new Point(894, 408);
+            gPanelProjectList.Name = "gPanelProjectList";
+            gPanelProjectList.ShadowDecoration.CustomizableEdges = customizableEdges36;
+            gPanelProjectList.Size = new Size(418, 406);
+            gPanelProjectList.TabIndex = 5;
             // 
             // flpTeams
             // 
@@ -827,7 +827,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            Controls.Add(gPanelThesisList);
+            Controls.Add(gPanelProjectList);
             Controls.Add(gPanelInformation);
             Controls.Add(gPanelEditInfor);
             DoubleBuffered = true;
@@ -847,8 +847,8 @@
             gShadowPanelPersonalInfor.ResumeLayout(false);
             gShadowPanelPersonalInfor.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)gPictureBoxGender).EndInit();
-            gPanelThesisList.ResumeLayout(false);
-            gPanelThesisList.PerformLayout();
+            gPanelProjectList.ResumeLayout(false);
+            gPanelProjectList.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)erpFullName).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpCitizenCode).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpBirthday).EndInit();
@@ -887,7 +887,7 @@
         private Guna.UI2.WinForms.Guna2CirclePictureBox gCirclePictureBoxAvatar;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxFaculty;
         private Guna.UI2.WinForms.Guna2DateTimePicker gDateTimePickerBirthday;
-        private Guna.UI2.WinForms.Guna2Panel gPanelThesisList;
+        private Guna.UI2.WinForms.Guna2Panel gPanelProjectList;
         private Label lblTeams;
         private FlowLayoutPanel flpTeams;
         private Guna.UI2.WinForms.Guna2CircleButton gCircleButtonEdit;

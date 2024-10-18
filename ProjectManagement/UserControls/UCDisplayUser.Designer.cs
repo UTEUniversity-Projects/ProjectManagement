@@ -88,8 +88,8 @@
             gButtonMyProjects.Animated = true;
             gButtonMyProjects.BackColor = Color.Transparent;
             gButtonMyProjects.BorderRadius = 20;
-            gButtonMyProjects.CustomImages.HoveredImage = Properties.Resources.PictureThesisGradient;
-            gButtonMyProjects.CustomImages.Image = Properties.Resources.PictureThesis;
+            gButtonMyProjects.CustomImages.HoveredImage = Properties.Resources.PictureProjectGradient;
+            gButtonMyProjects.CustomImages.Image = Properties.Resources.PictureProject;
             gButtonMyProjects.CustomImages.ImageAlign = HorizontalAlignment.Left;
             gButtonMyProjects.CustomImages.ImageOffset = new Point(20, 0);
             gButtonMyProjects.CustomImages.ImageSize = new Size(30, 30);

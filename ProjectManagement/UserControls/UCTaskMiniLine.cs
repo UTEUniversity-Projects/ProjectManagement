@@ -12,60 +12,58 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCTaskMiniLine : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
         public event EventHandler TasksDeleteClicked;
 
-        private User creator = new User();
-        private User instructor = new User();
-        private Project thesis = new Project();
-        private Tasks tasks = new Tasks();
+        private Users creator = new Users();
+        private Users instructor = new Users();
+        private Project project = new Project();
+        private Tasks task = new Tasks();
         private Team team = new Team();
-        private User host = new User();
-
-        private UserDAO peopleDAO = new UserDAO();
-        private TeamDAO teamDAO = new TeamDAO();
-        private TasksDAO tasksDAO = new TasksDAO();
+        private Users host = new Users();
 
         private bool isProcessing = false;
 
-        public UCTaskMiniLine(User host, User instructor, Project thesis, Tasks tasks, bool isProcessing)
+        public UCTaskMiniLine(Users host, Users instructor, Project project, Tasks task, bool isProcessing)
         {
             InitializeComponent();
             this.host = host;
             this.instructor = instructor;
-            this.thesis = thesis;
-            this.tasks = tasks;
+            this.project = project;
+            this.task = task;
             this.isProcessing = isProcessing;
             InitUserControl();
         }
         public Tasks GetTask
         {
-            get { return this.tasks; }
+            get { return this.task; }
         }
         private void InitUserControl()
         {
-            creator = peopleDAO.SelectOnlyByID(tasks.IdCreator);
-            team = teamDAO.SelectOnly(tasks.IdTeam);
+            creator = UserDAO.SelectOnlyByID(task.CreatedBy);
+            team = TeamDAO.SelectFollowProject(this.project.ProjectId);
 
-            lblTaskTitle.Text = myProcess.FormatStringLength(tasks.Title, 60);
+            lblTaskTitle.Text = DataTypeUtil.FormatStringLength(task.Title, 60);
             lblCreator.Text = creator.FullName;
-            gProgressBarToLine.Value = tasks.Progress;
-            myProcess.SetItemFavorite(gButtonStar, tasks.IsFavorite);
+            gProgressBarToLine.Value = (int)task.Progress;
+            // GunaControlUtil.SetItemFavorite(gButtonStar, task.IsFavorite);
 
-            if (!isProcessing || (host.Role == ERole.Student && tasks.IdCreator != host.IdAccount))
+            if (!isProcessing || (host.Role == EUserRole.STUDENT && task.CreatedBy != host.UserId))
             {
                 gButtonDelete.Hide();
-                lblTaskTitle.Text = myProcess.FormatStringLength(tasks.Title, 53);
+                lblTaskTitle.Text = DataTypeUtil.FormatStringLength(task.Title, 53);
             }
         }
         private void TaskDetailsShow(Notification notification, bool flag)
         {
-            FTaskDetails fTaskDetails = new FTaskDetails(host, instructor, thesis, tasks, creator, team, isProcessing);
+            FTaskDetails fTaskDetails = new FTaskDetails(host, instructor, project, task, creator, team, isProcessing);
             if (flag) fTaskDetails.PerformNotificationClick(notification);
             fTaskDetails.FormClosed += FTaskDetails_FormClosed;
             fTaskDetails.ShowDialog();
@@ -86,25 +84,25 @@ namespace ProjectManagement
             {
                 if (fTaskDetails.Edited)
                 {
-                    this.tasks = tasksDAO.SelectOnly(tasks.IdTask);
+                    this.task = TaskDAO.SelectOnly(task.TaskId);
                     InitUserControl();
                 }
             }
         }
         private void gButtonStar_Click(object sender, EventArgs e)
         {
-            tasks.IsFavorite = !tasks.IsFavorite;
+            // task.IsFavorite = !task.IsFavorite;
 
-            myProcess.SetItemFavorite(gButtonStar, tasks.IsFavorite);
-            tasksDAO.UpdateIsFavorite(tasks);
+            // GunaControlUtil.SetItemFavorite(gButtonStar, task.IsFavorite);
+            TaskDAO.UpdateIsFavorite(task);
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure you want to delete " + tasks.IdTask,
+            DialogResult result = MessageBox.Show("Are you sure you want to delete " + task.TaskId,
                                                     "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                tasksDAO.Delete(tasks);
+                TaskDAO.Delete(task.TaskId);
                 OnTasksDeleteClicked(EventArgs.Empty);
             }
         }

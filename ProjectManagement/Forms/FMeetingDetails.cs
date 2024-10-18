@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ProjectManagement.Process;
-using ProjectManagement.Models;
+﻿using ProjectManagement.Models;
+using ProjectManagement.Enums;
 
 namespace ProjectManagement.Forms
 {
@@ -21,21 +12,21 @@ namespace ProjectManagement.Forms
         {
             InitializeComponent();
         }
-        public FMeetingDetails(Meeting meeting, User host)
+        public FMeetingDetails(Meeting meeting, Users host)
         {
             InitializeComponent();
 
             this.meeting = meeting;
             UCMeetingCreate uCMeetingCreate = new UCMeetingCreate();
-            if (meeting.IdCreator == host.IdAccount)
+            if (meeting.CreatedBy == host.UserId)
             {
-                uCMeetingCreate.SetInformation(meeting, host, EOperation.Edit);
+                uCMeetingCreate.SetInformation(meeting, host, EDatabaseOperation.EDIT);
                 this.BackColor = SystemColors.ButtonFace;
                 uCMeetingCreate.SetBackColor(SystemColors.ButtonFace);
             }
             else
             {
-                uCMeetingCreate.SetInformation(meeting, host, EOperation.View);
+                uCMeetingCreate.SetInformation(meeting, host, EDatabaseOperation.VIEW);
                 this.BackColor = Color.White;
                 uCMeetingCreate.SetBackColor(Color.White);
             }

@@ -106,7 +106,7 @@
             gTextBoxSearch.Name = "gTextBoxSearch";
             gTextBoxSearch.PasswordChar = '\0';
             gTextBoxSearch.PlaceholderForeColor = Color.Gray;
-            gTextBoxSearch.PlaceholderText = "Search username";
+            gTextBoxSearch.PlaceholderText = "Search userName";
             gTextBoxSearch.SelectedText = "";
             gTextBoxSearch.ShadowDecoration.CustomizableEdges = customizableEdges2;
             gTextBoxSearch.Size = new Size(260, 40);
@@ -255,7 +255,7 @@
             gGradientButtonPerform.Text = "Perform";
             gGradientButtonPerform.Click += gGradientButtonPerform_Click;
             // 
-            // UCThesisDetailsCreatedTeam
+            // UCProjectDetailsCreatedTeam
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -267,7 +267,7 @@
             Controls.Add(gSeparatorTopic);
             Controls.Add(lblRegisteredList);
             DoubleBuffered = true;
-            Name = "UCThesisDetailsCreatedTeam";
+            Name = "UCProjectDetailsCreatedTeam";
             Size = new Size(715, 635);
             guna2ShadowPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gCirclePictureBoxAvatar).EndInit();

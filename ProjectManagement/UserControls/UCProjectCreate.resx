@@ -112,7 +112,7 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -158,16 +158,6 @@
         ItlKfMw6Pwm1dEDGM/lfM0h7JbHC/g0T3GDf8htMio+0xvt5oLB1xw5vxc52tFWro3TchskKzTRo0eG6
         mPFG/4HsM3B4EdgekxtUjts4SRYOVMY1hSHbFgyY1gpZ65HkpObTff4oLUQjVGUr58ODQavbP4mc28D2
         uJxgUv//9Vn/c/wAeSBvQfPfKPEAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="gPictureBoxLevel.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADcSURBVFhH7ZQx
-        DsJADATzPAh/CAF+DvwDdAUUI0brwggJZaUUM3uxq7tp2vKvOVyOh/m03OfT8sB325+XPc+3Zyz6sPz1
-        XXm+Pa9lVd8eW2S+PbbIfHtskfn22CLz5VSvly0yX071etki8+XYAHpy8uXYAHpy8uXYAHpy8uXYAHpy
-        8uXYAHpy8u3Xi5z8KFqvFzl5LejJ5snJa0FPNk9OXgt6snly8lrQk82Tk9eCnmyenLwW9GTz5OS1oCeb
-        JyevBT3ZPDn5UVQfotZz74znVn66zuu6+9a5LT/PE2e+JaN0EyTLAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="gTextBoxTopic.IconLeft" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

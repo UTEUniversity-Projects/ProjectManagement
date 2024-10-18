@@ -59,7 +59,7 @@
             flpTeamRegistered.Size = new Size(662, 395);
             flpTeamRegistered.TabIndex = 52;
             // 
-            // UCThesisDetailsRegistered
+            // UCProjectDetailsRegistered
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -68,7 +68,7 @@
             Controls.Add(gSeparatorTopic);
             Controls.Add(lblRegisteredList);
             DoubleBuffered = true;
-            Name = "UCThesisDetailsRegistered";
+            Name = "UCProjectDetailsRegistered";
             Size = new Size(715, 635);
             ResumeLayout(false);
             PerformLayout();

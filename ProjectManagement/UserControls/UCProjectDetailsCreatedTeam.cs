@@ -12,24 +12,20 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCProjectDetailsCreatedTeam : UserControl
     {
-        private MyProcess myProcess = new MyProcess();
+        
         public event EventHandler RegisteredPerform;
 
-        private User people = new User();
-        private Project thesis = new Project();
-        private List<User> listPeople = new List<User>();
-        private List<User> members = new List<User>();
-
-        private UserDAO peopleDAO = new UserDAO();
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private TeamDAO teamDAO = new TeamDAO();
-        private ProjectStatusDAO thesisStatusDAO = new ProjectStatusDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
+        private Users user = new Users();
+        private Project project = new Project();
+        private List<Users> listUser = new List<Users>();
+        private List<Users> members = new List<Users>();
 
         private Image pictureAvatar;
         private bool flagCheck = false;
@@ -41,13 +37,13 @@ namespace ProjectManagement
             InitializeComponent();
             InitUserControl();
         }
-        public UCProjectDetailsCreatedTeam(User people, Project thesis)
+        public UCProjectDetailsCreatedTeam(Users user, Project project)
         {
             InitializeComponent();
-            this.people = people;
-            this.thesis = thesis;
+            this.user = user;
+            this.project = project;
             InitUserControl();
-            AddMember(this.people);
+            AddMember(this.user);
         }
 
         #endregion
@@ -71,14 +67,14 @@ namespace ProjectManagement
             flpSearch.Hide();
             gGradientButtonPerform.Hide();
         }
-        private void AddMember(User people)
+        private void AddMember(Users user)
         {
-            if (members.Count < this.thesis.MaxMembers)
+            if (members.Count < this.project.MaxMember)
             {
-                UCUserMiniLine line = new UCUserMiniLine(people);
+                UCUserMiniLine line = new UCUserMiniLine(user);
                 line.SetBackGroundColor(Color.White);
                 line.SetSize(new Size(310, 60));
-                if (people.IdAccount == this.people.IdAccount)
+                if (user.UserId == this.user.UserId)
                 {
                     line.SetDeleteMode(false);
                 }
@@ -88,34 +84,34 @@ namespace ProjectManagement
                     line.ButtonDeleteClicked += (sender, e) => ButtonDelete_Clicked(sender, e, line);
                 }
                 flpTeam.Controls.Add(line);
-                members.Add(people);
+                members.Add(user);
             }
             else
             {
-                MessageBox.Show("The number of members cannot be exceeded " + this.thesis.MaxMembers,
+                MessageBox.Show("The number of members cannot be exceeded " + this.project.MaxMember,
                                                     "OK", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
             }
         }
-        private void LoadPeopleList()
+        private void LoadUserList()
         {
             flpSearch.Controls.Clear();
             int maxLine = 4;
-            foreach (User people in members)
+            foreach (Users user in members)
             {
-                User foundPeople = listPeople.Find(p => p.IdAccount == people.IdAccount);
-                if (foundPeople != null)
+                Users foundUser = listUser.Find(p => p.UserId == user.UserId);
+                if (foundUser != null)
                 {
-                    listPeople.Remove(foundPeople);
+                    listUser.Remove(foundUser);
                 }
             }
-            int size = Math.Min(maxLine, listPeople.Count);
+            int size = Math.Min(maxLine, listUser.Count);
             for (int i = 0; i < size; i++)
             {
-                User people = listPeople[i];
-                UCUserMiniLine uCPeopleMiniLine = new UCUserMiniLine(people);
-                uCPeopleMiniLine.SetSize(new Size(310, 60));
-                uCPeopleMiniLine.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, people);
-                flpSearch.Controls.Add(uCPeopleMiniLine);
+                Users user = listUser[i];
+                UCUserMiniLine uCUserMiniLine = new UCUserMiniLine(user);
+                uCUserMiniLine.SetSize(new Size(310, 60));
+                uCUserMiniLine.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, user);
+                flpSearch.Controls.Add(uCUserMiniLine);
             }
             flpSearch.Show();
             flpSearch.BringToFront();
@@ -126,19 +122,19 @@ namespace ProjectManagement
         }
         #endregion
 
-        #region PEOPLE MINI LINE
+        #region USER MINI LINE
 
-        private void ButtonAdd_Clicked(object sender, EventArgs e, User people)
+        private void ButtonAdd_Clicked(object sender, EventArgs e, Users user)
         {
-            AddMember(people);
+            AddMember(user);
             gTextBoxSearch.Text = string.Empty;
         }
-        private void ButtonDelete_Clicked(object sender, EventArgs e, UCUserMiniLine people)
+        private void ButtonDelete_Clicked(object sender, EventArgs e, UCUserMiniLine user)
         {
-            if (people.GetPeople.IdAccount != this.people.IdAccount)
+            if (user.GetUser.UserId != this.user.UserId)
             {
-                members.Remove(people.GetPeople);
-                flpTeam.Controls.Remove(people);
+                members.Remove(user.GetUser);
+                flpTeam.Controls.Remove(user);
             }
             else
             {
@@ -155,9 +151,9 @@ namespace ProjectManagement
 
             if (!string.IsNullOrEmpty(textBox.Text))
             {
-                this.listPeople = peopleDAO.SelectListByUserName(textBox.Text, people.Role);
+                this.listUser = UserDAO.SelectListByUserName(textBox.Text, user.Role);
                 flpTeam.Hide();
-                LoadPeopleList();
+                LoadUserList();
             }
             else
             {
@@ -165,7 +161,7 @@ namespace ProjectManagement
                 flpSearch.Hide();
                 flpTeam.Show();
                 flpTeam.BringToFront();
-                listPeople = new List<User>();
+                listUser = new List<Users>();
             }
         }
 
@@ -177,20 +173,22 @@ namespace ProjectManagement
         {
             if (CheckEmpty(gTextBoxTeamName.Text))
             {
-                this.thesis.Status = EThesisStatus.Registered;
+                this.project.Status = EProjectStatus.REGISTERED;
 
-                thesisDAO.UpdateStatus(this.thesis, EThesisStatus.Registered);
-                Team team = new Team(gTextBoxTeamName.Text, myProcess.ImageToName(pictureAvatar), members);
-                thesisStatusDAO.Insert(this.thesis, team);
-                teamDAO.Insert(team);
+                Team team = new Team(gTextBoxTeamName.Text, WinformControlUtil.ImageToName(pictureAvatar), DateTime.Now, this.user.UserId,
+                    this.project.ProjectId, ETeamStatus.REGISTERED);
 
-                string content = Notification.GetContentTypeRegistered(team.TeamName, thesis.Topic);
-                notificationDAO.Insert(new Notification(thesis.IdInstructor, people.IdAccount, thesis.IdThesis, thesis.IdThesis, content, DateTime.Now, false, false));
+                TeamDAO.Insert(team, this.members);
+                ProjectDAO.UpdateStatus(this.project, EProjectStatus.REGISTERED);
 
-                string message = Notification.GetContentRegisteredMembers(people.FullName, team.TeamName, thesis.Topic);
-                notificationDAO.InsertFollowListPeople(people.IdAccount, thesis.IdThesis, thesis.IdThesis, message, team.Members);
+                string content = Notification.GetContentTypeRegistered(team.TeamName, project.Topic);
+                Notification notification = new Notification(team.TeamName + " just registered", content, Notification.GetNotificationType(project.ProjectId), DateTime.Now);
+                NotificationDAO.Insert(notification, project.InstructorId);
 
-                MessageBox.Show("Registered successfuly", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                string message = Notification.GetContentRegisteredMembers(user.FullName, team.TeamName, project.Topic);
+                NotificationDAO.InsertFollowTeam(team.TeamId, message, ENotificationType.PROJECT);
+
+                MessageBox.Show("Registered successfully", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                 this.gGradientButtonRegister.Enabled = false;
                 gGradientButtonPerform.PerformClick();
             } 
@@ -234,7 +232,7 @@ namespace ProjectManagement
         private void gTextBoxTeamName_TextChanged(object sender, EventArgs e)
         {
             Guna2TextBox textBox = (Guna2TextBox)sender;
-            myProcess.RunCheckDataValid(CheckEmpty(textBox.Text) || flagCheck, erpTeamName, gTextBoxTeamName, "Name can not empty");
+            WinformControlUtil.RunCheckDataValid(CheckEmpty(textBox.Text) || flagCheck, erpTeamName, gTextBoxTeamName, "Name can not empty");
         }
 
         #endregion

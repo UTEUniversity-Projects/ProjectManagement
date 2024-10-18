@@ -1,47 +1,30 @@
 ﻿using Guna.UI2.WinForms;
-using Microsoft.EntityFrameworkCore.Storage.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ProjectManagement.Forms;
-using ProjectManagement.Process;
 using ProjectManagement.Models;
 using ProjectManagement.DAOs;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class UCMeetingCreate : UserControl
     {
         public event EventHandler MeetingCreated;
-        private MyProcess myProcess = new MyProcess();
 
-        private User host = new User();
-        private User instructor = new User();
-        private Project thesis = new Project();
+
+        private Users host = new Users();
+        private Users instructor = new Users();
+        private Project project = new Project();
         private Team team = new Team();
         private Meeting meeting = new Meeting();
 
-        private UserDAO peopleDAO = new UserDAO();
-        private ProjectDAO thesisDAO = new ProjectDAO();
-        private MeetingDAO meetingDAO = new MeetingDAO();
-        private NotificationDAO notificationDAO = new NotificationDAO();
-
         private bool flagCheck = true;
-        private EOperation eOperation = new EOperation();
+        private EDatabaseOperation eOperation = new EDatabaseOperation();
 
         public UCMeetingCreate()
         {
             InitializeComponent();
             gDateTimePickerStart.Format = DateTimePickerFormat.Custom;
             gDateTimePickerStart.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
-            gDateTimePickerEnd.Format = DateTimePickerFormat.Custom;
-            gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
         }
 
         #region PROPERTIES
@@ -59,22 +42,22 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetUpUserControl(User host, Project thesis, Team team)
+        public void SetUpUserControl(Users host, Project project, Team team)
         {
             this.host = host;
-            this.thesis = thesis;
+            this.project = project;
             this.team = team;
-            this.instructor = peopleDAO.SelectOnlyByID(thesis.IdInstructor);
-            this.eOperation = EOperation.Create;
+            this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
+            this.eOperation = EDatabaseOperation.CREATE;
             SetUpMode();
         }
-        public void SetInformation(Meeting meeting, User host, EOperation eOperation)
+        public void SetInformation(Meeting meeting, Users host, EDatabaseOperation eOperation)
         {
             this.meeting = meeting;
             this.host = host;
             this.eOperation = eOperation;
-            this.thesis = thesisDAO.SelectOnly(meeting.IdThesis);
-            this.instructor = peopleDAO.SelectOnlyByID(thesis.IdInstructor);
+            this.project = ProjectDAO.SelectOnly(meeting.ProjectId);
+            this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
             SetUpMode();
         }
         public void SetBackColor(Color color)
@@ -85,15 +68,15 @@ namespace ProjectManagement
         {
             switch (this.eOperation)
             {
-                case EOperation.Create:
+                case EDatabaseOperation.CREATE:
                     SetCreateMode();
                     break;
-                case EOperation.View:
+                case EDatabaseOperation.VIEW:
                     InitInformation();
                     lblCre.Show();
                     SetViewMode();
                     break;
-                case EOperation.Edit:
+                case EDatabaseOperation.EDIT:
                     InitInformation();
                     SetEditMode();
                     break;
@@ -103,22 +86,20 @@ namespace ProjectManagement
         {
             gTextBoxTitle.Text = meeting.Title;
             gTextBoxDescription.Text = meeting.Description;
-            gDateTimePickerStart.Value = meeting.Start;
-            gDateTimePickerEnd.Value = meeting.TheEnd;
+            gDateTimePickerStart.Value = meeting.StartAt;
             gTextBoxLocation.Text = meeting.Location;
             gTextBoxLink.Text = meeting.Link;
         }
         private void SetViewMode()
         {
-            myProcess.SetTextBoxState(gTextBoxTitle, true);
-            myProcess.SetTextBoxState(gTextBoxDescription, true);
-            myProcess.SetTextBoxState(gTextBoxLocation, true);
-            myProcess.SetTextBoxState(gTextBoxLink, true);
+            GunaControlUtil.SetTextBoxState(gTextBoxTitle, true);
+            GunaControlUtil.SetTextBoxState(gTextBoxDescription, true);
+            GunaControlUtil.SetTextBoxState(gTextBoxLocation, true);
+            GunaControlUtil.SetTextBoxState(gTextBoxLink, true);
             gDateTimePickerStart.Enabled = false;
-            gDateTimePickerEnd.Enabled = false;
 
-            User creator = peopleDAO.SelectOnlyByID(meeting.IdCreator);
-            lblCre.Text = "Created by " + creator.FullName + " at " + meeting.Created.ToString("dd/MM/yyyy HH:mm:ss tt");
+            Users creator = UserDAO.SelectOnlyByID(meeting.CreatedBy);
+            lblCre.Text = "Created by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
             gButtonCancel.Location = new Point(531, 447);
             gButtonCancel.Text = "Close";
             gButtonCancel.Show();
@@ -129,12 +110,11 @@ namespace ProjectManagement
         private void SetEditMode()
         {
             this.flagCheck = true;
-            myProcess.SetTextBoxState(gTextBoxTitle, false);
-            myProcess.SetTextBoxState(gTextBoxDescription, false);
-            myProcess.SetTextBoxState(gTextBoxLocation, false);
-            myProcess.SetTextBoxState(gTextBoxLink, false);
+            GunaControlUtil.SetTextBoxState(gTextBoxTitle, false);
+            GunaControlUtil.SetTextBoxState(gTextBoxDescription, false);
+            GunaControlUtil.SetTextBoxState(gTextBoxLocation, false);
+            GunaControlUtil.SetTextBoxState(gTextBoxLink, false);
             gDateTimePickerStart.Enabled = true;
-            gDateTimePickerEnd.Enabled = true;
             gButtonCreate.Text = "Save";
             gButtonCancel.Show();
             gButtonCancel.Text = "Cancel";
@@ -149,18 +129,16 @@ namespace ProjectManagement
             gTextBoxLocation.Clear();
             gTextBoxLink.Clear();
             gDateTimePickerStart.Value = DateTime.Now;
-            gDateTimePickerEnd.Value = DateTime.Now;
             lblCre.Hide();
         }
         private bool CheckInformationValid()
         {
-            myProcess.RunCheckDataValid(meeting.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
-            myProcess.RunCheckDataValid(meeting.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
-            myProcess.RunCheckDataValid(meeting.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
-            myProcess.RunCheckDataValid(meeting.CheckTheEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "Invalid end time");
-            myProcess.RunCheckDataValid(meeting.CheckLocation() || flagCheck, erpLocation, gTextBoxLocation, "Location cannot be empty");
+            WinformControlUtil.RunCheckDataValid(meeting.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
+            WinformControlUtil.RunCheckDataValid(meeting.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(meeting.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
+            WinformControlUtil.RunCheckDataValid(meeting.CheckLocation() || flagCheck, erpLocation, gTextBoxLocation, "Location cannot be empty");
 
-            return meeting.CheckTitle() && meeting.CheckDescription() && meeting.CheckStart() && meeting.CheckTheEnd() && meeting.CheckLocation();
+            return meeting.CheckTitle() && meeting.CheckDescription() && meeting.CheckStart() && meeting.CheckLocation();
         }
 
         #endregion
@@ -169,17 +147,17 @@ namespace ProjectManagement
 
         private void SolveForCreate()
         {
-            this.meeting = new Meeting(thesis.IdThesis, gTextBoxTitle.Text, gTextBoxDescription.Text, gDateTimePickerStart.Value, gDateTimePickerEnd.Value,
-                                        gTextBoxLocation.Text, gTextBoxLink.Text, host.IdAccount);
+            this.meeting = new Meeting(gTextBoxTitle.Text, gTextBoxDescription.Text, gDateTimePickerStart.Value, gTextBoxLocation.Text,
+                gTextBoxLink.Text, DateTime.Now, host.UserId, project.ProjectId);
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                meetingDAO.Insert(this.meeting);
+                MeetingDAO.Insert(this.meeting);
 
                 string content = Notification.GetContentTypeMeeting(meeting.Title, host.FullName);
-                var peoples = new List<User> { instructor };
-                peoples.AddRange(team.Members);
-                notificationDAO.InsertFollowListPeople(host.IdAccount, this.meeting.IdThesis, this.meeting.IdMeeting, content, peoples);
+                var peoples = new List<Users> { instructor };
+                peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.MEETING);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);
                 gButtonCancel.PerformClick();
@@ -187,17 +165,17 @@ namespace ProjectManagement
         }
         private void SolveForEdit()
         {
-            this.meeting = new Meeting(this.meeting.IdMeeting, meeting.IdThesis, gTextBoxTitle.Text, gTextBoxDescription.Text, gDateTimePickerStart.Value, gDateTimePickerEnd.Value,
-                                        gTextBoxLocation.Text, gTextBoxLink.Text, host.IdAccount, DateTime.Now);
+            this.meeting = new Meeting(this.meeting.MeetingId, gTextBoxTitle.Text, gTextBoxDescription.Text, gDateTimePickerStart.Value, gTextBoxLocation.Text,
+                gTextBoxLink.Text, DateTime.Now, host.UserId, project.ProjectId);
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                meetingDAO.Update(this.meeting);
+                MeetingDAO.Update(this.meeting);
 
                 string content = Notification.GetContentTypeMeetingUpdated(meeting.Title);
-                var peoples = new List<User> { instructor };
-                peoples.AddRange(team.Members);
-                notificationDAO.InsertFollowListPeople(host.IdAccount, this.meeting.IdThesis, this.meeting.IdMeeting, content, peoples);
+                var peoples = new List<Users> { instructor };
+                peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.COMMENT);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);
                 gButtonCancel.PerformClick();
@@ -205,7 +183,7 @@ namespace ProjectManagement
         }
         private void gButtonCreate_Click(object sender, EventArgs e)
         {
-            if (this.eOperation == EOperation.Create) SolveForCreate();
+            if (this.eOperation == EDatabaseOperation.CREATE) SolveForCreate();
             else SolveForEdit();
         }
 
@@ -216,28 +194,23 @@ namespace ProjectManagement
         private void gTextBoxTitle_TextChanged(object sender, EventArgs e)
         {
             this.meeting.Title = gTextBoxTitle.Text;
-            myProcess.RunCheckDataValid(meeting.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
+            WinformControlUtil.RunCheckDataValid(meeting.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
         }
         private void gTextBoxDescription_TextChanged(object sender, EventArgs e)
         {
             this.meeting.Description = gTextBoxDescription.Text;
-            myProcess.RunCheckDataValid(meeting.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(meeting.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
 
         }
         private void gTextBoxLocation_TextChanged(object sender, EventArgs e)
         {
             this.meeting.Location = gTextBoxLocation.Text;
-            myProcess.RunCheckDataValid(meeting.CheckLocation() || flagCheck, erpLocation, gTextBoxLocation, "Location cannot be empty");
+            WinformControlUtil.RunCheckDataValid(meeting.CheckLocation() || flagCheck, erpLocation, gTextBoxLocation, "Location cannot be empty");
         }
         private void gDateTimePickerStart_ValueChanged(object sender, EventArgs e)
         {
-            this.meeting.Start = gDateTimePickerStart.Value;
-            myProcess.RunCheckDataValid(meeting.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
-        }
-        private void gDateTimePickerEnd_ValueChanged(object sender, EventArgs e)
-        {
-            this.meeting.TheEnd = gDateTimePickerEnd.Value;
-            myProcess.RunCheckDataValid(meeting.CheckTheEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "Invalid end time");
+            this.meeting.StartAt = gDateTimePickerStart.Value;
+            WinformControlUtil.RunCheckDataValid(meeting.CheckStart() || flagCheck, erpStart, gDateTimePickerStart, "Invalid start time");
         }
 
         #endregion

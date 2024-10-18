@@ -6,86 +6,40 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using ProjectManagement.Mappers.Implement;
+using System.Data.SqlClient;
 
 namespace ProjectManagement.DAOs
 {
     internal class MeetingDAO : DBConnection
     {
-        public MeetingDAO() { }
 
         #region SELECT MEETING
 
-        private List<Meeting> SelectList(string command)
+        public static Meeting SelectOnly(string meetingId)
         {
-            DataTable dataTable = Select(command);
-
-            List<Meeting> list = new List<Meeting>();
-            foreach (DataRow row in dataTable.Rows)
-            {
-                Meeting meeting = GetFromDataRow(row);
-                list.Add(meeting);
-            }
-
-            return list;
+            return DBGetModel.GetModel(DBTableNames.Meeting, "meetingId", meetingId, new MeetingMapper());
         }
-        public Meeting SelectOnly(string idMeeting)
+        public static List<Meeting> SelectByProject(string projectId)
         {
-            string command = string.Format("SELECT * FROM {0} WHERE idmeeting = '{1}'",
-                                            DBTableNames.DBMeeting, idMeeting);
-            DataTable dt = Select(command);
-
-            if (dt.Rows.Count > 0) return GetFromDataRow(dt.Rows[0]);
-            return new Meeting();
-        }
-        public List<Meeting> SelectByThesis(string idThesis)
-        {
-            string command = string.Format("SELECT * FROM {0} WHERE idthesis = '{1}' ORDER BY start",
-                                            DBTableNames.DBMeeting, idThesis);
-            return SelectList(command);
+            return DBGetModel.GetModelList(DBTableNames.Meeting, "projectId", projectId, new MeetingMapper());
         }
 
         #endregion
 
         #region MEETING DAO EXCUTION
 
-        public void Insert(Meeting meeting)
+        public static void Insert(Meeting meeting)
         {
-            ExecuteQueryMeeting(meeting, "INSERT INTO {0} VALUES ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')",
-                "Create", true);
+            DBExecution.Insert(meeting, DBTableNames.Meeting);
         }
-        public void Delete(Meeting meeting)
+        public static void Delete(Meeting meeting)
         {
-            ExecuteQueryMeeting(meeting, "DELETE FROM {0} WHERE idmeeting = '{1}'",
-                "Delete", false);
+            DBExecution.Delete(DBTableNames.Meeting, "meetingId", meeting.MeetingId);
         }
-        public void Update(Meeting meeting)
+        public static void Update(Meeting meeting)
         {
-            ExecuteQueryMeeting(meeting, "UPDATE {0} SET " +
-                "idthesis = '{2}', title = '{3}', description = '{4}', start = '{5}', theend = '{6}', location = '{7}', " +
-                "link = '{8}', idcreator = '{9}', created = '{10}' WHERE idmeeting = '{1}'",
-                "Update", false);
-        }
-
-        #endregion
-
-        #region Get Meeting From Data Row
-
-        private Meeting GetFromDataRow(DataRow row)
-        {
-            string idMeeting = row["idmeeting"].ToString();
-            string idThesis = row["idthesis"].ToString();
-            string title = row["title"].ToString();
-            string description = row["description"].ToString();
-            DateTime start = DateTime.Parse(row["start"].ToString());
-            DateTime theEnd = DateTime.Parse(row["theend"].ToString());
-            string location = row["location"].ToString();
-            string link = row["link"].ToString();
-            string creator = row["idcreator"].ToString();
-            DateTime created = DateTime.Parse(row["created"].ToString());
-
-            Meeting meeting = new Meeting(idMeeting, idThesis, title, description, start, theEnd, location, link, creator, created);
-            return meeting;
+            DBExecution.Update(meeting, DBTableNames.Meeting, "meetingId", meeting.MeetingId);
         }
 
         #endregion

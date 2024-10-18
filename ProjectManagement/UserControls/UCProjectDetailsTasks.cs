@@ -9,19 +9,18 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjectManagement.Enums;
 
 namespace ProjectManagement
 {
     public partial class UCProjectDetailsTasks : UserControl
     {
-        private User people = new User();
-        private User instructor = new User();
+        private Users user = new Users();
+        private Users instructor = new Users();
         private Team team = new Team();
-        private Project thesis = new Project();
+        private Project project = new Project();
         private List<Tasks> listTask = new List<Tasks>();
 
-        private TasksDAO taskDAO = new TasksDAO();
         private UCTaskCreate uCTaskCreate = new UCTaskCreate();
         private bool isProcessing = true;
 
@@ -32,24 +31,24 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetUpUserControl(User people, User instructor, Team team, Project thesis, bool isProcessing)
+        public void SetUpUserControl(Users user, Users instructor, Team team, Project project, bool isProcessing)
         {
-            this.people = people;
+            this.user = user;
             this.instructor = instructor;
             this.team = team;
-            this.thesis = thesis;
+            this.project = project;
             this.isProcessing = isProcessing;
             InitUserControl();
         }
         private void InitUserControl()
         {
             flpTaskList.Location = new Point(12, 12);
-            uCTaskCreate.SetUpUserControl(people, instructor, team, thesis);
-            uCTaskCreate.Location = new Point(12, 12);
+            uCTaskCreate.SetUpUserControl(user, instructor, team, project);
+            uCTaskCreate.Location = new Point(10, 10);
             uCTaskCreate.GButtonCancel.Click += GButtonCancel_Click;
             uCTaskCreate.TasksCreateClicked += UCTaskCreate_TasksCreateClicked;
-            gShadowPanelBack.Controls.Add(uCTaskCreate);
-            uCTaskCreate.Hide();
+            gShadowPanelTaskCreate.Controls.Add(uCTaskCreate);
+            gShadowPanelTaskCreate.Hide();
 
             if (!isProcessing)
             {
@@ -65,10 +64,10 @@ namespace ProjectManagement
         }
         private void UCTaskCreate_TasksCreateClicked(object sender, EventArgs e)
         {
-            Tasks tasks = taskDAO.SelectOnly(uCTaskCreate.GetTasks.IdTask);
+            Tasks task = TaskDAO.SelectOnly(uCTaskCreate.GetTasks.TaskId);
 
-            this.listTask.Add(tasks);
-            UCTaskMiniLine line = new UCTaskMiniLine(people, instructor, thesis, tasks, isProcessing);
+            this.listTask.Add(task);
+            UCTaskMiniLine line = new UCTaskMiniLine(user, instructor, project, task, isProcessing);
             line.TasksDeleteClicked += GButtonDelete_Click;
             flpTaskList.Controls.Add(line);
             flpTaskList.Controls.SetChildIndex(line, 0);
@@ -76,14 +75,14 @@ namespace ProjectManagement
         private void UpdateTaskList()
         {
             this.listTask.Clear();
-            this.listTask = taskDAO.SelectListByTeam(this.team.IdTeam);
+            this.listTask = TaskDAO.SelectListByTeam(this.team.TeamId);
         }
         private void LoadTaskList()
         {
             flpTaskList.Controls.Clear();
-            foreach (Tasks tasks in listTask)
+            foreach (Tasks task in listTask)
             {
-                UCTaskMiniLine line = new UCTaskMiniLine(people, instructor, thesis, tasks, isProcessing);
+                UCTaskMiniLine line = new UCTaskMiniLine(user, instructor, project, task, isProcessing);
                 line.TasksDeleteClicked += GButtonDelete_Click;
                 flpTaskList.Controls.Add(line);
             }
@@ -110,33 +109,33 @@ namespace ProjectManagement
                 }
             }
         }
-        public void PerformNotificationClick(Notification notification)
+        public void PerformNotificationClick(ENotificationType type)
         {
-            Tasks tasks = new Tasks();
-            switch (notification.Type)
-            {
-                case ENotificationType.Task:
-                    tasks = taskDAO.SelectOnly(notification.IdObject);
-                    break;
-                case ENotificationType.Comment:
-                    tasks = taskDAO.SelectFromComment(notification.IdObject);
-                    break;
-                case ENotificationType.Evaluation:
-                    tasks = taskDAO.SelectFromEvaluation(notification.IdObject);
-                    break;
-            }
+            //Tasks task = new Tasks();
+            //switch (type)
+            //{
+            //    case ENotificationType.TASK:
+            //        task = TaskDAO.SelectOnly(notification.IdObject);
+            //        break;
+            //    case ENotificationType.COMMENT:
+            //        task = TaskDAO.SelectFromComment(notification.IdObject);
+            //        break;
+            //    case ENotificationType.EVALUATION:
+            //        task = TaskDAO.SelectFromEvaluation(notification.IdObject);
+            //        break;
+            //}
 
-            foreach (UCTaskMiniLine line in flpTaskList.Controls)
-            {
-                if (line != null)
-                {
-                    if (line.GetTask.IdTask == tasks.IdTask)
-                    {
-                        line.PerformNotificationClick(notification);
-                        return;
-                    }
-                }
-            }            
+            //foreach (UCTaskMiniLine line in flpTaskList.Controls)
+            //{
+            //    if (line != null)
+            //    {
+            //        if (line.GetTask.TaskId == task.TaskId)
+            //        {
+            //            line.PerformNotificationClick(notification);
+            //            return;
+            //        }
+            //    }
+            //}            
         }
 
         #endregion
@@ -145,13 +144,17 @@ namespace ProjectManagement
 
         private void gGradientButtonAddTask_Click(object sender, EventArgs e)
         {
+            lblTaskList.Text = "CREATE TASK";
             flpTaskList.Hide();
-            uCTaskCreate.Show();
+            gShadowPanelTaskCreate.Show();
+            gShadowPanelTaskCreate.BringToFront();
         }
         private void GButtonCancel_Click(object? sender, EventArgs e)
         {
-            uCTaskCreate.Hide();
+            lblTaskList.Text = "TASK LIST";
             flpTaskList.Show();
+            gShadowPanelTaskCreate.Hide();
+            gShadowPanelTaskCreate.SendToBack();
         }
 
         #endregion
@@ -160,7 +163,7 @@ namespace ProjectManagement
 
         private void gTextBoxSearch_TextChanged(object sender, EventArgs e)
         {
-            this.listTask = taskDAO.SearchTaskTitle(this.team.IdTeam, gTextBoxSearch.Text);
+            this.listTask = TaskDAO.SearchTaskTitle(this.project.ProjectId, gTextBoxSearch.Text);
             LoadTaskList();
         }
 

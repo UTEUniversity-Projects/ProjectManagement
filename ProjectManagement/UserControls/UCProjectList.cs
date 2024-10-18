@@ -15,8 +15,8 @@ namespace ProjectManagement
 {
     public partial class UCProjectList : UserControl
     {
-        public event EventHandler ThesisLineClicked;
-        private int numThesis = 0;
+        public event EventHandler ProjectLineClicked;
+        private int numProject = 0;
 
         public UCProjectList()
         {
@@ -25,7 +25,7 @@ namespace ProjectManagement
 
         #region PROPERTIES
 
-        public Guna2GradientButton GButtonCreateThesis
+        public Guna2GradientButton GButtonCreateProject
         {
             get { return this.gGradientButtonCreateProject; }
         }
@@ -56,19 +56,19 @@ namespace ProjectManagement
 
         public void Clear()
         {
-            flpThesisList.Controls.Clear();
+            flpProjectList.Controls.Clear();
         }
-        public void AddThesis(UCProjectLine thesisLine)
+        public void AddProject(UCProjectLine projectLine)
         {
-            thesisLine.ThesisLineClicked += ThesisLine_Clicked;
-            thesisLine.ThesisDeleteClicked += ThesisDelete_Clicked;
-            flpThesisList.Controls.Add(thesisLine);
-            SetNumThesis(1, false);
+            projectLine.ProjectLineClicked += ProjectLine_Clicked;
+            projectLine.ProjectDeleteClicked += ProjectDelete_Clicked;
+            flpProjectList.Controls.Add(projectLine);
+            SetNumProject(1, false);
         }
-        public void SetNumThesis(int num, bool flagReset)
+        public void SetNumProject(int num, bool flagReset)
         {
-            if (flagReset) numThesis = num; else numThesis += num;
-            lblNumThesis.Text = numThesis.ToString();
+            if (flagReset) numProject = num; else numProject += num;
+            lblNumProject.Text = numProject.ToString();
         }
         public void SetFilter(bool flag)
         {
@@ -87,17 +87,17 @@ namespace ProjectManagement
         }
         public void NotificationJump(Notification notification)
         {
-            foreach (UCProjectLine line in flpThesisList.Controls)
-            {
-                if (line != null)
-                {
-                    if (line.GetIdThesis == notification.IdThesis)
-                    {
-                        line.PerformNotificationClick(notification);
-                        return;
-                    }
-                }
-            }
+            //foreach (UCProjectLine line in flpProjectList.Controls)
+            //{
+            //    if (line != null)
+            //    {
+            //        if (line.GetIdProject == notification.ProjectId)
+            //        {
+            //            line.PerformNotificationClick(notification);
+            //            return;
+            //        }
+            //    }
+            //}
         }
 
 
@@ -105,30 +105,30 @@ namespace ProjectManagement
 
         #region METHOD
 
-        private void ThesisLine_Clicked(object sender, EventArgs e)
+        private void ProjectLine_Clicked(object sender, EventArgs e)
         {
-            OnThesisLineClicked(EventArgs.Empty);
+            OnProjectLineClicked(EventArgs.Empty);
         }
-        private void OnThesisLineClicked(EventArgs e)
+        private void OnProjectLineClicked(EventArgs e)
         {
-            ThesisLineClicked?.Invoke(this, e);
+            ProjectLineClicked?.Invoke(this, e);
         }
-        public void ThesisDelete_Clicked(object sender, EventArgs e)
+        public void ProjectDelete_Clicked(object sender, EventArgs e)
         {
             UCProjectLine line = sender as UCProjectLine;
 
             if (line != null)
             {
-                foreach (Control control in flpThesisList.Controls)
+                foreach (Control control in flpProjectList.Controls)
                 {
                     if (control.GetType() == typeof(UCProjectLine))
                     {
-                        UCProjectLine thesisLine = (UCProjectLine)control;
-                        if (thesisLine == line)
+                        UCProjectLine projectLine = (UCProjectLine)control;
+                        if (projectLine == line)
                         {
-                            flpThesisList.Controls.Remove(control);
+                            flpProjectList.Controls.Remove(control);
                             control.Dispose();
-                            SetNumThesis(-1, false);
+                            SetNumProject(-1, false);
                             break;
                         }
                     }

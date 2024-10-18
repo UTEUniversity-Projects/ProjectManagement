@@ -57,7 +57,7 @@
             gButtonConfirm = new Guna.UI2.WinForms.Guna2GradientButton();
             gButtonCancel = new Guna.UI2.WinForms.Guna2Button();
             lblEvaluation = new Label();
-            lblPeopleCode = new Label();
+            lblUserCode = new Label();
             gTextBoxEvaluation = new Guna.UI2.WinForms.Guna2TextBox();
             lblUserName = new Label();
             gTextBoxStatus = new Guna.UI2.WinForms.Guna2TextBox();
@@ -110,7 +110,7 @@
             gShadowPanelEvaluate.Controls.Add(gButtonConfirm);
             gShadowPanelEvaluate.Controls.Add(gButtonCancel);
             gShadowPanelEvaluate.Controls.Add(lblEvaluation);
-            gShadowPanelEvaluate.Controls.Add(lblPeopleCode);
+            gShadowPanelEvaluate.Controls.Add(lblUserCode);
             gShadowPanelEvaluate.Controls.Add(gTextBoxEvaluation);
             gShadowPanelEvaluate.Controls.Add(lblUserName);
             gShadowPanelEvaluate.Controls.Add(gTextBoxStatus);
@@ -271,17 +271,17 @@
             lblEvaluation.TabIndex = 33;
             lblEvaluation.Text = "EVALUATION";
             // 
-            // lblPeopleCode
+            // lblUserCode
             // 
-            lblPeopleCode.AutoSize = true;
-            lblPeopleCode.BackColor = Color.White;
-            lblPeopleCode.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPeopleCode.ForeColor = Color.FromArgb(74, 97, 94);
-            lblPeopleCode.Location = new Point(83, 44);
-            lblPeopleCode.Name = "lblPeopleCode";
-            lblPeopleCode.Size = new Size(71, 17);
-            lblPeopleCode.TabIndex = 30;
-            lblPeopleCode.Text = "243300001";
+            lblUserCode.AutoSize = true;
+            lblUserCode.BackColor = Color.White;
+            lblUserCode.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUserCode.ForeColor = Color.FromArgb(74, 97, 94);
+            lblUserCode.Location = new Point(83, 44);
+            lblUserCode.Name = "lblUserCode";
+            lblUserCode.Size = new Size(71, 17);
+            lblUserCode.TabIndex = 30;
+            lblUserCode.Text = "243300001";
             // 
             // gTextBoxEvaluation
             // 
@@ -324,7 +324,7 @@
             lblUserName.Name = "lblUserName";
             lblUserName.Size = new Size(101, 25);
             lblUserName.TabIndex = 29;
-            lblUserName.Text = "User name";
+            lblUserName.Text = "Users name";
             // 
             // gTextBoxStatus
             // 
@@ -417,7 +417,7 @@
 
         private Guna.UI2.WinForms.Guna2Button gButtonBack;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelEvaluate;
-        private Label lblPeopleCode;
+        private Label lblUserCode;
         private Label lblUserName;
         private Guna.UI2.WinForms.Guna2CirclePictureBox gCirclePictureBoxAvatar;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxStatus;

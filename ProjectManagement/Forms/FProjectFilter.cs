@@ -1,28 +1,21 @@
 ﻿using Guna.UI2.WinForms;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
+using ProjectManagement.Mappers.Implement;
+using System.Data.SqlClient;
 
 namespace ProjectManagement
 {
     public partial class FProjectFilter : Form
     {
-        private MyProcess myProcess = new MyProcess();
-        private User people = new User();
-        private List<Project> listThesis = new List<Project>();
-
-        private UserDAO peopleDAO = new UserDAO();
-        private ProjectDAO thesisDAO = new ProjectDAO();
+        
+        private Users user = new Users();
+        private List<Project> listProject = new List<Project>();
+        private List<Field> fields = new List<Field>();
 
         private UCUserMiniLine uCCreatorLine = new UCUserMiniLine();
         private UCUserMiniLine uCInstructorLine = new UCUserMiniLine();
@@ -48,25 +41,26 @@ namespace ProjectManagement
         {
             get { return this.gGradientButtonSave; }
         }
-        public List<Project> ListThesis
+        public List<Project> ListProject
         {
-            get { return this.listThesis; }
-            set { this.listThesis = value; }
+            get { return this.listProject; }
+            set { this.listProject = value; }
         }
 
         #endregion
 
         #region FUNCTIONS
 
-        public void SetUpFilter(User people)
+        public void SetUpFilter(Users user)
         {
-            this.people = people;
+            this.user = user;
+            this.fields = FieldDAO.SelectList();
             InitUserControl();
         }
         private void InitUserControl()
         {
-            myProcess.AddEnumsToComboBox(gComboBoxField, typeof(EField));
-            myProcess.AddEnumsToComboBox(gComboBoxStatus, typeof(EThesisStatus));
+            GunaControlUtil.SetComboBoxDisplayAndValue(gComboBoxField, fields, "Name", "FieldId");
+            EnumUtil.AddEnumsToComboBox(gComboBoxStatus, typeof(EProjectStatus));
             flagAllTopic = false;
             gButtonTopicSelectAll.PerformClick();
             flagAllStatus = false;
@@ -82,19 +76,19 @@ namespace ProjectManagement
             List<string> list = new List<string>();
 
             cmbIDInstructor.Items.Clear();
-            list.AddRange(peopleDAO.SelectListID(ERole.Lecture));
+            list.AddRange(UserDAO.SelectListId(EUserRole.LECTURE));
             foreach (var item in list) cmbIDInstructor.Items.Add(item);
 
             cmbIDCreator.Items.Clear();
-            list.AddRange(peopleDAO.SelectListID(ERole.Student));
+            list.AddRange(UserDAO.SelectListId(EUserRole.STUDENT));
             foreach (var item in list) cmbIDCreator.Items.Add(item);
 
             cmbIDCreator.Text = string.Empty;
             cmbIDInstructor.Text = string.Empty;
 
-            if (people.Role == ERole.Lecture)
+            if (user.Role == EUserRole.LECTURE)
             {
-                cmbIDInstructor.SelectedItem = people.IdAccount;
+                cmbIDInstructor.SelectedItem = user.UserId;
                 cmbIDInstructor.Enabled = false;
             }
             cmbIDCreator_SelectedIndexChanged(cmbIDCreator, new EventArgs());
@@ -155,42 +149,53 @@ namespace ProjectManagement
         }
         private void gGradientButtonSave_Click(object sender, EventArgs e)
         {
-            string command = string.Format("SELECT * FROM {0} ", DBTableNames.DBThesis);
+            string sqlStr = string.Format("SELECT P.* FROM {0} P ", DBTableNames.Project);
+            List<SqlParameter> parameters = new List<SqlParameter>();
             int condition = 0;
 
             if (!flagAllTopic)
             {
                 condition++;
-                command += " WHERE ";
-                command += string.Format(" field = '{0}' ", gComboBoxField.SelectedItem.ToString());
-                command += "and";
-                command += string.Format(" maxmembers BETWEEN {0} and {1} ", gTextBoxMembersFrom.Text, gTextBoxMembersTo.Text);
+                sqlStr += " WHERE P.fieldId = @FieldId AND P.maxMember BETWEEN @MembersFrom AND @MembersTo";
+                parameters.Add(new SqlParameter("@FieldId", gComboBoxField.SelectedItem.ToString()));
+                parameters.Add(new SqlParameter("@MembersFrom", gTextBoxMembersFrom.Text));
+                parameters.Add(new SqlParameter("@MembersTo", gTextBoxMembersTo.Text));
             }
+
             if (!flagAllStatus)
             {
                 condition++;
-                if (condition == 1) command += " WHERE "; else command += "and";
-                command += string.Format(" status = '{0}' ", gComboBoxStatus.SelectedItem.ToString());
+                sqlStr += (condition == 1) ? " WHERE " : " AND ";
+                sqlStr += " P.status = @Status ";
+                parameters.Add(new SqlParameter("@Status", gComboBoxStatus.SelectedItem.ToString()));
             }
+
             if (!flagAllFavorite)
             {
                 condition++;
-                if (condition == 1) command += " WHERE "; else command += "and";
-                command += string.Format(" isfavorite = {0}", flagFavorite ? 1 : 0);
+                sqlStr += (condition == 1) ? " WHERE " : " AND ";
+                sqlStr += " EXISTS (SELECT 1 FROM FavouriteProject FP WHERE FP.projectId = P.projectId AND FP.userId = @UserId) ";
+                parameters.Add(new SqlParameter("@UserId", user.UserId));
             }
+
             if (cmbIDCreator.SelectedIndex != -1)
             {
                 condition++;
-                if (condition == 1) command += " WHERE "; else command += "and";
-                command += string.Format(" idcreator = '{0}'", cmbIDCreator.SelectedItem);
+                sqlStr += (condition == 1) ? " WHERE " : " AND ";
+                sqlStr += " P.createdBy = @CreatedBy ";
+                parameters.Add(new SqlParameter("@CreatedBy", cmbIDCreator.SelectedItem.ToString()));
             }
+
             if (cmbIDInstructor.SelectedIndex != -1)
             {
                 condition++;
-                if (condition == 1) command += " WHERE "; else command += "and";
-                command += string.Format(" idinstructor = '{0}'", cmbIDInstructor.SelectedItem);
+                sqlStr += (condition == 1) ? " WHERE " : " AND ";
+                sqlStr += " P.instructorId = @InstructorId ";
+                parameters.Add(new SqlParameter("@InstructorId", cmbIDInstructor.SelectedItem.ToString()));
             }
-            this.listThesis = thesisDAO.SelectList(command);
+
+            this.listProject = DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+
             this.Close();
             gButtonFilter.PerformClick();
         }
@@ -220,30 +225,30 @@ namespace ProjectManagement
 
         #region EVENT cmbIDInstructor
 
-        private void GetUCPeopleLineByID(ComboBox comboBox, FlowLayoutPanel flowLayoutPanel, UCUserMiniLine uCPeopleMiniLine)
+        private void GetUCUserLineByID(ComboBox comboBox, FlowLayoutPanel flowLayoutPanel, UCUserMiniLine uCUserMiniLine)
         {
             if (comboBox.SelectedItem != null)
             {
                 string idInstructor = comboBox.SelectedItem.ToString();
-                User people = peopleDAO.SelectOnlyByID(idInstructor);
-                uCPeopleMiniLine.SetInformation(people);
+                Users user = UserDAO.SelectOnlyByID(idInstructor);
+                uCUserMiniLine.SetInformation(user);
                 flowLayoutPanel.Controls.Clear();
-                flowLayoutPanel.Controls.Add(uCPeopleMiniLine);
+                flowLayoutPanel.Controls.Add(uCUserMiniLine);
             }
             else
             {
-                Label label = myProcess.CreateLabel("There aren't any people selected !");
+                Label label = WinformControlUtil.CreateLabel("There aren't any user selected !");
                 flowLayoutPanel.Controls.Clear();
                 flowLayoutPanel.Controls.Add(label);
             }
         }
         private void cmbIDCreator_SelectedIndexChanged(object sender, EventArgs e)
         {
-            GetUCPeopleLineByID(cmbIDCreator, flpCreator, uCCreatorLine);
+            GetUCUserLineByID(cmbIDCreator, flpCreator, uCCreatorLine);
         }
         private void cmbIDInstructor_SelectedIndexChanged(object sender, EventArgs e)
         {
-            GetUCPeopleLineByID(cmbIDInstructor, flpInstructor, uCInstructorLine);
+            GetUCUserLineByID(cmbIDInstructor, flpInstructor, uCInstructorLine);
         }
 
         #endregion

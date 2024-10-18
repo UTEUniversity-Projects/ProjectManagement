@@ -16,20 +16,20 @@ namespace ProjectManagement
 {
     public partial class FProjectEdit : Form
     {
-        private UCProjectCreate uCThesisCreate = new UCProjectCreate();
+        private UCProjectCreate uCProjectCreate = new UCProjectCreate();
 
-        public FProjectEdit(User people, Project thesis)
+        public FProjectEdit(Users user, Project project)
         {
             InitializeComponent();
-            InitUserControl(people, thesis);
+            InitUserControl(user, project);
         }
-        private void InitUserControl(User people, Project thesis)
+        private void InitUserControl(Users user, Project project)
         {
             gPanelEdit.Controls.Clear();
-            uCThesisCreate.SetEditState(people, thesis);
-            gPanelEdit.Controls.Add(uCThesisCreate);
+            uCProjectCreate.SetEditState(user, project);
+            gPanelEdit.Controls.Add(uCProjectCreate);
 
-            uCThesisCreate.GButtonCancel.Click += ButtonCancel_Clicked;
+            uCProjectCreate.GButtonCancel.Click += ButtonCancel_Clicked;
         }
         private void ButtonCancel_Clicked(object sender, EventArgs e)
         {

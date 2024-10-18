@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
+using ProjectManagement.Forms;
 using ProjectManagement.Models;
 
 namespace ProjectManagement
@@ -16,28 +17,27 @@ namespace ProjectManagement
     {
         public event EventHandler NotificationJump;
 
-        private User host = new User();
+        private Users host = new Users();
         private Notification notificationClicked = new Notification();
         private List<Notification> notificationList = new List<Notification>();
-        private NotificationDAO notificationDAO = new NotificationDAO();
 
         public UCNotification()
         {
             InitializeComponent();
         }
-        public void SetInformation(User host)
+        public void SetInformation(Users host)
         {
             this.host = host;
             InitUserControl();
         }
         private void InitUserControl()
         {
-            this.notificationList = notificationDAO.SelectList(host);
+            this.notificationList = NotificationDAO.SelectList(host);
             LoadNotificationList();
         }
         public bool HasNewNotification()
         {
-            return notificationList.Count(n => n.IsSaw == false) > 0;
+            return false; // notificationList.Count(n => n.IsSaw == false) > 0;
         }
         private void LoadNotificationList()
         {
@@ -73,13 +73,21 @@ namespace ProjectManagement
         }
         private void NotificationLine_Clicked(object sender, EventArgs e)
         {
-            UCNotificationLine line = sender as UCNotificationLine;
+            UCNotificationLine line = (UCNotificationLine)sender;
 
             if (line != null)
             {
-                this.notificationClicked = line.GetNotification;
-                OnNotificationLineClicked(EventArgs.Empty);
+                FNotificationDetails fNotificationDetails = new FNotificationDetails(line.GetNotification);
+                fNotificationDetails.ShowDialog();
             }
+
+            //UCNotificationLine line = sender as UCNotificationLine;
+
+            //if (line != null)
+            //{
+            //    this.notificationClicked = line.GetNotification;
+            //    OnNotificationLineClicked(EventArgs.Empty);
+            //}
         }
         private void OnNotificationLineClicked(EventArgs e)
         {

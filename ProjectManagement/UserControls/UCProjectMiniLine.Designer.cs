@@ -60,7 +60,7 @@
             gShadowPanelBack.ShadowStyle = Guna.UI2.WinForms.Guna2ShadowPanel.ShadowMode.ForwardDiagonal;
             gShadowPanelBack.Size = new Size(345, 50);
             gShadowPanelBack.TabIndex = 16;
-            gShadowPanelBack.Click += UCThesisMiniLine_Click;
+            gShadowPanelBack.Click += UCProjectMiniLine_Click;
             // 
             // gTextBoxStatus
             // 
@@ -100,7 +100,7 @@
             DoubleBuffered = true;
             Name = "UCProjectMiniLine";
             Size = new Size(350, 50);
-            Click += UCThesisMiniLine_Click;
+            Click += UCProjectMiniLine_Click;
             gShadowPanelBack.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();

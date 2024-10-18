@@ -1,75 +1,63 @@
-﻿using Guna.UI2.WinForms;
-using Guna.UI2.WinForms.Suite;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ProjectManagement.DAOs;
+﻿using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
-using ProjectManagement.Properties;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement
 {
     public partial class FTeamDetails : Form
     {
-        private MyProcess myProcess = new MyProcess();
+        
         private Team team = new Team();
-        private Project thesis = new Project();
-        private TasksDAO tasksDAO = new TasksDAO();
+        private Project project = new Project();
 
         private int progress = 0;
         private List<Tasks> listTasks;
 
-        public FTeamDetails(Team team, Project thesis)
+        public FTeamDetails(Team team, Project project)
         {
             InitializeComponent();
-            SetInformation(team, thesis);
+            SetInformation(team, project);
         }
 
         #region FUNCTIONS
 
-        private void SetInformation(Team team, Project thesis)
+        private void SetInformation(Team team, Project project)
         {
             this.team = team;
-            this.thesis = thesis;
-            this.listTasks = tasksDAO.SelectListByTeam(this.team.IdTeam);
+            this.project = project;
+            this.listTasks = TaskDAO.SelectListByTeam(this.team.TeamId);
             InitUserControl();
         }
         private void InitUserControl()
         {
             SetTeam(this.team);
 
-            if (this.thesis.IdThesis == string.Empty)
+            if (this.project.ProjectId == string.Empty)
             {
-                gShadowPanelThesis.Controls.Clear();
-                gShadowPanelThesis.Controls.Add(myProcess.CreatePictureBox(Properties.Resources.PictureEmptyState, new Size(399, 266)));
+                gShadowPanelProject.Controls.Clear();
+                gShadowPanelProject.Controls.Add(GunaControlUtil.CreatePictureBox(Properties.Resources.PictureEmptyState, new Size(399, 266)));
             }
             else
             {
-                gShadowPanelThesis.Controls.Clear();
-                UCProjectMiniBoard uCThesisMiniBoard = new UCProjectMiniBoard(thesis);
-                gShadowPanelThesis.Controls.Add(uCThesisMiniBoard);
+                gShadowPanelProject.Controls.Clear();
+                UCProjectMiniBoard uCProjectMiniBoard = new UCProjectMiniBoard(project);
+                gShadowPanelProject.Controls.Add(uCProjectMiniBoard);
             }
             UpdateChart();
         }
         public void SetTeam(Team team)
         {
-            gCirclePictureBoxAvatar.Image = myProcess.NameToImage(team.AvatarName);
-            lblViewHandle.Text = myProcess.FormatStringLength(team.TeamName, 20);
-            gTextBoxTeamCode.Text = team.IdTeam;
-            gTextBoxCreated.Text = team.Created.ToString("dd/MM/yyyy");
-            gTextBoxTeamMemebrs.Text = team.Members.Count.ToString() + " members";
+            gCirclePictureBoxAvatar.Image = WinformControlUtil.NameToImage(team.Avatar);
+            lblViewHandle.Text = DataTypeUtil.FormatStringLength(team.TeamName, 20);
+            gTextBoxTeamCode.Text = team.TeamId;
+            gTextBoxCreated.Text = team.CreatedAt.ToString("dd/MM/yyyy");
+            gTextBoxTeamMemebrs.Text = TeamDAO.GetMembersByTeamId(team.TeamId).Count.ToString() + " members";
 
             flpMembers.Controls.Clear();
-            foreach (User people in team.Members)
+            foreach (Users user in TeamDAO.GetMembersByTeamId(team.TeamId))
             {
-                UCUserMiniLine line = new UCUserMiniLine(people);
+                UCUserMiniLine line = new UCUserMiniLine(user);
                 line.SetBackGroundColor(SystemColors.ButtonFace);
                 line.SetSize(new Size(340, 60));
                 line.GButtonAdd.Hide();

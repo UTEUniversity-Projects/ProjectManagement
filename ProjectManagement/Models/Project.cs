@@ -7,216 +7,145 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Process;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
 {
-    #region THESIS ENUM
-
-    public enum EField
-    {
-        [Display(Name = "SoftwareDevelopment")]
-        SoftwareDevelopment,
-        [Display(Name = "Cybersecurity")]
-        Cybersecurity,
-        [Display(Name = "DataScienceAndAnalytics")]
-        DataScienceAndAnalytics,
-        [Display(Name = "ArtificialIntelligenceAndMachineLearning")]
-        ArtificialIntelligenceAndMachineLearning,
-        [Display(Name = "CloudComputing")]
-        CloudComputing,
-        [Display(Name = "InternetOfThings")]
-        InternetOfThings,
-        [Display(Name = "MobileDevelopment")]
-        MobileDevelopment,
-        [Display(Name = "WebDevelopment")]
-        WebDevelopment,
-        [Display(Name = "ComputerNetworking")]
-        ComputerNetworking,
-        [Display(Name = "VirtualRealityAndAugmentedReality")]
-        VirtualRealityAndAugmentedReality,
-        [Display(Name = "BigData")]
-        BigData,
-        [Display(Name = "BlockchainTechnology")]
-        BlockchainTechnology,
-        [Display(Name = "HumanComputerInteraction")]
-        HumanComputerInteraction,
-        [Display(Name = "QuantumComputing")]
-        QuantumComputing,
-        [Display(Name = "Bioinformatics")]
-        Bioinformatics
-    }
-    public enum ELevel
-    {
-        [Display(Name = "Easy")]
-        Easy,
-        [Display(Name = "Medium")]
-        Medium,
-        [Display(Name = "Difficult")]
-        Difficult
-    }
-    public enum EThesisStatus
-    {
-        [Display(Name = "Published")]
-        Published,
-        [Display(Name = "Registered")]
-        Registered,
-        [Display(Name = "Processing")]
-        Processing,
-        [Display(Name = "Completed")]
-        Completed,
-        [Display(Name = "GiveUp")]
-        GiveUp
-    }
-
-    #endregion
-
     public class Project
     {
-        private MyProcess myProcess = new MyProcess();
 
-        #region THESIS ATTRIBUTES
+        #region PROJECT ATTRIBUTES
 
-        private string idThesis;
+        private string projectId;
+        private string instructorId;
         private string topic;
-        private EField field;
-        private ELevel level;
-        private int maxMembers;
         private string description;
-        private DateTime publishDate;
-        private string technology;
-        private string functions;
-        private string requirements;
-        private string idCreator;
-        private bool isFavorite;
-        private EThesisStatus status;
-        private string idInstructor;
+        private string feature;
+        private string requirement;
+        private int maxMember;
+        private DateTime publicDate;
+        private EProjectStatus status;
+        private DateTime createdAt;
+        private string createdBy;
+        private string fieldId;
 
         #endregion
 
-        #region THESIS CONTRUCTOR
+        #region PROJECT CONTRUCTOR
 
         public Project()
         {
-            this.idThesis = string.Empty;
-            this.topic = string.Empty;
-            this.field = EField.SoftwareDevelopment;
-            this.level = ELevel.Easy;
-            this.maxMembers = 0;
-            this.description = string.Empty;
-            this.publishDate = DateTime.Now;
-            this.technology = string.Empty;
-            this.functions = string.Empty;
-            this.requirements = string.Empty;
-            this.idCreator = string.Empty;
-            this.isFavorite = false;
-            this.status = EThesisStatus.Published;
-            this.idInstructor = string.Empty;
+            projectId = string.Empty;
+            topic = string.Empty;
+            description = string.Empty;
+            feature = string.Empty;
+            requirement = string.Empty;
+            maxMember = 0;
+            publicDate = DateTime.MinValue;
+            status = default;
+            createdAt = DateTime.MinValue;
+            createdBy = string.Empty;
+            fieldId = string.Empty;
         }
-        public Project(string topic, EField field, ELevel level, int maxMembers, string desciption,
-                        DateTime publishDate, string technology, string functions, string requirements, string idCreator, string idInstructor)
+
+        public Project(string projectId, string instructorId, string topic, string description, string feature, string requirement, 
+            int maxMember, DateTime publicDate, EProjectStatus status, DateTime createdAt, string createdBy, string fieldId)
         {
-            this.idThesis = myProcess.GenIDClassify(EClassify.Thesis);
+            this.projectId = projectId;
+            this.instructorId = instructorId;
             this.topic = topic;
-            this.field = field;
-            this.level = level;
-            this.maxMembers = maxMembers;
-            this.description = desciption;
-            this.publishDate = publishDate;
-            this.technology = technology;
-            this.functions = functions;
-            this.requirements = requirements;
-            this.idCreator = idCreator;
-            this.isFavorite = false;
-            this.status = EThesisStatus.Published;
-            this.idInstructor = idInstructor;
-        }
-        public Project(string idThesis, string topic, EField field, ELevel level, int maxMembers, string desciption, DateTime publishDate, 
-                        string technology, string functions, string requirements, string idCreator, bool isFavorite, EThesisStatus status, string idInstructor)
-        {
-            this.idThesis = idThesis;
-            this.topic = topic;
-            this.field = field;
-            this.level = level;
-            this.maxMembers = maxMembers;
-            this.description = desciption;
-            this.publishDate = publishDate;
-            this.technology = technology;
-            this.functions = functions;
-            this.requirements = requirements;
-            this.idCreator = idCreator;
-            this.isFavorite = isFavorite;
+            this.description = description;
+            this.feature = feature;
+            this.requirement = requirement;
+            this.maxMember = maxMember;
+            this.publicDate = publicDate;
             this.status = status;
-            this.idInstructor = idInstructor;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.fieldId = fieldId;
+        }
+
+        public Project(string instructorId, string topic, string description, string feature, string requirement, 
+            int maxMember, DateTime publicDate, EProjectStatus status, DateTime createdAt, string createdBy, string fieldId)
+        {
+            this.projectId = ModelUtil.GenerateModelId(EModelClassification.PROJECT);
+            this.instructorId = instructorId;
+            this.topic = topic;
+            this.description = description;
+            this.feature = feature;
+            this.requirement = requirement;
+            this.maxMember = maxMember;
+            this.publicDate = publicDate;
+            this.status = status;
+            this.createdAt = createdAt;
+            this.createdBy = createdBy;
+            this.fieldId = fieldId;
         }
 
         #endregion
 
-        #region THESIS PROPERTIES
+        #region PROJECT PROPERTIES
 
-        public string IdThesis
+        public string ProjectId
         {
-            get { return idThesis; }
+            get { return projectId; }
+            set { projectId = value; }
+        }
+        public string InstructorId
+        {
+            get { return instructorId; }
+            set { instructorId = value; }
         }
         public string Topic
         {
             get { return topic; }
             set { topic = value; }
         }
-        public EField Field
-        {
-            get { return field; }
-        }
-        public ELevel Level
-        {
-            get { return level; }
-        }
-        public int MaxMembers
-        {
-            get { return maxMembers; }
-        }
         public string Description
         {
             get { return description; }
             set { description = value; }
         }
-        public DateTime PublishDate
+        public string Feature
         {
-            get { return publishDate; }
+            get { return feature; }
+            set { feature = value; }
         }
-        public string Technology
+        public string Requirement
         {
-            get { return technology; }
-            set {  technology = value; }
+            get { return requirement; }
+            set { requirement = value; }
         }
-        public string Functions
+        public int MaxMember
         {
-            get { return functions; }
-            set {  functions = value; }
+            get { return maxMember; }
+            set { maxMember = value; }
         }
-        public string Requirements
+        public DateTime PublicDate
         {
-            get { return requirements; }
-            set { requirements = value; }
+            get { return publicDate; }
+            set { publicDate = value; }
         }
-        public string IdCreator
-        {
-            get { return idCreator; }
-        }
-        public bool IsFavorite
-        {
-            get { return isFavorite; }
-            set { isFavorite = value; }
-        }
-        public EThesisStatus Status
+        public EProjectStatus Status
         {
             get { return status; }
             set { status = value; }
         }
-        public string IdInstructor
+        public DateTime CreatedAt
         {
-            get { return idInstructor; }
-            set { idInstructor = value; }
+            get { return createdAt; }
+            set { createdAt = value; }
+        }
+        public string CreatedBy
+        {
+            get { return createdBy; }
+            set { createdBy = value; }
+        }
+        public string FieldId
+        {
+            get { return fieldId; }
+            set { fieldId = value; }
         }
 
         #endregion
@@ -233,19 +162,19 @@ namespace ProjectManagement.Models
         }
         public bool CheckTechnology()
         {
-            return this.technology != string.Empty;
+            return true;
         }
-        public bool CheckFunctions()
+        public bool CheckFeature()
         {
-            return this.functions != string.Empty;
+            return this.feature != string.Empty;
         }
-        public bool CheckRequirements()
+        public bool CheckRequirement()
         {
-            return this.requirements != string.Empty;
+            return this.requirement != string.Empty;
         }
-        public bool CheckInstructor()
+        public bool CheckInstructorId()
         {
-            return this.idInstructor != string.Empty;
+            return this.instructorId != string.Empty;
         }
 
         #endregion
@@ -256,13 +185,13 @@ namespace ProjectManagement.Models
         {
             switch (this.status)
             {
-                case EThesisStatus.Registered:
+                case EProjectStatus.REGISTERED:
                     return Color.FromArgb(255, 87, 87);
-                case EThesisStatus.Processing:
+                case EProjectStatus.PROCESSING:
                     return Color.FromArgb(94, 148, 255);
-                case EThesisStatus.Completed:
+                case EProjectStatus.COMPLETED:
                     return Color.FromArgb(45, 237, 55);
-                case EThesisStatus.GiveUp:
+                case EProjectStatus.GAVEUP:
                     return Color.FromArgb(252, 182, 3);
                 default:
                     return Color.Gray;
@@ -272,13 +201,13 @@ namespace ProjectManagement.Models
         {
             switch (this.status)
             {
-                case EThesisStatus.Registered:
+                case EProjectStatus.REGISTERED:
                     return 0;
-                case EThesisStatus.Processing:
+                case EProjectStatus.PROCESSING:
                     return 1;
-                case EThesisStatus.Published:
+                case EProjectStatus.PUBLISHED:
                     return 2;
-                case EThesisStatus.Completed:
+                case EProjectStatus.COMPLETED:
                     return 3;
                 default:
                     return int.MaxValue;

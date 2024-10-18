@@ -55,7 +55,7 @@
             MaximizeBox = false;
             Name = "FDisplayMain";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Thesis Management";
+            Text = "Project Management";
             ResumeLayout(false);
         }
 

@@ -138,7 +138,7 @@
             lblStart.Name = "lblStart";
             lblStart.Size = new Size(49, 20);
             lblStart.TabIndex = 81;
-            lblStart.Text = "Start :";
+            lblStart.Text = "StartAt :";
             // 
             // gTextBoxLocation
             // 
@@ -279,7 +279,7 @@
             lblCre.Name = "lblCre";
             lblCre.Size = new Size(345, 20);
             lblCre.TabIndex = 39;
-            lblCre.Text = "Created by Anonymous at 03/05/2024 10:30:45 AM";
+            lblCre.Text = "CreatedAt by Anonymous at 03/05/2024 10:30:45 AM";
             // 
             // gButtonDelete
             // 

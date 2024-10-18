@@ -44,8 +44,6 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             gButtonCreate = new Guna.UI2.WinForms.Guna2GradientButton();
             gButtonCancel = new Guna.UI2.WinForms.Guna2Button();
             lblDescription = new Label();
@@ -58,18 +56,14 @@
             gTextBoxLocation = new Guna.UI2.WinForms.Guna2TextBox();
             lblLink = new Label();
             gTextBoxLink = new Guna.UI2.WinForms.Guna2TextBox();
-            gDateTimePickerEnd = new Guna.UI2.WinForms.Guna2DateTimePicker();
-            lblEnd = new Label();
             lblCre = new Label();
             erpTitle = new ErrorProvider(components);
             erpDescription = new ErrorProvider(components);
             erpStart = new ErrorProvider(components);
-            erpEnd = new ErrorProvider(components);
             erpLocation = new ErrorProvider(components);
             ((System.ComponentModel.ISupportInitialize)erpTitle).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpStart).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)erpEnd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpLocation).BeginInit();
             SuspendLayout();
             // 
@@ -207,7 +201,7 @@
             gDateTimePickerStart.FillColor = Color.White;
             gDateTimePickerStart.Font = new Font("Segoe UI", 9F);
             gDateTimePickerStart.Format = DateTimePickerFormat.Long;
-            gDateTimePickerStart.Location = new Point(88, 260);
+            gDateTimePickerStart.Location = new Point(127, 261);
             gDateTimePickerStart.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
             gDateTimePickerStart.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             gDateTimePickerStart.Name = "gDateTimePickerStart";
@@ -311,35 +305,6 @@
             gTextBoxLink.TabIndex = 81;
             gTextBoxLink.TextOffset = new Point(5, 0);
             // 
-            // gDateTimePickerEnd
-            // 
-            gDateTimePickerEnd.Checked = true;
-            gDateTimePickerEnd.CustomizableEdges = customizableEdges15;
-            gDateTimePickerEnd.FillColor = Color.White;
-            gDateTimePickerEnd.Font = new Font("Segoe UI", 9F);
-            gDateTimePickerEnd.Format = DateTimePickerFormat.Long;
-            gDateTimePickerEnd.Location = new Point(400, 260);
-            gDateTimePickerEnd.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
-            gDateTimePickerEnd.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
-            gDateTimePickerEnd.Name = "gDateTimePickerEnd";
-            gDateTimePickerEnd.ShadowDecoration.CustomizableEdges = customizableEdges16;
-            gDateTimePickerEnd.ShowUpDown = true;
-            gDateTimePickerEnd.Size = new Size(230, 45);
-            gDateTimePickerEnd.TabIndex = 1;
-            gDateTimePickerEnd.Value = new DateTime(2024, 5, 8, 8, 42, 56, 890);
-            gDateTimePickerEnd.ValueChanged += gDateTimePickerEnd_ValueChanged;
-            // 
-            // lblEnd
-            // 
-            lblEnd.AutoSize = true;
-            lblEnd.BackColor = Color.Transparent;
-            lblEnd.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblEnd.Location = new Point(342, 268);
-            lblEnd.Name = "lblEnd";
-            lblEnd.Size = new Size(52, 28);
-            lblEnd.TabIndex = 84;
-            lblEnd.Text = "End";
-            // 
             // lblCre
             // 
             lblCre.AutoSize = true;
@@ -368,11 +333,6 @@
             erpStart.ContainerControl = this;
             erpStart.Icon = (Icon)resources.GetObject("erpStart.Icon");
             // 
-            // erpEnd
-            // 
-            erpEnd.ContainerControl = this;
-            erpEnd.Icon = (Icon)resources.GetObject("erpEnd.Icon");
-            // 
             // erpLocation
             // 
             erpLocation.ContainerControl = this;
@@ -384,8 +344,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ButtonFace;
             Controls.Add(lblCre);
-            Controls.Add(lblEnd);
-            Controls.Add(gDateTimePickerEnd);
             Controls.Add(lblLink);
             Controls.Add(gTextBoxLink);
             Controls.Add(lblLocation);
@@ -403,7 +361,6 @@
             ((System.ComponentModel.ISupportInitialize)erpTitle).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpStart).EndInit();
-            ((System.ComponentModel.ISupportInitialize)erpEnd).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpLocation).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -423,13 +380,10 @@
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxLocation;
         private Label lblLink;
         private Guna.UI2.WinForms.Guna2TextBox gTextBoxLink;
-        private Guna.UI2.WinForms.Guna2DateTimePicker gDateTimePickerEnd;
-        private Label lblEnd;
         private Label lblCre;
         private ErrorProvider erpTitle;
         private ErrorProvider erpDescription;
         private ErrorProvider erpStart;
-        private ErrorProvider erpEnd;
         private ErrorProvider erpLocation;
     }
 }

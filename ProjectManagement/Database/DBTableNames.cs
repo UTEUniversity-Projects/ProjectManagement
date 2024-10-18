@@ -8,16 +8,29 @@ namespace ProjectManagement.Database
 {
     internal class DBTableNames
     {
-        public static string DBPeople = "People";
-        public static string DBThesis = "Thesis";
-        public static string DBMember = "Member";
-        public static string DBTask = "Task";
-        public static string DBComment = "Comment";
-        public static string DBEvaluation = "Evaluation";
-        public static string DBNotification = "Notification";
-        public static string DBMeeting = "Meeting";
-        public static string DBThesisStatus = "ThesisStatus";
-        public static string DBTechnology = "Technology";
-        public static string DBGiveUp = "GiveUp";
+        public static string User = "Users";
+        public static string Lecture = "Lecture";
+        public static string Student = "Student";
+        public static string Field = "Field";
+        public static string Technology = "Technology";
+        public static string Media = "Media";
+        public static string Project = "Project";
+        public static string Team = "Team";
+        public static string Task = "Task";
+        public static string Meeting = "Meeting";
+        public static string Comment = "Comment";
+        public static string Evaluation = "Evaluation";
+        public static string Notification = "Notification";
+        public static string JoinTeam = "JoinTeam";
+        public static string ViewNotification = "ViewNotification";
+        public static string ProjectMedia = "ProjectMedia";
+        public static string ProjectTechnology = "ProjectTechnology";
+        public static string TaskStudent = "TaskStudent";
+        public static string FavoriteProject = "FavoriteProject";
+        public static string FieldTechnology = "FieldTechnology ";
+        public static string GiveUp = "GiveUp";
+
+        public static string Member = "Member";
+        public static string ProjectStatus = "ProjectStatus";
     }
 }

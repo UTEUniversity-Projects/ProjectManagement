@@ -6,98 +6,88 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Database;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjectManagement.Mappers.Implement;
+using System.Data.SqlClient;
+using ProjectManagement.Enums;
+using ProjectManagement.Utils;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace ProjectManagement.DAOs
 {
     internal class NotificationDAO : DBConnection
     {
-        private MyProcess myProcess = new MyProcess();
-
-        public NotificationDAO() { }
-
+        
         #region SELECT NOTIFICATION
 
-        private List<Notification> SelectList(string command)
+        public static List<Notification> SelectList(Users user)
         {
-            DataTable dataTable = Select(command);
+            string sqlStr = string.Format("SELECT * FROM {0} AS N JOIN (SELECT * FROM {1} WHERE userId = @UserId) AS VN " +
+                                            "ON N.notificationId = VN.notificationId " +
+                                            "ORDER BY createdAt DESC",
+                                            DBTableNames.Notification, DBTableNames.ViewNotification);
 
-            List<Notification> list = new List<Notification>();
-            foreach (DataRow row in dataTable.Rows)
-            {
-                Notification notification = GetFromDataRow(row);
-                list.Add(notification);
-            }
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", user.UserId) };
 
-            return list;
-        }
-        public List<Notification> SelectList(User people)
-        {
-            string command = string.Format("SELECT * FROM {0} WHERE idhost = '{1}' ORDER BY created DESC", 
-                                            DBTableNames.DBNotification, people.IdAccount);
-            return SelectList(command);
+            return DBGetModel.GetModelList(sqlStr, parameters, new NotificationMapper());
         }
 
         #endregion
 
         #region NOTIFICATION DAO EXECUTION
 
-        public void Insert(Notification notification)
+        public static void Insert(Notification notification, string userId)
         {
-            ExecuteQueryNotification(notification, "INSERT INTO {0} VALUES ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', {9}, {10})",
-                "Create", false);
+            DBExecution.Insert(notification, DBTableNames.Notification);
+            InsertViewNotification(userId, notification.NotificationId, false);
         }
-        public void InsertFollowListPeople(string idSender, string idThesis, string idObject, string content, List<User> peoples)
+        public static void InsertFollowTeam(string teamId, string content, ENotificationType type)
         {
-            foreach (User people in peoples)
+            Notification notification = new Notification("Notification", content, type, DateTime.Now);
+            DBExecution.Insert(notification, DBTableNames.Notification);
+
+            List<Users> students = TeamDAO.GetMembersByTeamId(teamId);
+
+            foreach (Users student in students)
             {
-                if (people.IdAccount != idSender)
-                {
-                    Insert(new Notification(people.IdAccount, idSender, idThesis, idObject, content, DateTime.Now, false, false));
-                }
+                InsertViewNotification(student.UserId, notification.NotificationId, false);
             }
         }
-        public void Delete(Notification notification)
+        private static void InsertViewNotification(string userId, string notificationId, bool seen)
         {
-            ExecuteQueryNotification(notification, "DELETE FROM {0} WHERE idnotification = '{1}'",
-                "Delete", false);
+            string sqlStr = string.Format("INSERT INTO {0} (userId, notificationId, seen) " +
+                "VALUES (@UserId, @NotificationId, @Seen)", DBTableNames.ViewNotification);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("NotificationId", notificationId),
+                new SqlParameter("@Seen", seen == true ? 1 : 0)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
         }
-        public void UpdateIsSaw(string idNotification, bool flag)
+
+        public static void Delete(Notification notification)
         {
-            string command = string.Format("UPDATE {0} SET issaw = {1} WHERE idnotification = '{2}'",
-                                                DBTableNames.DBNotification, flag ? 1 : 0, idNotification);
-            SQLExecuteByCommand(command);
+            DBExecution.Delete(DBTableNames.Notification, "notificationId", notification.NotificationId);
         }
-        public void UpdateIsFavorite(string idNotification, bool flag)
+        public static void UpdateIsSaw(string userId, string notificationId, bool flag)
         {
-            string command = string.Format("UPDATE {0} SET isfavorite = {1} WHERE idnotification = '{2}'",
-                                                DBTableNames.DBNotification, flag ? 1 : 0, idNotification);
-            SQLExecuteByCommand(command);
+            string sqlStr = string.Format("UPDATE {0} SET seen = @Seen WHERE userId = @UserId AND notificationId = @NotificationId",
+                                                DBTableNames.Notification);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Seen", flag ? 1 : 0),
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@NotificationId", notificationId)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
         }
+        public static void UpdateIsFavorite(string notificationId, bool flag) { }
 
         #endregion
-
-        #region Get Notification From Data Row
-
-        public Notification GetFromDataRow(DataRow row)
-        {
-            string idNotification = row["idnotification"].ToString();
-            string idHost = row["idhost"].ToString();
-            string idSender = row["idsender"].ToString();
-            string idThesis = row["idthesis"].ToString();
-            string idObject = row["idobject"].ToString();
-            string content = row["content"].ToString();
-            ENotificationType type = myProcess.GetEnumFromDisplayName<ENotificationType>(row["type"].ToString());
-            DateTime created = DateTime.Parse(row["created"].ToString());
-            bool isFavorite = row["isfavorite"].ToString() == "True" ? true : false;
-            bool isSaw = row["issaw"].ToString() == "True" ? true : false;
-
-            Notification notification = new Notification(idNotification, idHost, idSender, idThesis, idObject, content, type, created, isFavorite, isSaw);
-            return notification;
-        }
-
-        #endregion
-    
+            
     }
 }

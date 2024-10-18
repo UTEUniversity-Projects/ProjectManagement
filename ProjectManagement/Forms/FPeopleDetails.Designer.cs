@@ -1,6 +1,6 @@
 ﻿namespace ProjectManagement
 {
-    partial class FPeopleDetails
+    partial class FUserDetails
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FPeopleDetails));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FUserDetails));
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
@@ -198,7 +198,7 @@
             gTextBoxGender.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxGender.IconLeft = Properties.Resources.PicGender;
             gTextBoxGender.IconLeftOffset = new Point(5, 0);
-            gTextBoxGender.Location = new Point(21, 196);
+            gTextBoxGender.Location = new Point(21, 244);
             gTextBoxGender.Margin = new Padding(3, 4, 3, 4);
             gTextBoxGender.Name = "gTextBoxGender";
             gTextBoxGender.PasswordChar = '\0';
@@ -238,7 +238,7 @@
             gTextBoxPhonenumber.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxPhonenumber.IconLeft = (Image)resources.GetObject("gTextBoxPhonenumber.IconLeft");
             gTextBoxPhonenumber.IconLeftOffset = new Point(5, 0);
-            gTextBoxPhonenumber.Location = new Point(21, 292);
+            gTextBoxPhonenumber.Location = new Point(21, 148);
             gTextBoxPhonenumber.Margin = new Padding(3, 4, 3, 4);
             gTextBoxPhonenumber.Name = "gTextBoxPhonenumber";
             gTextBoxPhonenumber.PasswordChar = '\0';
@@ -268,7 +268,7 @@
             gTextBoxEmail.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxEmail.IconLeft = (Image)resources.GetObject("gTextBoxEmail.IconLeft");
             gTextBoxEmail.IconLeftOffset = new Point(5, 0);
-            gTextBoxEmail.Location = new Point(21, 244);
+            gTextBoxEmail.Location = new Point(21, 100);
             gTextBoxEmail.Margin = new Padding(3, 4, 3, 4);
             gTextBoxEmail.Name = "gTextBoxEmail";
             gTextBoxEmail.PasswordChar = '\0';
@@ -298,12 +298,12 @@
             gTextBoxBirthday.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxBirthday.IconLeft = (Image)resources.GetObject("gTextBoxBirthday.IconLeft");
             gTextBoxBirthday.IconLeftOffset = new Point(5, 0);
-            gTextBoxBirthday.Location = new Point(21, 148);
+            gTextBoxBirthday.Location = new Point(21, 196);
             gTextBoxBirthday.Margin = new Padding(3, 4, 3, 4);
             gTextBoxBirthday.Name = "gTextBoxBirthday";
             gTextBoxBirthday.PasswordChar = '\0';
             gTextBoxBirthday.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
-            gTextBoxBirthday.PlaceholderText = "Birthday";
+            gTextBoxBirthday.PlaceholderText = "DateOfBirth";
             gTextBoxBirthday.ReadOnly = true;
             gTextBoxBirthday.SelectedText = "";
             gTextBoxBirthday.ShadowDecoration.CustomizableEdges = customizableEdges9;
@@ -328,7 +328,7 @@
             gTextBoxCitizencode.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxCitizencode.IconLeft = (Image)resources.GetObject("gTextBoxCitizencode.IconLeft");
             gTextBoxCitizencode.IconLeftOffset = new Point(5, 0);
-            gTextBoxCitizencode.Location = new Point(21, 100);
+            gTextBoxCitizencode.Location = new Point(21, 292);
             gTextBoxCitizencode.Margin = new Padding(3, 4, 3, 4);
             gTextBoxCitizencode.Name = "gTextBoxCitizencode";
             gTextBoxCitizencode.PasswordChar = '\0';
@@ -607,7 +607,7 @@
             gCircleProgressBar.Text = "CircleProgressBar";
             gCircleProgressBar.Value = 75;
             // 
-            // FPeopleDetails
+            // FUserDetails
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -622,7 +622,7 @@
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            Name = "FPeopleDetails";
+            Name = "FUserDetails";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Account Details";
             gShadowPanelAccountAvatar.ResumeLayout(false);

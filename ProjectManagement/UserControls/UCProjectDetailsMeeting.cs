@@ -14,10 +14,10 @@ namespace ProjectManagement
 {
     public partial class UCProjectDetailsMeeting : UserControl
     {
-        private User host = new User();
-        private Project thesis = new Project();
+        private Users host = new Users();
+        private Project project = new Project();
         private Team team = new Team();
-        private MeetingDAO meetingDAO = new MeetingDAO();
+        private MeetingDAO MeetingDAO = new MeetingDAO();
         private UCMeetingCreate uCMeetingCreate = new UCMeetingCreate();
 
         private List<Meeting> meetings = new List<Meeting>();
@@ -36,14 +36,14 @@ namespace ProjectManagement
             flpMeetingList.Show();
             uCMeetingCreate.Hide();
         }
-        public void SetUpUserControl(User host, Project thesis, Team team)
+        public void SetUpUserControl(Users host, Project project, Team team)
         {
             this.host = host;
-            this.thesis = thesis;
+            this.project = project;
             this.team = team;
             this.meetings.Clear();
-            this.meetings.AddRange(meetingDAO.SelectByThesis(thesis.IdThesis));
-            uCMeetingCreate.SetUpUserControl(host, thesis, team);
+            this.meetings.AddRange(MeetingDAO.SelectByProject(project.ProjectId));
+            uCMeetingCreate.SetUpUserControl(host, project, team);
             uCMeetingCreate.MeetingCreated += UCMeetingCreate_MeetingCreated;
 
             foreach (var meeting in meetings)
@@ -55,7 +55,7 @@ namespace ProjectManagement
         }
         private void UCMeetingCreate_MeetingCreated(object? sender, EventArgs e)
         {
-            Meeting meeting = meetingDAO.SelectOnly(uCMeetingCreate.GetMeeting.IdMeeting);
+            Meeting meeting = MeetingDAO.SelectOnly(uCMeetingCreate.GetMeeting.MeetingId);
 
             if (meeting != null)
             {
@@ -72,7 +72,7 @@ namespace ProjectManagement
 
             if (card != null)
             {
-                meetingDAO.Delete(card.GetMeeting);
+                MeetingDAO.Delete(card.GetMeeting);
 
                 foreach (Control control in flpMeetingList.Controls)
                 {
@@ -92,11 +92,13 @@ namespace ProjectManagement
         }
         private void GButtonCancel_Click(object? sender, EventArgs e)
         {
+            lblMeetingList.Text = "MEETING LIST";
             flpMeetingList.Show();
             uCMeetingCreate.Hide();
         }
         private void gGradientButtonAddMeeting_Click(object sender, EventArgs e)
         {
+            lblMeetingList.Text = "CREATE MEETING";
             flpMeetingList.Hide();
             uCMeetingCreate.SetCreateMode();
             uCMeetingCreate.Show();

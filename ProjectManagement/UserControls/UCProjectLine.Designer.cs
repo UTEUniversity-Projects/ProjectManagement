@@ -223,9 +223,9 @@
             DoubleBuffered = true;
             Name = "UCProjectLine";
             Size = new Size(1230, 80);
-            Click += UCThesisLine_Click;
-            MouseEnter += UCThesisLine_MouseEnter;
-            MouseLeave += UCThesisLine_MouseLeave;
+            Click += UCProjectLine_Click;
+            MouseEnter += UCProjectLine_MouseEnter;
+            MouseLeave += UCProjectLine_MouseLeave;
             ResumeLayout(false);
             PerformLayout();
         }

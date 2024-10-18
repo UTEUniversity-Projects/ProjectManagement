@@ -166,7 +166,7 @@
             gTextBoxType.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             gTextBoxType.FillColor = Color.Gray;
             gTextBoxType.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
-            gTextBoxType.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            gTextBoxType.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             gTextBoxType.ForeColor = Color.White;
             gTextBoxType.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxType.Location = new Point(63, 38);
@@ -177,7 +177,7 @@
             gTextBoxType.ReadOnly = true;
             gTextBoxType.SelectedText = "";
             gTextBoxType.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            gTextBoxType.Size = new Size(100, 21);
+            gTextBoxType.Size = new Size(110, 23);
             gTextBoxType.TabIndex = 44;
             gTextBoxType.TextAlign = HorizontalAlignment.Center;
             // 
