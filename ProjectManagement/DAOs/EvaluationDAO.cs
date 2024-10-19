@@ -55,7 +55,12 @@ namespace ProjectManagement.DAOs
                 DBExecution.Insert(evaluation, DBTableNames.Evaluation);
             }
         }
-
+        public static void InsertAssignStudent(string instructorId, string taskId, string studentId)
+        {
+            Evaluation evaluation = new Evaluation(string.Empty, 0.0D, 0.0D, false, DateTime.Now,
+                instructorId, studentId, taskId);
+            DBExecution.Insert(evaluation, DBTableNames.Evaluation);
+        }
         public static void Update(Evaluation evaluation)
         {
             DBExecution.Update(evaluation, DBTableNames.Evaluation, "evaluationId", evaluation.EvaluationId);

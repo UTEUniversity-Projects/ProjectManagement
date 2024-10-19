@@ -42,7 +42,11 @@ namespace ProjectManagement
         }
         private void LoadListRoleLecture()
         {
-            foreach (Member member in TeamDAO.GetMembersByTeamId(this.team.TeamId))
+            //foreach (Member member in TeamDAO.GetMembersByTeamId(this.team.TeamId))
+            //{
+            //    AddUserMiniLine(member.User);
+            //}
+            foreach (Member member in TaskStudentDAO.GetMembersByTaskId(this.task.TaskId))
             {
                 AddUserMiniLine(member.User);
             }

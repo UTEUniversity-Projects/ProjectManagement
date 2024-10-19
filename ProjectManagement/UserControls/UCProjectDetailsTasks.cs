@@ -75,7 +75,16 @@ namespace ProjectManagement
         private void UpdateTaskList()
         {
             this.listTask.Clear();
-            this.listTask = TaskDAO.SelectListByTeam(this.team.TeamId);
+            if (user.Role == EUserRole.LECTURE)
+            {
+                this.listTask = TaskDAO.SelectListByTeam(this.team.TeamId);
+            }
+            else
+            {
+                this.listTask = TaskStudentDAO.SelectListTaskByStudentId(user.UserId);
+            }
+            //
+            
         }
         private void LoadTaskList()
         {

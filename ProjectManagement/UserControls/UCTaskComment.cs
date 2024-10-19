@@ -18,8 +18,6 @@ namespace ProjectManagement
 {
     public partial class UCTaskComment : UserControl
     {
-        
-
         private Users user = new Users();
         private Users instructor = new Users();
         private Project project = new Project();
