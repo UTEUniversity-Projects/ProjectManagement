@@ -24,6 +24,7 @@ namespace ProjectManagement
         private UCProjectDetailsStatistical uCProjectDetailsStatistical = new UCProjectDetailsStatistical();
 
         private bool flagEdited = false;
+        private bool flagWaitingConfirm = false;
         private bool flagDeleted = false;
         private bool flagStuMyTheses = false;
         private bool isFavorite = false;
@@ -69,6 +70,7 @@ namespace ProjectManagement
         {
             this.flagEdited = false;
             this.flagDeleted = false;
+
             gShadowPanelTeam.Controls.Add(showTeam);
 
             ResetProjectInfor();
@@ -100,6 +102,12 @@ namespace ProjectManagement
         {
             SetTeamHere(false);
             gGradientButtonReasonDetails.Hide();
+
+            if (project.Status == EProjectStatus.WAITING)
+            {
+                SetWaitingGiveUpMode(true);
+                return;
+            }
 
             if (project.Status == EProjectStatus.PROCESSING || project.Status == EProjectStatus.COMPLETED)
             {
@@ -186,12 +194,22 @@ namespace ProjectManagement
             gTextBoxState.ForeColor = Color.FromArgb(0, 192, 192);
             SetUpDataViewState();
         }
+        private void SetWaitingGiveUpMode(bool flag)
+        {
+            if (flag == false) return;
+
+            gPictureBoxState.Image = Properties.Resources.GiftWaiting;
+            gTextBoxState.Text = "The project cannot continue !";
+            gTextBoxState.ForeColor = Color.FromArgb(0, 192, 192);
+            gGradientButtonReasonDetails.Show();
+            SetUpDataViewState();
+        }
         private void SetGiveUpMode(bool flag)
         {
             if (flag == false) return;
 
             gPictureBoxState.Image = Properties.Resources.PictureEmptyState;
-            gTextBoxState.Text = "  The project cannot continue !";
+            gTextBoxState.Text = "The project cannot continue !";
             gTextBoxState.ForeColor = Color.Gray;
             gGradientButtonReasonDetails.Show();
             SetUpDataViewState();
@@ -207,6 +225,13 @@ namespace ProjectManagement
         {
             gGradientButtonComplete.Hide();
             gGradientButtonGiveUp.Hide();
+            gGradientButtonConfirm.Hide();
+
+            if (host.Role == EUserRole.LECTURE && project.Status == EProjectStatus.WAITING)
+            {
+                gGradientButtonConfirm.Show();
+                return;
+            }
 
             if (host.Role == EUserRole.LECTURE && project.Status == EProjectStatus.PROCESSING)
             {
@@ -365,7 +390,9 @@ namespace ProjectManagement
         private void FGiveUp_ConfirnedGivingUp(object? sender, EventArgs e)
         {
             this.flagEdited = true;
-            SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
+            ProjectDAO.UpdateStatus(this.project, EProjectStatus.WAITING);
+            SetUpDataViewState();
+            SetNewState(EProjectStatus.WAITING, Properties.Resources.PictureEmptyState, "Waiting for Lecture confirm");
         }
 
         #endregion
@@ -489,5 +516,11 @@ namespace ProjectManagement
 
         #endregion
 
+        private void gGradientButtonConfirm_Click(object sender, EventArgs e)
+        {
+            this.flagEdited = true;
+            ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
+            SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
+        }
     }
 }

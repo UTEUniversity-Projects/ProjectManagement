@@ -49,7 +49,6 @@ namespace ProjectManagement
             lblTitle.Text = DataTypeUtil.FormatStringLength(meeting.Title, 30);
             gTextBoxLocation.Text = meeting.Location;
             lblTimeStart.Text = meeting.StartAt.ToString("dd/MM/yyyy HH:mm:ss tt");
-            lblTimeEnd.Text = meeting.TheEnd.ToString("dd/MM/yyyy HH:mm:ss tt");
 
             this.creator = UserDAO.SelectOnlyByID(meeting.CreatedBy);
             lblCre.Text = "Created by " + creator.FullName + " at " + meeting.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss tt");
