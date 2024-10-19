@@ -13,6 +13,7 @@ using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 using ProjectManagement.Mappers.Implement;
 using System.Data.SqlClient;
+using System.Web;
 
 namespace ProjectManagement.DAOs
 {
@@ -115,6 +116,21 @@ namespace ProjectManagement.DAOs
 
             return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
         }
+        public static List<string> GetFavoriteList(string userId)
+        {
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE userId = @UserId", DBTableNames.FavoriteProject);
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            List<string> favoriteProjects = new List<string>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                favoriteProjects.Add(row["projectId"].ToString());
+            }
+
+            return favoriteProjects;
+        }
+
         #endregion
 
         #region SEARCH PROJECT
@@ -206,9 +222,43 @@ namespace ProjectManagement.DAOs
 
             DBExecution.ExecuteNonQuery(sqlStr, parameters);
         }
-        public static void UpdateFavorite(Project project) { }
+        public static void UpdateFavorite(string userId, string projectId, bool isFavorite) 
+        {
+            string sqlStr = string.Empty;
+
+            if (isFavorite == false)
+            {
+                sqlStr = string.Format("DELETE FROM {0} WHERE userId = @UserId AND projectId = @ProjectId", DBTableNames.FavoriteProject);
+            }
+            else
+            {
+                sqlStr = string.Format("INSERT INTO {0} (userId, projectId) VALUES (@UserId, @ProjectId)", DBTableNames.FavoriteProject);
+            }
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@ProjectId", projectId)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }
 
         #endregion
 
+        public static bool CheckIsFavorite(string userId, string projectId)
+        {
+            string sqlStr = string.Format("SELECT 1 FROM {0} WHERE userId = @UserId AND projectId = @ProjectId", DBTableNames.FavoriteProject);
+           
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@ProjectId", projectId)
+            };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            return dataTable.Rows.Count > 0;
+        }
     }
 }

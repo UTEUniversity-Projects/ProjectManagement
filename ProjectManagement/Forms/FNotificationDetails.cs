@@ -10,17 +10,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement.Forms
 {
     public partial class FNotificationDetails : Form
     {
         private Notification notification = new Notification();
+        private bool isFavorite = false;
 
-        public FNotificationDetails(Notification notification)
+        public FNotificationDetails(NotificationMeta notificationMeta)
         {
             InitializeComponent();
-            this.notification = notification;
+            this.notification = notificationMeta.Notification;
+            this.isFavorite = notificationMeta.IsFavorite;
             InitUserControl();
         }
 
@@ -31,6 +34,7 @@ namespace ProjectManagement.Forms
             lblTime.Text = notification.CreatedAt.ToString("dd/MM/yyyy hh:mm:ss tt");
             gTextBoxType.Text = EnumUtil.GetDisplayName(notification.Type);
             gTextBoxType.FillColor = notification.GetTypeColor();
+            GunaControlUtil.SetItemFavorite(gButtonStar, isFavorite);
         }
     }
 }

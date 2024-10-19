@@ -13,21 +13,23 @@ namespace ProjectManagement
         private Project project = new Project();
 
         private int progress = 0;
+        private bool isFavorite = false;
         private List<Member> members = new List<Member>();
         private List<Tasks> listTasks = new List<Tasks>();
 
-        public FTeamDetails(Team team, Project project)
+        public FTeamDetails(Team team, ProjectMeta projectMeta)
         {
             InitializeComponent();
-            SetInformation(team, project);
+            this.team = team;
+            this.project = projectMeta.Project;
+            this.isFavorite = projectMeta.IsFavorite;
+            SetInformation();
         }
 
         #region FUNCTIONS
 
-        private void SetInformation(Team team, Project project)
+        private void SetInformation()
         {
-            this.team = team;
-            this.project = project;
             this.members = TeamDAO.GetMembersByTeamId(team.TeamId);
             this.listTasks = TaskDAO.SelectListByTeam(this.team.TeamId);
             InitUserControl();
@@ -44,7 +46,7 @@ namespace ProjectManagement
             else
             {
                 gShadowPanelProject.Controls.Clear();
-                UCProjectMiniBoard uCProjectMiniBoard = new UCProjectMiniBoard(project);
+                UCProjectMiniBoard uCProjectMiniBoard = new UCProjectMiniBoard(new ProjectMeta(project, isFavorite));
                 gShadowPanelProject.Controls.Add(uCProjectMiniBoard);
             }
             UpdateChart();

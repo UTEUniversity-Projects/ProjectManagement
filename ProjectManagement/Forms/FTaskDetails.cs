@@ -1,7 +1,7 @@
 ﻿using Guna.UI2.WinForms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.MetaData;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 
@@ -15,12 +15,9 @@ namespace ProjectManagement.Forms
         private Users creator = new Users();
         private Users instructor = new Users();
         private Project project = new Project();
-        private Tasks task = new Tasks();
+        private TaskMeta taskMeta = new TaskMeta();
         private Team team = new Team();
         private Tasks dynamicTask = new Tasks();
-
-        private TaskDAO TaskDAO = new TaskDAO();
-        private EvaluationDAO EvaluationDAO = new EvaluationDAO();
 
         private UCTaskComment uCTaskComment = new UCTaskComment();
         private UCTaskEvaluateList uCTaskEvaluateList = new UCTaskEvaluateList();
@@ -30,13 +27,13 @@ namespace ProjectManagement.Forms
         private bool flagCheck = false;
         private bool edited = false;
 
-        public FTaskDetails(Users host, Users instructor, Project project, Tasks task, Users creator, Team team, bool isProcessing)
+        public FTaskDetails(Users host, Users instructor, Project project, TaskMeta taskMeta, Users creator, Team team, bool isProcessing)
         {
             InitializeComponent();
             this.host = host;
             this.instructor = instructor;
             this.project = project;
-            this.task = task;
+            this.taskMeta = taskMeta;
             this.creator = creator;
             this.team = team;
             this.isProcessing = isProcessing;
@@ -56,29 +53,29 @@ namespace ProjectManagement.Forms
 
         private void SetUpUserControl()
         {
-            this.dynamicTask = task.Clone();
+            this.dynamicTask = taskMeta.Task.Clone();
             InitUserControl();
             SetViewState();
         }
         private void InitUserControl()
         {
             lblCreator.Text = creator.FullName;
-            gTextBoxTitle.Text = task.Title;
-            gTextBoxDescription.Text = task.Description;
-            gTextBoxProgress.Text = task.Progress.ToString();
+            gTextBoxTitle.Text = taskMeta.Task.Title;
+            gTextBoxDescription.Text = taskMeta.Task.Description;
+            gTextBoxProgress.Text = taskMeta.Task.Progress.ToString();
             gCirclePictureBoxCreator.Image = WinformControlUtil.NameToImage(creator.Avatar);
-            // GunaControlUtil.SetItemFavorite(gButtonStar, task.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, taskMeta.IsFavorite);
 
-            if (!isProcessing || (host.Role == EUserRole.STUDENT && task.CreatedBy != host.UserId))
+            if (!isProcessing || (host.Role == EUserRole.STUDENT && taskMeta.Task.CreatedBy != host.UserId))
             {
                 gButtonEdit.Hide();
                 gButtonStar.Location = new Point(383, 17);
             }
 
-            uCTaskComment.SetUpUserControl(host, instructor, project, task, isProcessing);
+            uCTaskComment.SetUpUserControl(host, instructor, project, taskMeta.Task, isProcessing);
             gShadowPanelView.Controls.Add(uCTaskComment);
 
-            uCTaskEvaluateList.SetUpUserControl(project, task, team, host);
+            uCTaskEvaluateList.SetUpUserControl(project, taskMeta.Task, team, host);
             uCTaskEvaluateList.ClickEvaluate += Line_ClickEvaluate;
             gShadowPanelView.Controls.Add(uCTaskEvaluateList);
 
@@ -101,14 +98,14 @@ namespace ProjectManagement.Forms
         }
         private bool CheckInformationValid()
         {
-            WinformControlUtil.RunCheckDataValid(task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
-            WinformControlUtil.RunCheckDataValid(task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(taskMeta.Task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
+            WinformControlUtil.RunCheckDataValid(taskMeta.Task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
             int progress = 0;
             bool checkProgress = int.TryParse(gTextBoxProgress.Text, out progress);
-            if (checkProgress) task.Progress = progress;
-            WinformControlUtil.RunCheckDataValid((checkProgress && task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
+            if (checkProgress) taskMeta.Task.Progress = progress;
+            WinformControlUtil.RunCheckDataValid((checkProgress && taskMeta.Task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
 
-            return task.CheckTitle() && task.CheckDescription() && (checkProgress && task.CheckProgress());
+            return taskMeta.Task.CheckTitle() && taskMeta.Task.CheckDescription() && (checkProgress && taskMeta.Task.CheckProgress());
         }
         private void AllButtonStandardColor()
         {
@@ -131,9 +128,9 @@ namespace ProjectManagement.Forms
         }
         private void gButtonCancel_Click(object sender, EventArgs e)
         {
-            gTextBoxTitle.Text = task.Title;
-            gTextBoxDescription.Text = task.Description;
-            gTextBoxProgress.Text = task.Progress.ToString();
+            gTextBoxTitle.Text = taskMeta.Task.Title;
+            gTextBoxDescription.Text = taskMeta.Task.Description;
+            gTextBoxProgress.Text = taskMeta.Task.Progress.ToString();
             SetViewState();
         }
         private void gButtonSave_Click(object sender, EventArgs e)
@@ -141,10 +138,10 @@ namespace ProjectManagement.Forms
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                this.task = new Tasks(task.TaskId, DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
-                    double.Parse(gTextBoxProgress.Text), ETaskPriority.LOW, task.CreatedAt, this.creator.UserId, this.project.ProjectId);
+                this.taskMeta.Task = new Tasks(taskMeta.Task.TaskId, DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
+                    double.Parse(gTextBoxProgress.Text), ETaskPriority.LOW, taskMeta.Task.CreatedAt, this.creator.UserId, this.project.ProjectId);
 
-                TaskDAO.Update(task);
+                TaskDAO.Update(taskMeta.Task);
                 this.flagCheck = true;
                 this.edited = true;
                 SetViewState();
@@ -187,10 +184,10 @@ namespace ProjectManagement.Forms
             bool checkProgress = int.TryParse(gTextBoxProgress.Text, out progress);
             if (checkProgress)
             {
-                task.Progress = progress;
+                taskMeta.Task.Progress = progress;
                 gProgressBarToLine.Value = progress;
             }
-            WinformControlUtil.RunCheckDataValid((checkProgress && task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
+            WinformControlUtil.RunCheckDataValid((checkProgress && taskMeta.Task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
         }
 
         #endregion
@@ -204,7 +201,7 @@ namespace ProjectManagement.Forms
             if (line != null)
             {
                 this.peopleLineClicked = line;
-                uCTaskEvaluateDetails.SetUpUserControl(project, task, line.GetUser, line.GetEvaluation, host, isProcessing);
+                uCTaskEvaluateDetails.SetUpUserControl(project, taskMeta.Task, line.GetUser, line.GetEvaluation, host, isProcessing);
                 uCTaskComment.Hide();
                 uCTaskEvaluateList.Hide();
                 uCTaskEvaluateDetails.Show();
@@ -212,7 +209,7 @@ namespace ProjectManagement.Forms
         }
         private void GButtonBack_Click(object sender, EventArgs e)
         {
-            Evaluation evaluation = EvaluationDAO.SelectOnly(task.TaskId, this.peopleLineClicked.GetUser.UserId);
+            Evaluation evaluation = EvaluationDAO.SelectOnly(taskMeta.Task.TaskId, this.peopleLineClicked.GetUser.UserId);
             this.peopleLineClicked.SetEvaluateMode(evaluation, true);
             gGradientButtonEvaluate.PerformClick();
         }
