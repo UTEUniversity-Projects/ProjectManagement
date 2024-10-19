@@ -33,16 +33,31 @@ namespace ProjectManagement.DAOs
 
             List<NotificationMeta> list = new List<NotificationMeta>();
             NotificationMapper notificationMapper = new NotificationMapper();
+            List<string> favoriteNotifications = GetFavoriteList(userId);
 
             foreach (DataRow row in dataTable.Rows)
             {
                 Notification notification = notificationMapper.MapRow(row);
                 bool isSaw = row["seen"].ToString() == "True" ? true : false;
 
-                list.Add(new NotificationMeta(notification, isSaw));
+                list.Add(new NotificationMeta(notification, isSaw, favoriteNotifications.Contains(notification.NotificationId)));
             }
 
             return list;
+        }
+        private static List<string> GetFavoriteList(string userId)
+        {
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE userId = @UserId", DBTableNames.FavoriteNotification);
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            List<string> favoriteProjects = new List<string>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                favoriteProjects.Add(row["notificationId"].ToString());
+            }
+
+            return favoriteProjects;
         }
 
         #endregion
@@ -110,9 +125,29 @@ namespace ProjectManagement.DAOs
 
             DBExecution.ExecuteNonQuery(sqlStr, parameters);
         }
-        public static void UpdateIsFavorite(string notificationId, bool flag) { }
+        public static void UpdateFavorite(string userId, string notificationId, bool isFavorite)
+        {
+            string sqlStr = string.Empty;
+
+            if (isFavorite == false)
+            {
+                sqlStr = string.Format("DELETE FROM {0} WHERE userId = @UserId AND notificationId = @NotificationId", DBTableNames.FavoriteNotification);
+            }
+            else
+            {
+                sqlStr = string.Format("INSERT INTO {0} (userId, notificationId) VALUES (@UserId, @NotificationId)", DBTableNames.FavoriteNotification);
+            }
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@NotificationId", notificationId)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+        }
 
         #endregion
-            
+
     }
 }

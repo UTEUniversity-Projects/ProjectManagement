@@ -78,7 +78,7 @@ namespace ProjectManagement
 
             if (line != null)
             {
-                FNotificationDetails fNotificationDetails = new FNotificationDetails(line.GetNotification);
+                FNotificationDetails fNotificationDetails = new FNotificationDetails(line.GetNotificationMeta);
                 fNotificationDetails.ShowDialog();
             }
 

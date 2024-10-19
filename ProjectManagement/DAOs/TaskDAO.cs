@@ -10,6 +10,8 @@ using ProjectManagement.Mappers.Implement;
 using System.Data.SqlClient;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.MetaData;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace ProjectManagement.DAOs
 {
@@ -44,6 +46,42 @@ namespace ProjectManagement.DAOs
             };
 
             return DBGetModel.GetModelList(sqlStr, parameters, new TaskMapper());
+        }
+        public static List<TaskMeta> SelectListTaskMeta(string userId, string teamId, string projectId)
+        {
+            List<Tasks> tasks = SelectListByTeam(teamId);
+            List<string> favoriteTasks = SelectFavoriteList(userId, projectId);
+
+            List<TaskMeta> taskMetas = new List<TaskMeta>();
+            foreach (Tasks task in tasks)
+            {
+                taskMetas.Add(new TaskMeta(task, favoriteTasks.Contains(task.TaskId)));
+            }
+
+            return taskMetas;
+        }
+        private static List<string> SelectFavoriteList(string userId, string projectId)
+        {
+            string sqlStr = string.Format("SELECT FT.taskId FROM {0} AS FT " +
+                "JOIN (SELECT taskId FROM {1} WHERE projectId = @ProjectId) AS T " +
+                "ON FT.taskId = T.taskId " +
+                "WHERE userId = @UserId", DBTableNames.FavoriteTask, DBTableNames.Task);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", projectId),
+                new SqlParameter("@UserId", userId)
+            };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            List<string> list = new List<string>();
+            foreach (DataRow row in  dataTable.Rows)
+            {
+                list.Add(row["taskId"].ToString());
+            }
+
+            return list;
         }
 
         #endregion
@@ -83,16 +121,33 @@ namespace ProjectManagement.DAOs
         {
             DBExecution.Update(task, DBTableNames.Task, "taskId", task.TaskId);
         }
-        public static void UpdateIsFavorite(Tasks task)
+        public static void UpdateFavorite(string userId, string taskId, bool isFavorite)
         {
-            // DBUtil.SQLExecuteByCommand(string.Format("UPDATE " + DBTableNames.Task + " SET isfavorite = {0} WHERE taskId = '{1}'", task.IsFavorite ? 1 : 0, task.TaskId));
+            string sqlStr = string.Empty;
+
+            if (isFavorite == false)
+            {
+                sqlStr = string.Format("DELETE FROM {0} WHERE userId = @UserId AND taskId = @TaskId", DBTableNames.FavoriteTask);
+            }
+            else
+            {
+                sqlStr = string.Format("INSERT INTO {0} (userId, taskId) VALUES (@UserId, @TaskId)", DBTableNames.FavoriteTask);
+            }
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@TaskId", taskId)
+            };
+
+            DBExecution.ExecuteNonQuery(sqlStr, parameters);
         }
 
         #endregion
 
         #region SEARCH TASK
 
-        public static List<Tasks> SearchTaskTitle(string projectId, string title)
+        private static List<Tasks> SearchTaskTitle(string projectId, string title)
         {
             string sqlStr = string.Format("SELECT * FROM {0} WHERE projectId = @ProjectId AND title LIKE @TitleSyntax ORDER BY createdAt DESC",
                                 DBTableNames.Task);
@@ -105,8 +160,35 @@ namespace ProjectManagement.DAOs
 
             return DBGetModel.GetModelList(sqlStr, parameters, new TaskMapper());
         }
+        public static List<TaskMeta> SearchTaskMetaTitle(string userId, string projectId, string title)
+        {
+            List<Tasks> tasks = SearchTaskTitle(projectId, title);
+            List<string> favoriteTasks = SelectFavoriteList(userId, projectId);
+
+            List<TaskMeta> taskMetas = new List<TaskMeta>();
+            foreach (Tasks task in tasks)
+            {
+                taskMetas.Add(new TaskMeta(task, favoriteTasks.Contains(task.TaskId)));
+            }
+
+            return taskMetas;
+        }
 
         #endregion
 
+        public static bool CheckIsFavorite(string userId, string taskId)
+        {
+            string sqlStr = string.Format("SELECT 1 FROM {0} WHERE userId = @UserId AND taskId = @TaskId", DBTableNames.FavoriteTask);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@TaskId", taskId)
+            };
+
+            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+
+            return dataTable.Rows.Count > 0;
+        }
     }
 }

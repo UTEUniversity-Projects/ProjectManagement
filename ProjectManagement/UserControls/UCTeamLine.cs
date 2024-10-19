@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.MetaData;
 using ProjectManagement.Utils;
 
 namespace ProjectManagement
@@ -19,13 +19,18 @@ namespace ProjectManagement
         
         public event EventHandler ProjectAddAccepted;
         private Team team = new Team();
+        private Users user = new Users();
         private Project project = new Project();
         private ProjectDAO ProjectDAO = new ProjectDAO();
 
-        public UCTeamLine(Team team)
+        private bool isFavorite = false;
+
+        public UCTeamLine(Team team, Users user)
         {
             InitializeComponent();
-            SetInformation(team);
+            this.team = team;
+            this.user = user;
+            SetInformation();
         }
 
         #region PROPERTIES
@@ -39,10 +44,10 @@ namespace ProjectManagement
 
         #region FUNCTIONS 
 
-        public void SetInformation(Team team)
+        private void SetInformation()
         {
-            this.team = team;
             this.project = ProjectDAO.SelectFollowTeam(team.TeamId);
+            this.isFavorite = ProjectDAO.CheckIsFavorite(user.UserId, project.ProjectId);
             InitUserControl();
         }
         private void InitUserControl()
@@ -84,7 +89,7 @@ namespace ProjectManagement
 
         private void gShadowPanelBack_Click(object sender, EventArgs e)
         {
-            FTeamDetails fTeamDetails = new FTeamDetails(team, project);
+            FTeamDetails fTeamDetails = new FTeamDetails(team, new ProjectMeta(project, isFavorite));
             fTeamDetails.ShowDialog();
         }
         private void gButtonAdd_Click(object sender, EventArgs e)

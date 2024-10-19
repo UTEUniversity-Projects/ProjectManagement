@@ -95,7 +95,7 @@ namespace ProjectManagement
             List<Team> list = TeamDAO.SelectFollowUser(user.UserId);
             foreach (Team team in list)
             {
-                UCTeamLine line = new UCTeamLine(team);
+                UCTeamLine line = new UCTeamLine(team, user);
                 line.SetSize(new Size(350, 60));
                 line.SetBackColor(SystemColors.ButtonFace);
                 line.SetSimpleLine();

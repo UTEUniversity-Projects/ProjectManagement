@@ -11,6 +11,7 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
 using ProjectManagement.Utils;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -18,13 +19,15 @@ namespace ProjectManagement
     {
         
         private Project project = new Project();
+        private bool isFavorite = false;
 
-        public UCProjectMiniBoard(Project project)
+        public UCProjectMiniBoard(ProjectMeta projectMeta)
         {
             InitializeComponent();
 
-            this.project = project;
-            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
+            this.project = projectMeta.Project;
+            this.isFavorite = projectMeta.IsFavorite;
+            GunaControlUtil.SetItemFavorite(gButtonStar, this.isFavorite);
             gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             gTextBoxTopic.Text = project.Topic;
@@ -39,7 +42,7 @@ namespace ProjectManagement
         }
         private void SetProjectView()
         {
-            FProjectView fProjectView = new FProjectView(project);
+            FProjectView fProjectView = new FProjectView(new ProjectMeta(project, isFavorite));
             fProjectView.ShowDialog();
         }
         private void gButtonDetails_Click(object sender, EventArgs e)

@@ -26,6 +26,7 @@ namespace ProjectManagement
         private bool flagEdited = false;
         private bool flagDeleted = false;
         private bool flagStuMyTheses = false;
+        private bool isFavorite = false;
 
         public UCProjectDetails()
         {
@@ -55,10 +56,11 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetInformation(Project project, Users host, bool flagStuMyTheses)
+        public void SetInformation(Project project, Users host, bool isFavorite, bool flagStuMyTheses)
         {
             this.project = project;
             this.host = host;
+            this.isFavorite = isFavorite;
             this.flagStuMyTheses = flagStuMyTheses;
             this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
             InitUserControl();
@@ -79,7 +81,7 @@ namespace ProjectManagement
         {
             this.project = ProjectDAO.SelectOnly(project.ProjectId);
 
-            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, this.isFavorite);
             gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             gTextBoxTopic.Text = project.Topic;
@@ -146,7 +148,7 @@ namespace ProjectManagement
                 this.team = TeamDAO.SelectFollowProject(this.project.ProjectId);
                 if (team != null)
                 {
-                    showTeam.SetInformation(team, project);
+                    showTeam.SetInformation(team, new ProjectMeta(project, isFavorite));
                     showTeam.Location = new Point(5, 5);
                     SetTeamHere(true);
                 }
@@ -243,7 +245,6 @@ namespace ProjectManagement
                 ptbEmptyState.Show();
                 lblThere.Show();
             }
-
         }
         private void SetStudentRegister(bool flag)
         {
@@ -330,7 +331,7 @@ namespace ProjectManagement
 
         private void gButtonDetails_Click(object sender, EventArgs e)
         {
-            FProjectView fProjectView = new FProjectView(project);
+            FProjectView fProjectView = new FProjectView(new ProjectMeta(project, this.isFavorite));
             fProjectView.ShowDialog();
         }
 
@@ -357,7 +358,7 @@ namespace ProjectManagement
 
         private void gGradientButtonGiveUp_Click(object sender, EventArgs e)
         {
-            FGiveUp fGiveUp = new FGiveUp(this.project, this.host, this.team);
+            FGiveUp fGiveUp = new FGiveUp(new ProjectMeta(this.project, this.isFavorite), this.host, this.team);
             fGiveUp.ConfirmedGivingUp += FGiveUp_ConfirnedGivingUp;
             fGiveUp.ShowDialog();
         }
@@ -373,7 +374,7 @@ namespace ProjectManagement
 
         private void gGradientButtonReasonDetails_Click(object sender, EventArgs e)
         {
-            FGiveUp fGiveUp = new FGiveUp(this.project, this.host, this.team);
+            FGiveUp fGiveUp = new FGiveUp(new ProjectMeta(this.project, this.isFavorite), this.host, this.team);
             GiveUp giveUp = GiveUpDAO.SelectFollowProject(project.ProjectId);
             fGiveUp.SetReadOnly(giveUp);
             fGiveUp.ShowDialog();
@@ -435,7 +436,7 @@ namespace ProjectManagement
             uCProjectDetailsRegistered.Clear();
             foreach (Team team in teams)
             {
-                UCTeamLine line = new UCTeamLine(team);
+                UCTeamLine line = new UCTeamLine(team, host);
                 line.ProjectAddAccepted += ProjectAddAccepted_Clicked;
                 uCProjectDetailsRegistered.AddTeam(line);
             }

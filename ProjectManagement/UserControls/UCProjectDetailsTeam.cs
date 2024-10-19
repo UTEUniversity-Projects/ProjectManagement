@@ -19,17 +19,17 @@ namespace ProjectManagement
     {
 
         private Team team = new Team();
-        private Project project = new Project();
+        private ProjectMeta projectMeta = new ProjectMeta();
         private List<Member> members = new List<Member>();
 
         public UCProjectDetailsTeam()
         {
             InitializeComponent();
         }
-        public void SetInformation(Team team, Project project)
+        public void SetInformation(Team team, ProjectMeta projectMeta)
         {
             this.team = team;
-            this.project = project;
+            this.projectMeta = projectMeta;
             this.members = TeamDAO.GetMembersByTeamId(team.TeamId);
             InitUserControl();
         }
@@ -41,7 +41,7 @@ namespace ProjectManagement
         }
         private void ShowTeam()
         {
-            FTeamDetails fTeamDetails = new FTeamDetails(team, project);
+            FTeamDetails fTeamDetails = new FTeamDetails(team, projectMeta);
             fTeamDetails.ShowDialog();
         }
 

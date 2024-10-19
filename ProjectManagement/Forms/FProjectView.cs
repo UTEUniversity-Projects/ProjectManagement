@@ -4,11 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Database;
+using ProjectManagement.MetaData;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Utils;
@@ -17,11 +19,13 @@ namespace ProjectManagement.Forms
 {
     public partial class FProjectView : Form
     {
+        private ProjectMeta projectMeta;
 
-        public FProjectView(Project project)
+        public FProjectView(ProjectMeta projectMeta)
         {
             InitializeComponent();
-            SetInformation(project);
+            this.projectMeta = projectMeta;
+            SetInformation(projectMeta.Project);
         }
         private void SetInformation(Project project)
         {
@@ -41,7 +45,7 @@ namespace ProjectManagement.Forms
             gTextBoxTeamRegistered.FillColor = gTextBoxStatus.FillColor;
             gTextBoxTeamRegistered.Text = TeamDAO.CountTeamFollowState(project.ProjectId, project.Status).ToString() + " teams";
 
-            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, this.projectMeta.IsFavorite);
         }
         private void AddUserLine(Users user, FlowLayoutPanel flowLayoutPanel)
         {

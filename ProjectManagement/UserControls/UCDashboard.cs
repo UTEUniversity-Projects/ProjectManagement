@@ -24,6 +24,7 @@ namespace ProjectManagement
         private FProjectFilter fProjectFilter = new FProjectFilter();
 
         private bool flagStuMyTheses = false;
+        private List<string> favoriteProjects = new List<string>();
 
         public UCDashboard()
         {
@@ -60,6 +61,7 @@ namespace ProjectManagement
         public void SetInformation(Users user)
         {
             this.user = user;
+            this.favoriteProjects = ProjectDAO.GetFavoriteList(this.user.UserId);
             gGradientButtonProjects.PerformClick();
             fProjectFilter.SetUpFilter(user);
             fProjectFilter.ListProject = this.currentList;
@@ -81,7 +83,7 @@ namespace ProjectManagement
         {
             if (flag)
             {
-                this.projectLineClicked.SetInformation(newProject);
+                this.projectLineClicked.SetInformation(this.user, newProject, this.favoriteProjects.Contains(newProject.ProjectId));
             }
         }
         private void UpdateProjectListLecture()
@@ -118,8 +120,9 @@ namespace ProjectManagement
             for (int i = 0; i < listProject.Count; i++)
             {
                 UCProjectLine projectLine = new UCProjectLine();
-                projectLine.SetInformation(listProject[i]);
+                projectLine.SetInformation(this.user, listProject[i], this.favoriteProjects.Contains(listProject[i].ProjectId));
                 projectLine.ProjectLineClicked += ProjectLine_Clicked;
+                projectLine.ProjectFavoriteClicked += ProjectFavorite_Clicked;
                 projectLine.NotificationJump += ProjectLine_NotificationJump;
                 if (user.Role == EUserRole.STUDENT) projectLine.HideToolBar();
                 uCProjectList.AddProject(projectLine);
@@ -194,7 +197,7 @@ namespace ProjectManagement
             gPanelDataView.Controls.Clear();
             this.projectClicked = ProjectDAO.SelectOnly(projectLine.GetIdProject);
             this.projectLineClicked = projectLine;
-            uCProjectDetails.SetInformation(this.projectClicked, user, this.flagStuMyTheses);
+            uCProjectDetails.SetInformation(this.projectClicked, user, this.favoriteProjects.Contains(this.projectClicked.ProjectId), this.flagStuMyTheses);
             gPanelDataView.Controls.Add(uCProjectDetails);
             
         }
@@ -205,6 +208,16 @@ namespace ProjectManagement
             if (projectLine != null)
             {
                 ProjectDetailsShow(projectLine);
+            }
+        }
+        private void ProjectFavorite_Clicked(object sender, EventArgs e)
+        {
+            UCProjectLine projectLine = sender as UCProjectLine;
+
+            if (projectLine != null)
+            {
+                if (projectLine.IsFavorite) this.favoriteProjects.Add(projectLine.GetIdProject);
+                else this.favoriteProjects.Remove(projectLine.GetIdProject);
             }
         }
         private void ProjectLine_NotificationJump(object sender, EventArgs e)

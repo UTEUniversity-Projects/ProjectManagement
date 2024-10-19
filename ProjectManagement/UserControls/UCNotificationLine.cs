@@ -33,9 +33,9 @@ namespace ProjectManagement
             this.notificationMeta = notificationMeta;
             InitUserControl();
         }
-        public Notification GetNotification
+        public NotificationMeta GetNotificationMeta
         {
-            get { return this.notificationMeta.Notification; }
+            get { return this.notificationMeta; }
         }
         private void InitUserControl()
         {
@@ -43,7 +43,7 @@ namespace ProjectManagement
             lblTime.Text = notificationMeta.Notification.CreatedAt.ToString("dd/MM/yyyy hh:mm:ss tt");
             gTextBoxType.Text = EnumUtil.GetDisplayName(notificationMeta.Notification.Type);
             gTextBoxType.FillColor = notificationMeta.Notification.GetTypeColor();
-            // GunaControlUtil.SetItemFavorite(gButtonStar, notificationMeta.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, notificationMeta.IsFavorite);
 
             if (notificationMeta.IsSaw)
             {
@@ -85,9 +85,9 @@ namespace ProjectManagement
         }
         private void gButtonStar_Click(object sender, EventArgs e)
         {
-            // notificationMeta.IsFavorite = !notificationMeta.IsFavorite;
-            // GunaControlUtil.SetItemFavorite(gButtonStar, notificationMeta.IsFavorite);
-            // NotificationDAO.UpdateIsFavorite(notificationMeta.NotificationId, notificationMeta.IsFavorite);
+            notificationMeta.IsFavorite = !notificationMeta.IsFavorite;
+            NotificationDAO.UpdateFavorite(user.UserId, notificationMeta.Notification.NotificationId, notificationMeta.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, notificationMeta.IsFavorite);
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {
