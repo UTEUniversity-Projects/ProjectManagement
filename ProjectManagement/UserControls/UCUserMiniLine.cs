@@ -28,7 +28,7 @@ namespace ProjectManagement
         private bool isEvaluate = false;
         private Color uCBackColor = Color.White;
         private Color uCHoverColor = SystemColors.ButtonFace;
-
+        private bool isAdd = false;
         public UCUserMiniLine()
         {
             InitializeComponent();
@@ -53,7 +53,10 @@ namespace ProjectManagement
         {
             get { return this.evaluation; }
         }
-
+        public bool IsAdd
+        {
+            get { return this.isAdd; }
+        }
         #endregion
 
         #region FUNCTIONS
@@ -207,6 +210,7 @@ namespace ProjectManagement
         private void gButtonAdd_Click(object sender, EventArgs e)
         {
             OnButtonAddClicked(EventArgs.Empty);
+            isAdd =!isAdd;
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {
