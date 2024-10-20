@@ -152,7 +152,7 @@ namespace ProjectManagement
             this.project = new Project(cmbIDInstructor.SelectedIndex != -1 ? cmbIDInstructor.SelectedItem.ToString() : string.Empty,
                 gTextBoxTopic.Text, gTextBoxDescription.Text, gTextBoxFunctions.Text, gTextBoxRequirements.Text,
                 DataTypeUtil.ConvertStringToInt32(gComboBoxMembers.SelectedItem.ToString()),
-                DateTime.Now, EProjectStatus.PUBLISHED, DateTime.Now, this.user.UserId, ((Field)gComboBoxField.SelectedItem).FieldId);
+                EProjectStatus.PUBLISHED, DateTime.Now, this.user.UserId, ((Field)gComboBoxField.SelectedItem).FieldId);
 
             this.flagCheck = false;
             if (CheckInformationValid())
@@ -227,7 +227,7 @@ namespace ProjectManagement
 
         private void cmbIDInstructor_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbIDInstructor.SelectedItem != null)
+            if (cmbIDInstructor.SelectedIndex >= 0)
             {
                 string idInstructor = cmbIDInstructor.SelectedItem.ToString();
                 Users user = UserDAO.SelectOnlyByID(idInstructor);
@@ -241,6 +241,8 @@ namespace ProjectManagement
                 flpInstructor.Controls.Clear();
                 flpInstructor.Controls.Add(label);
             }
+
+            WinformControlUtil.RunCheckDataValid(cmbIDInstructor.SelectedIndex >= 0 || flagCheck, erpInstructor, cmbIDInstructor, "You must select instructor");
         }
 
         #endregion

@@ -229,7 +229,7 @@ namespace ProjectManagement
         IEnumerable<object> GetContributionForTeacher(int selectedYear)
         {
             List<Project> listTheses = ProjectDAO.SelectListRoleLecture(this.user.UserId)
-                                     .Where(project => project.PublicDate.Year == selectedYear)
+                                     .Where(project => project.CreatedAt.Year == selectedYear)
                                      .ToList();
 
             this.totalContributions = listTheses.Count;
@@ -237,7 +237,7 @@ namespace ProjectManagement
             var contributions = allMonths
             .GroupJoin(listTheses,
                        month => month,
-                       project => project.PublicDate.Month,
+                       project => project.CreatedAt.Month,
                        (month, evaluation) => new
                        {
                            Month = month,

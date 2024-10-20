@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Guna.UI2.WinForms;
 using ProjectManagement.DAOs;
+using ProjectManagement.Enums;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Utils;
@@ -62,6 +63,7 @@ namespace ProjectManagement
             this.isFavorite = isFavorite;
             this.creator = UserDAO.SelectOnlyByID(project.CreatedBy);
             this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
+            HideToolBar();
             InitUserControl();
         }
         private void InitUserControl()
@@ -77,10 +79,19 @@ namespace ProjectManagement
         {
             this.BackColor = color;
         }
-        public void HideToolBar()
+        private void HideToolBar()
         {
-            gButtonEdit.Hide();
-            gButtonDelete.Hide();
+            if (project.Status == EProjectStatus.COMPLETED || project.Status == EProjectStatus.GAVEUP)
+            {
+                gButtonEdit.Hide();
+                return;
+            }
+            if (host.Role == EUserRole.STUDENT && host.UserId != project.CreatedBy)
+            {
+                gButtonEdit.Hide();
+                gButtonDelete.Hide();
+                return;
+            }
         }
         public void RemoveProject()
         {

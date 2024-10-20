@@ -23,7 +23,10 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@StudentId", studentId)
             };
 
-            return DBGetModel.GetModel(sqlStr, parameters, new EvaluationMapper());
+            Evaluation evaluation = DBGetModel.GetModel(sqlStr, parameters, new EvaluationMapper());
+
+            if (evaluation != null) return evaluation;
+            return new Evaluation();
         }
 
         public static List<Evaluation> SelectListByTask(string taskId)

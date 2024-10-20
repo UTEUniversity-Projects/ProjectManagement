@@ -31,7 +31,7 @@ namespace ProjectManagement
             this.current = current;
             InitUserControl();
         }
-        private void InitUserControl()
+        public void InitUserControl()
         {
             this.notifications = NotificationDAO.SelectList(current.UserId);
             LoadNotificationList();
