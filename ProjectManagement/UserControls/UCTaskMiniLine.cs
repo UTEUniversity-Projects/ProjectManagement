@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Forms;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.MetaData;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 
@@ -25,45 +25,45 @@ namespace ProjectManagement
         private Users creator = new Users();
         private Users instructor = new Users();
         private Project project = new Project();
-        private Tasks task = new Tasks();
+        private TaskMeta taskMeta = new TaskMeta();
         private Team team = new Team();
         private Users host = new Users();
 
         private bool isProcessing = false;
 
-        public UCTaskMiniLine(Users host, Users instructor, Project project, Tasks task, bool isProcessing)
+        public UCTaskMiniLine(Users host, Users instructor, Project project, TaskMeta taskMeta, bool isProcessing)
         {
             InitializeComponent();
             this.host = host;
             this.instructor = instructor;
             this.project = project;
-            this.task = task;
+            this.taskMeta = taskMeta;
             this.isProcessing = isProcessing;
             InitUserControl();
         }
-        public Tasks GetTask
+        public TaskMeta GetTask
         {
-            get { return this.task; }
+            get { return this.taskMeta; }
         }
         private void InitUserControl()
         {
-            creator = UserDAO.SelectOnlyByID(task.CreatedBy);
+            creator = UserDAO.SelectOnlyByID(taskMeta.Task.CreatedBy);
             team = TeamDAO.SelectFollowProject(this.project.ProjectId);
 
-            lblTaskTitle.Text = DataTypeUtil.FormatStringLength(task.Title, 60);
+            lblTaskTitle.Text = DataTypeUtil.FormatStringLength(taskMeta.Task.Title, 60);
             lblCreator.Text = creator.FullName;
-            gProgressBarToLine.Value = (int)task.Progress;
-            // GunaControlUtil.SetItemFavorite(gButtonStar, task.IsFavorite);
+            gProgressBarToLine.Value = (int)taskMeta.Task.Progress;
+            GunaControlUtil.SetItemFavorite(gButtonStar, taskMeta.IsFavorite);
 
-            if (!isProcessing || (host.Role == EUserRole.STUDENT && task.CreatedBy != host.UserId))
+            if (!isProcessing || (host.Role == EUserRole.STUDENT && taskMeta.Task.CreatedBy != host.UserId))
             {
                 gButtonDelete.Hide();
-                lblTaskTitle.Text = DataTypeUtil.FormatStringLength(task.Title, 53);
+                lblTaskTitle.Text = DataTypeUtil.FormatStringLength(taskMeta.Task.Title, 53);
             }
         }
         private void TaskDetailsShow(Notification notification, bool flag)
         {
-            FTaskDetails fTaskDetails = new FTaskDetails(host, instructor, project, task, creator, team, isProcessing);
+            FTaskDetails fTaskDetails = new FTaskDetails(host, instructor, project, taskMeta, creator, team, isProcessing);
             if (flag) fTaskDetails.PerformNotificationClick(notification);
             fTaskDetails.FormClosed += FTaskDetails_FormClosed;
             fTaskDetails.ShowDialog();
@@ -84,25 +84,24 @@ namespace ProjectManagement
             {
                 if (fTaskDetails.Edited)
                 {
-                    this.task = TaskDAO.SelectOnly(task.TaskId);
+                    this.taskMeta.Task = TaskDAO.SelectOnly(taskMeta.Task.TaskId);
                     InitUserControl();
                 }
             }
         }
         private void gButtonStar_Click(object sender, EventArgs e)
         {
-            // task.IsFavorite = !task.IsFavorite;
-
-            // GunaControlUtil.SetItemFavorite(gButtonStar, task.IsFavorite);
-            TaskDAO.UpdateIsFavorite(task);
+            taskMeta.IsFavorite = !taskMeta.IsFavorite;
+            TaskDAO.UpdateFavorite(host.UserId, taskMeta.Task.TaskId, taskMeta.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, taskMeta.IsFavorite);
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure you want to delete " + task.TaskId,
+            DialogResult result = MessageBox.Show("Are you sure you want to delete " + taskMeta.Task.TaskId,
                                                     "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                TaskDAO.Delete(task.TaskId);
+                TaskDAO.Delete(taskMeta.Task.TaskId);
                 OnTasksDeleteClicked(EventArgs.Empty);
             }
         }

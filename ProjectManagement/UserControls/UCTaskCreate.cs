@@ -12,6 +12,7 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Utils;
 using ProjectManagement.Enums;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -73,15 +74,15 @@ namespace ProjectManagement
             gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
 
             flpMembers.Controls.Clear();
-            foreach (Users user in TeamDAO.GetMembersByTeamId(team.TeamId))
+            foreach (Member member in TeamDAO.GetMembersByTeamId(team.TeamId))
             {
-                UCUserMiniLine line = new UCUserMiniLine(user);
+                UCUserMiniLine line = new UCUserMiniLine(member.User);
                 line.SetBackGroundColor(SystemColors.ButtonFace);
-                line.SetSize(new Size(305, 60));
-                line.GButtonAdd.Location = new Point(250, 10);
+                line.SetSize(new Size(285, 60));
+                line.GButtonAdd.Location = new Point(230, 10);
                 line.GButtonAdd.HoverState.FillColor = SystemColors.ButtonFace;
                 line.GButtonAdd.HoverState.Image = null;
-                line.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, user);
+                line.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, member.User);
                 line.GButtonAdd.Show();
                 flpMembers.Controls.Add(line);
             }
@@ -133,15 +134,28 @@ namespace ProjectManagement
             this.flagCheck = false;
             if (CheckInformationValid())
             {
-                this.task = new Tasks(DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
-                    0.0D, Enums.ETaskPriority.LOW, DateTime.Now, this.creator.UserId, this.project.ProjectId);
+                this.task = new Tasks(gDateTimePickerStart.Value, gDateTimePickerEnd.Value, gTextBoxTitle.Text, gTextBoxDescription.Text, 0.0D, EnumUtil.GetEnumFromDisplayName<ETaskPriority>(gComboBoxPriority.SelectedItem.ToString()), DateTime.Now, this.creator.UserId, this.project.ProjectId);
                 TaskDAO.Insert(task);
-                EvaluationDAO.InsertFollowTeam(instructor.UserId, task.TaskId, team.TeamId);
+                List<Users> assignStudent = new List<Users>();
+                foreach (UCUserMiniLine item in flpMembers.Controls)
+                {
+                    if (item.IsAdd)
+                    {
+                        TaskStudent taskStudent = new TaskStudent(task.TaskId, item.GetUser.UserId);
+                        TaskStudentDAO.Insert(taskStudent);
+                        EvaluationDAO.InsertAssignStudent(instructor.UserId, task.TaskId, item.GetUser.UserId);
+                    }
+                }
 
-                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).ToList();
+                List<Users> peoples = TaskStudentDAO.GetMembersByTaskId(this.task.TaskId).Select(m => m.User).ToList();
                 peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeTask(creator.FullName, task.Title, project.Topic);
-                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, Enums.ENotificationType.TASK);
+                Notification notification = new Notification("Notification", content, ENotificationType.TASK, DateTime.Now);
+                NotificationDAO.InsertOnly(notification);
+                foreach (Users user in peoples)
+                {
+                    NotificationDAO.InsertViewNotification(user.UserId, notification.NotificationId, false);
+                }
 
                 this.flagCheck = true;
                 InitUserControl();
@@ -177,8 +191,15 @@ namespace ProjectManagement
             this.task.EndAt = gDateTimePickerEnd.Value;
             WinformControlUtil.RunCheckDataValid(task.CheckEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "The end time must be after the start time");
         }
+        private void gComboBoxPriority_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (gComboBoxPriority.SelectedItem != null &&
+            Enum.TryParse<ETaskPriority>(gComboBoxPriority.SelectedItem.ToString(), out var priority))
+            {
+                this.task.Priority = priority;
+            }
 
+        }
         #endregion
-
     }
 }

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -18,12 +18,9 @@ namespace ProjectManagement
     {
         private Team team = new Team();
         private List<Tasks> listTasks = new List<Tasks>();
-        private List<Users> members = new List<Users>();
+        private List<Member> members = new List<Member>();
         private List<double> evaluationOfMembers;
         private List<double> scoreOfMembers;
-
-        private TaskDAO TaskDAO = new TaskDAO();
-        
 
         public UCProjectDetailsStatistical()
         {
@@ -33,7 +30,7 @@ namespace ProjectManagement
         {
             this.team = team;
             this.members = TeamDAO.GetMembersByTeamId(team.TeamId);
-            this.members.OrderBy(member => member.UserId);
+            this.members.OrderBy(member => member.Role);
             this.listTasks = TaskDAO.SelectListByTeam(this.team.TeamId);
             UpdateMembers();
             UpdateChart();
@@ -45,12 +42,12 @@ namespace ProjectManagement
 
         public void UpdateMembers()
         {
-            this.evaluationOfMembers = CalculationUtil.CalEvaluations(this.listTasks, this.members.Count(), evaluation => evaluation.CompletionRate);
-            this.scoreOfMembers = CalculationUtil.CalEvaluations(this.listTasks, this.members.Count(), evaluation => evaluation.Score);
+            this.evaluationOfMembers = CalculationUtil.CalCompletionRate(this.listTasks, this.members.Count());
+            this.scoreOfMembers = CalculationUtil.CalScore(this.listTasks, this.members.Count());
             flpMemberStatistical.Controls.Clear();
             for (int i = 0; i < this.members.Count; i++)
             {
-                UCUserMiniLine line = new UCUserMiniLine(this.members[i]);
+                UCUserMiniLine line = new UCUserMiniLine(this.members[i].User);
                 line.SetBackGroundColor(SystemColors.ButtonFace);
                 line.SetSize(new Size(580, 63));
                 line.SetDeleteMode(false);

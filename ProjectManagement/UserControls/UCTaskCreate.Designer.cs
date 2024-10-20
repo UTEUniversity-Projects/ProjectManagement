@@ -287,6 +287,7 @@
             gComboBoxPriority.ShadowDecoration.CustomizableEdges = customizableEdges10;
             gComboBoxPriority.Size = new Size(185, 36);
             gComboBoxPriority.TabIndex = 89;
+            gComboBoxPriority.SelectedIndexChanged += gComboBoxPriority_SelectedIndexChanged;
             // 
             // lblPriority
             // 

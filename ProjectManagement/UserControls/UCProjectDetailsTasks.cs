@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Enums;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -19,7 +20,7 @@ namespace ProjectManagement
         private Users instructor = new Users();
         private Team team = new Team();
         private Project project = new Project();
-        private List<Tasks> listTask = new List<Tasks>();
+        private List<TaskMeta> listTask = new List<TaskMeta>();
 
         private UCTaskCreate uCTaskCreate = new UCTaskCreate();
         private bool isProcessing = true;
@@ -65,9 +66,10 @@ namespace ProjectManagement
         private void UCTaskCreate_TasksCreateClicked(object sender, EventArgs e)
         {
             Tasks task = TaskDAO.SelectOnly(uCTaskCreate.GetTasks.TaskId);
+            TaskMeta taskMeta = new TaskMeta(task, TaskDAO.CheckIsFavorite(user.UserId, task.TaskId));
 
-            this.listTask.Add(task);
-            UCTaskMiniLine line = new UCTaskMiniLine(user, instructor, project, task, isProcessing);
+            this.listTask.Add(new TaskMeta(task, false));
+            UCTaskMiniLine line = new UCTaskMiniLine(user, instructor, project, taskMeta, isProcessing);
             line.TasksDeleteClicked += GButtonDelete_Click;
             flpTaskList.Controls.Add(line);
             flpTaskList.Controls.SetChildIndex(line, 0);
@@ -75,14 +77,14 @@ namespace ProjectManagement
         private void UpdateTaskList()
         {
             this.listTask.Clear();
-            this.listTask = TaskDAO.SelectListByTeam(this.team.TeamId);
+            this.listTask = TaskDAO.SelectListTaskMeta(this.user.UserId, this.team.TeamId, this.team.ProjectId);
         }
         private void LoadTaskList()
         {
             flpTaskList.Controls.Clear();
-            foreach (Tasks task in listTask)
+            foreach (TaskMeta taskMeta in listTask)
             {
-                UCTaskMiniLine line = new UCTaskMiniLine(user, instructor, project, task, isProcessing);
+                UCTaskMiniLine line = new UCTaskMiniLine(user, instructor, project, taskMeta, isProcessing);
                 line.TasksDeleteClicked += GButtonDelete_Click;
                 flpTaskList.Controls.Add(line);
             }
@@ -163,7 +165,7 @@ namespace ProjectManagement
 
         private void gTextBoxSearch_TextChanged(object sender, EventArgs e)
         {
-            this.listTask = TaskDAO.SearchTaskTitle(this.project.ProjectId, gTextBoxSearch.Text);
+            this.listTask = TaskDAO.SearchTaskMetaTitle(user.UserId, project.ProjectId, gTextBoxSearch.Text);
             LoadTaskList();
         }
 

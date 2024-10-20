@@ -29,13 +29,15 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UCUserMiniLine));
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             lblUserCode = new Label();
             lblUserName = new Label();
             gCirclePictureBoxAvatar = new Guna.UI2.WinForms.Guna2CirclePictureBox();
@@ -43,8 +45,11 @@
             gButtonComplete = new Guna.UI2.WinForms.Guna2Button();
             gProgressBarToLine = new Guna.UI2.WinForms.Guna2ProgressBar();
             gButtonAdd = new Guna.UI2.WinForms.Guna2Button();
+            lblMemRole = new Label();
+            gPictureBoxMemRole = new Guna.UI2.WinForms.Guna2PictureBox();
             ((System.ComponentModel.ISupportInitialize)gCirclePictureBoxAvatar).BeginInit();
             gShadowPanelBack.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gPictureBoxMemRole).BeginInit();
             SuspendLayout();
             // 
             // lblUserCode
@@ -66,7 +71,7 @@
             lblUserName.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblUserName.Location = new Point(69, 6);
             lblUserName.Name = "lblUserName";
-            lblUserName.Size = new Size(87, 23);
+            lblUserName.Size = new Size(90, 23);
             lblUserName.TabIndex = 26;
             lblUserName.Text = "UserName";
             // 
@@ -77,7 +82,7 @@
             gCirclePictureBoxAvatar.ImageRotate = 0F;
             gCirclePictureBoxAvatar.Location = new Point(14, 5);
             gCirclePictureBoxAvatar.Name = "gCirclePictureBoxAvatar";
-            gCirclePictureBoxAvatar.ShadowDecoration.CustomizableEdges = customizableEdges1;
+            gCirclePictureBoxAvatar.ShadowDecoration.CustomizableEdges = customizableEdges10;
             gCirclePictureBoxAvatar.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
             gCirclePictureBoxAvatar.Size = new Size(45, 45);
             gCirclePictureBoxAvatar.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -88,6 +93,8 @@
             // gShadowPanelBack
             // 
             gShadowPanelBack.BackColor = Color.Transparent;
+            gShadowPanelBack.Controls.Add(gPictureBoxMemRole);
+            gShadowPanelBack.Controls.Add(lblMemRole);
             gShadowPanelBack.Controls.Add(gButtonComplete);
             gShadowPanelBack.Controls.Add(gProgressBarToLine);
             gShadowPanelBack.Controls.Add(gButtonAdd);
@@ -98,7 +105,7 @@
             gShadowPanelBack.ShadowColor = Color.Black;
             gShadowPanelBack.ShadowShift = 4;
             gShadowPanelBack.ShadowStyle = Guna.UI2.WinForms.Guna2ShadowPanel.ShadowMode.ForwardDiagonal;
-            gShadowPanelBack.Size = new Size(605, 60);
+            gShadowPanelBack.Size = new Size(800, 60);
             gShadowPanelBack.TabIndex = 28;
             gShadowPanelBack.Click += gShadowPanelBack_Click;
             gShadowPanelBack.MouseEnter += gShadowPanelBack_MouseEnter;
@@ -108,7 +115,7 @@
             // 
             gButtonComplete.BackColor = Color.White;
             gButtonComplete.BorderRadius = 5;
-            gButtonComplete.CustomizableEdges = customizableEdges2;
+            gButtonComplete.CustomizableEdges = customizableEdges13;
             gButtonComplete.DisabledState.BorderColor = Color.White;
             gButtonComplete.DisabledState.CustomBorderColor = Color.White;
             gButtonComplete.DisabledState.FillColor = Color.White;
@@ -123,19 +130,19 @@
             gButtonComplete.Location = new Point(547, 9);
             gButtonComplete.Name = "gButtonComplete";
             gButtonComplete.PressedColor = Color.White;
-            gButtonComplete.ShadowDecoration.CustomizableEdges = customizableEdges3;
+            gButtonComplete.ShadowDecoration.CustomizableEdges = customizableEdges14;
             gButtonComplete.Size = new Size(35, 35);
             gButtonComplete.TabIndex = 61;
             // 
             // gProgressBarToLine
             // 
             gProgressBarToLine.BorderRadius = 8;
-            gProgressBarToLine.CustomizableEdges = customizableEdges4;
+            gProgressBarToLine.CustomizableEdges = customizableEdges15;
             gProgressBarToLine.Location = new Point(339, 17);
             gProgressBarToLine.Name = "gProgressBarToLine";
             gProgressBarToLine.ProgressColor = Color.FromArgb(94, 148, 255);
             gProgressBarToLine.ProgressColor2 = Color.FromArgb(255, 77, 165);
-            gProgressBarToLine.ShadowDecoration.CustomizableEdges = customizableEdges5;
+            gProgressBarToLine.ShadowDecoration.CustomizableEdges = customizableEdges16;
             gProgressBarToLine.Size = new Size(200, 20);
             gProgressBarToLine.TabIndex = 60;
             gProgressBarToLine.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
@@ -145,7 +152,7 @@
             // 
             gButtonAdd.BackColor = Color.White;
             gButtonAdd.BorderRadius = 5;
-            gButtonAdd.CustomizableEdges = customizableEdges6;
+            gButtonAdd.CustomizableEdges = customizableEdges17;
             gButtonAdd.DisabledState.BorderColor = Color.White;
             gButtonAdd.DisabledState.CustomBorderColor = Color.White;
             gButtonAdd.DisabledState.FillColor = Color.White;
@@ -161,10 +168,37 @@
             gButtonAdd.Location = new Point(253, 10);
             gButtonAdd.Name = "gButtonAdd";
             gButtonAdd.PressedColor = Color.White;
-            gButtonAdd.ShadowDecoration.CustomizableEdges = customizableEdges7;
+            gButtonAdd.ShadowDecoration.CustomizableEdges = customizableEdges18;
             gButtonAdd.Size = new Size(35, 35);
             gButtonAdd.TabIndex = 14;
             gButtonAdd.Click += gButtonAdd_Click;
+            // 
+            // lblMemRole
+            // 
+            lblMemRole.AutoSize = true;
+            lblMemRole.BackColor = Color.White;
+            lblMemRole.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblMemRole.ForeColor = Color.FromArgb(74, 97, 94);
+            lblMemRole.Location = new Point(648, 17);
+            lblMemRole.Name = "lblMemRole";
+            lblMemRole.Size = new Size(55, 20);
+            lblMemRole.TabIndex = 62;
+            lblMemRole.Text = "Leader";
+            // 
+            // gPictureBoxMemRole
+            // 
+            gPictureBoxMemRole.BackColor = Color.White;
+            gPictureBoxMemRole.CustomizableEdges = customizableEdges11;
+            gPictureBoxMemRole.FillColor = SystemColors.ControlLight;
+            gPictureBoxMemRole.Image = Properties.Resources.PicItemLeaderKey;
+            gPictureBoxMemRole.ImageRotate = 0F;
+            gPictureBoxMemRole.Location = new Point(617, 15);
+            gPictureBoxMemRole.Name = "gPictureBoxMemRole";
+            gPictureBoxMemRole.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            gPictureBoxMemRole.Size = new Size(25, 25);
+            gPictureBoxMemRole.SizeMode = PictureBoxSizeMode.StretchImage;
+            gPictureBoxMemRole.TabIndex = 63;
+            gPictureBoxMemRole.TabStop = false;
             // 
             // UCUserMiniLine
             // 
@@ -177,9 +211,11 @@
             Controls.Add(gShadowPanelBack);
             DoubleBuffered = true;
             Name = "UCUserMiniLine";
-            Size = new Size(610, 60);
+            Size = new Size(850, 60);
             ((System.ComponentModel.ISupportInitialize)gCirclePictureBoxAvatar).EndInit();
             gShadowPanelBack.ResumeLayout(false);
+            gShadowPanelBack.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)gPictureBoxMemRole).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -193,5 +229,7 @@
         private Guna.UI2.WinForms.Guna2Button gButtonAdd;
         private Guna.UI2.WinForms.Guna2ProgressBar gProgressBarToLine;
         private Guna.UI2.WinForms.Guna2Button gButtonComplete;
+        private Label lblMemRole;
+        private Guna.UI2.WinForms.Guna2PictureBox gPictureBoxMemRole;
     }
 }

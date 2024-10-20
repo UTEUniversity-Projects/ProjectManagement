@@ -773,7 +773,6 @@ namespace ProjectManagement.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-
         internal static System.Drawing.Bitmap PicItemMemberKey {
             get {
                 object obj = ResourceManager.GetObject("PicItemMemberKey", resourceCulture);

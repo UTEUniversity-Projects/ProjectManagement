@@ -156,7 +156,7 @@ namespace ProjectManagement
 
                 string content = Notification.GetContentTypeMeeting(meeting.Title, host.FullName);
                 var peoples = new List<Users> { instructor };
-                peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
+                peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User));
                 NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.MEETING);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);
@@ -174,7 +174,7 @@ namespace ProjectManagement
 
                 string content = Notification.GetContentTypeMeetingUpdated(meeting.Title);
                 var peoples = new List<Users> { instructor };
-                peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
+                peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User));
                 NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.COMMENT);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);

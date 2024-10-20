@@ -23,7 +23,10 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@StudentId", studentId)
             };
 
-            return DBGetModel.GetModel(sqlStr, parameters, new EvaluationMapper());
+            Evaluation evaluation = DBGetModel.GetModel(sqlStr, parameters, new EvaluationMapper());
+
+            if (evaluation != null) return evaluation;
+            return new Evaluation();
         }
 
         public static List<Evaluation> SelectListByTask(string taskId)
@@ -55,7 +58,12 @@ namespace ProjectManagement.DAOs
                 DBExecution.Insert(evaluation, DBTableNames.Evaluation);
             }
         }
-
+        public static void InsertAssignStudent(string instructorId, string taskId, string studentId)
+        {
+            Evaluation evaluation = new Evaluation(string.Empty, 0.0D, 0.0D, false, DateTime.Now,
+                instructorId, studentId, taskId);
+            DBExecution.Insert(evaluation, DBTableNames.Evaluation);
+        }
         public static void Update(Evaluation evaluation)
         {
             DBExecution.Update(evaluation, DBTableNames.Evaluation, "evaluationId", evaluation.EvaluationId);

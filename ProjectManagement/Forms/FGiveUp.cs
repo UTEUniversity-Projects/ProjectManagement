@@ -11,6 +11,8 @@ using ProjectManagement.DAOs;
 using ProjectManagement.Models;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.MetaData;
+using System.Diagnostics.Metrics;
 
 namespace ProjectManagement.Forms
 {
@@ -24,16 +26,18 @@ namespace ProjectManagement.Forms
         private GiveUp giveUp = new GiveUp();
 
         private bool flagCheck = false;
+        private bool isFavorite = false;
 
         public FGiveUp()
         {
             InitializeComponent();
         }
-        public FGiveUp(Project project, Users represent, Team team)
+        public FGiveUp(ProjectMeta projectMeta, Users represent, Team team)
         {
             InitializeComponent();
 
-            this.project = project;
+            this.project = projectMeta.Project;
+            this.isFavorite = projectMeta.IsFavorite;
             this.represent = represent;
             this.team = team;
             this.giveUp = new GiveUp(project.ProjectId, represent.UserId, gTextBoxReason.Text, DateTime.Now, EGiveUpStatus.PENDING);
@@ -48,7 +52,7 @@ namespace ProjectManagement.Forms
         }
         private void SetProject()
         {
-            UCProjectMiniBoard uCProjectMiniBoard = new UCProjectMiniBoard(project);
+            UCProjectMiniBoard uCProjectMiniBoard = new UCProjectMiniBoard(new ProjectMeta(project, isFavorite));
             uCProjectMiniBoard.SetColorViewState(SystemColors.ButtonFace);
             gPanelProject.Controls.Clear();
             gPanelProject.Controls.Add(uCProjectMiniBoard);
@@ -64,7 +68,7 @@ namespace ProjectManagement.Forms
         }
         private void SetTeam()
         {
-            UCTeamLine uCTeamMiniLine = new UCTeamLine(team);
+            UCTeamLine uCTeamMiniLine = new UCTeamLine(team, represent);
             uCTeamMiniLine.SetSize(new Size(275, 60));
             gPanelTeam.Controls.Clear();
             gPanelTeam.Controls.Add(uCTeamMiniLine);
@@ -106,14 +110,7 @@ namespace ProjectManagement.Forms
                                                         "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.OK)
                 {
-                    ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
                     GiveUpDAO.Insert(this.giveUp);
-
-                    string content = Notification.GetContentTypeGiveUp(team.TeamName, project.Topic);
-                    var peoples = new List<Users>();
-                    peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId));
-                    peoples.Add(UserDAO.SelectOnlyByID(project.InstructorId));
-                    NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.PROJECT);
 
                     ConfirmedGivingUp?.Invoke(this, e);
                     this.Close();

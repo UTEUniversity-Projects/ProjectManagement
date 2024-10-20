@@ -39,8 +39,6 @@
             gElipse = new Guna.UI2.WinForms.Guna2Elipse(components);
             gButtonDelete = new Guna.UI2.WinForms.Guna2Button();
             gButtonStar = new Guna.UI2.WinForms.Guna2Button();
-            lblFrom = new Label();
-            lblTemp = new Label();
             lblNotification = new Label();
             lblTi = new Label();
             lblTime = new Label();
@@ -94,29 +92,6 @@
             gButtonStar.Size = new Size(40, 40);
             gButtonStar.TabIndex = 12;
             gButtonStar.Click += gButtonStar_Click;
-            // 
-            // lblFrom
-            // 
-            lblFrom.AutoSize = true;
-            lblFrom.BackColor = Color.Transparent;
-            lblFrom.Font = new Font("Century Gothic", 9F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            lblFrom.Location = new Point(234, 39);
-            lblFrom.Name = "lblFrom";
-            lblFrom.Size = new Size(92, 18);
-            lblFrom.TabIndex = 41;
-            lblFrom.Text = "Anonymous";
-            // 
-            // lblTemp
-            // 
-            lblTemp.AutoSize = true;
-            lblTemp.BackColor = Color.Transparent;
-            lblTemp.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTemp.ForeColor = Color.FromArgb(74, 97, 94);
-            lblTemp.Location = new Point(178, 38);
-            lblTemp.Name = "lblTemp";
-            lblTemp.Size = new Size(53, 20);
-            lblTemp.TabIndex = 40;
-            lblTemp.Text = "From :";
             // 
             // lblNotification
             // 
@@ -189,8 +164,6 @@
             Controls.Add(gTextBoxType);
             Controls.Add(lblTi);
             Controls.Add(lblTime);
-            Controls.Add(lblFrom);
-            Controls.Add(lblTemp);
             Controls.Add(lblNotification);
             Controls.Add(gButtonDelete);
             Controls.Add(gButtonStar);
@@ -209,8 +182,6 @@
         private Guna.UI2.WinForms.Guna2Elipse gElipse;
         private Guna.UI2.WinForms.Guna2Button gButtonDelete;
         private Guna.UI2.WinForms.Guna2Button gButtonStar;
-        private Label lblFrom;
-        private Label lblTemp;
         private Label lblNotification;
         private Label lblTi;
         private Label lblTime;

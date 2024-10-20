@@ -47,7 +47,6 @@ CREATE TABLE Project (
     feature NTEXT NOT NULL,
     requirement NTEXT NOT NULL,
     maxMember INT NOT NULL,
-    publicDate DATETIME NOT NULL,
 	status VARCHAR(20) NOT NULL,
 	createdAt DATETIME NOT NULL,
 	createdBy VARCHAR(20) NOT NULL,
@@ -588,7 +587,7 @@ INSERT INTO Technology (technologyId, name) VALUES
     ('249900300', 'BGP (Border Gateway Protocol)'),
     ('249900301', 'OSPF (Open Shortest Path First)'),
     ('249900302', 'MPLS (Multiprotocol Label Switching)'),
-    ('249900303', 'IPv4 v� IPv6'),
+    ('249900303', 'IPv4 vs IPv6'),
     ('249900304', 'ICMP (Internet Control Message Protocol)'),
     ('249900305', 'ARP (Address Resolution Protocol)'),
     ('249900306', 'STP (Spanning Tree Protocol)'),
@@ -780,77 +779,77 @@ INSERT INTO Technology (technologyId, name) VALUES
 	
 
 -- Insert data into Project table 
-INSERT INTO Project (projectId, instructorId, topic, description, feature, requirement, maxMember, publicDate, status, createdAt, createdBy, fieldId)
+INSERT INTO Project (projectId, instructorId, topic, description, feature, requirement, maxMember, status, createdAt, createdBy, fieldId)
 VALUES
     ('244400001', '242200001', 
         'Building a model for applying information technology to serve the development of agriculture and rural industry', 
         'Building an information technology model to optimize agricultural management and development, enhancing production efficiency, service provision, and sustainable development in rural areas.', 
         'Functions include weather monitoring, crop management, sensor data recording, yield prediction, schedule and resource management, and farmer-market connectivity.', 
         'Requirements: Agricultural knowledge, programming skills, understanding of AI and data analysis, logical thinking, and creativity in technology application in agriculture.', 
-        5, '2024-03-15 19:30:45', 'Registered', '2024-03-15 19:30:45', '242200001', '248800001'),
+        5, 'Registered', '2024-03-15 19:30:45', '242200001', '248800001'),
 
     ('244400002', '242200001', 
         'Developing an AI-powered system for cybersecurity threat detection and prevention', 
         'Creating an advanced AI system to detect and prevent cybersecurity threats in real-time, providing robust protection for sensitive data and networks.', 
         'Functions include anomaly detection, intrusion detection, malware analysis, threat intelligence integration, and automated response mechanisms.', 
         'Requirements: Strong understanding of cybersecurity principles, programming expertise in Python or Java, familiarity with network protocols and security tools, and analytical skills.', 
-        7, '2024-03-14 14:45:30', 'Registered', '2024-03-14 14:45:30', '242200001', '248800002'),
+        7, 'Registered', '2024-03-14 14:45:30', '242200001', '248800002'),
 
     ('244400003', '242200001', 
         'Utilizing data science techniques for predictive maintenance in manufacturing industries', 
         'Implementing data science methods to predict machinery failures and optimize maintenance schedules in manufacturing plants, reducing downtime and improving productivity.', 
         'Functions include data preprocessing, model training, feature selection, anomaly detection, and maintenance schedule optimization.', 
         'Requirements: Understanding of manufacturing processes, proficiency in data analysis tools like Python or R, knowledge of statistical techniques, and familiarity with industrial sensors and IoT.', 
-        4, '2024-03-13 10:20:15', 'Registered', '2024-03-13 10:20:15', '242200001', '248800003'),
+        4, 'Registered', '2024-03-13 10:20:15', '242200001', '248800003'),
 
     ('244400004', '242200001', 
         'Developing a chatbot using artificial intelligence for customer service', 
         'Creating an AI-powered chatbot to handle customer inquiries, provide assistance, and streamline customer service operations for businesses.', 
         'Functions include intent recognition, context handling, response generation, and integration with backend systems.', 
         'Requirements: Proficiency in NLP libraries like NLTK or spaCy, experience in building chatbots using frameworks like Dialogflow or Rasa, and knowledge of RESTful APIs for backend integration.', 
-        3, '2024-03-12 08:55:10', 'Processing', '2024-03-12 08:55:10', '242200001', '248800004'),
+        3, 'Processing', '2024-03-12 08:55:10', '242200001', '248800004'),
 
     ('244400005', '242200001', 
         'Implementing cloud computing solutions for efficient data storage and processing', 
         'Deploying cloud-based infrastructure for storing and processing large volumes of data, ensuring scalability, reliability, and cost-effectiveness for businesses.', 
         'Functions include data migration, cluster management, performance optimization, security configuration, and cost monitoring.', 
         'Requirements: Familiarity with cloud platforms, experience in deploying and managing cloud services, understanding of networking and security principles, and knowledge of DevOps practices.', 
-        6, '2024-03-11 12:30:25', 'Processing', '2024-03-11 12:30:25', '242200001', '248800005'),
+        6, 'Processing', '2024-03-11 12:30:25', '242200001', '248800005'),
 
     ('244400006', '242200001', 
         'Creating IoT applications for smart energy management in buildings', 
         'Developing IoT-based solutions to optimize energy consumption, monitor equipment performance, and automate energy-saving processes in residential and commercial buildings.', 
         'Functions include sensor integration, real-time data processing, energy usage analysis, automated control systems, and user interface design for energy monitoring.', 
         'Requirements: Knowledge of IoT protocols and platforms, proficiency in hardware programming, experience in energy management systems, and understanding of building automation principles.', 
-        5, '2024-03-10 15:20:40', 'Completed', '2024-03-10 15:20:40', '243300002', '248800006'),
+        5, 'Completed', '2024-03-10 15:20:40', '243300002', '248800006'),
 
     ('244400007', '242200001', 
         'Developing mobile applications for remote healthcare monitoring', 
         'Designing mobile apps to remotely monitor patients health status, track medication adherence, and facilitate communication between healthcare providers and patients.', 
         'Functions include user authentication, data encryption, real-time health data synchronization, medication reminders, and emergency alert systems.', 
         'Requirements: Proficiency in mobile app development frameworks, knowledge of healthcare regulations, experience in HIPAA compliance, and understanding of medical data privacy.', 
-        4, '2024-04-09 18:10:55', 'Completed', '2024-04-09 18:10:55', '243300002', '248800007'),
+        4, 'Completed', '2024-04-09 18:10:55', '243300002', '248800007'),
 
     ('244400008', '242200001', 
         'Developing responsive web interfaces for online education platforms', 
         'Creating user-friendly web interfaces for online learning platforms, ensuring accessibility, interactivity, and engagement for learners of all ages.', 
         'Functions include frontend development, UI/UX design, content management, gamification features, and integration with learning management systems.', 
         'Requirements: Proficiency in web development technologies, understanding of educational principles, experience in UX/UI design, and familiarity with e-learning standards.', 
-        6, '2024-04-08 09:40:20', 'GaveUp', '2024-04-08 09:40:20', '243300002', '248800008'),
+        6, 'GaveUp', '2024-04-08 09:40:20', '243300002', '248800008'),
 
     ('244400009', '242200001', 
         'Exploring the potential of blockchain technology for supply chain transparency', 
         'Investigating how blockchain can enhance supply chain transparency, traceability, and accountability, improving trust and efficiency in global supply networks.', 
         'Functions include blockchain architecture design, smart contract development, consensus mechanism implementation, and integration with existing supply chain systems.', 
         'Requirements: Understanding of blockchain principles, proficiency in smart contract programming, knowledge of supply chain management, and familiarity with cryptographic techniques.', 
-        8, '2024-04-07 11:50:35', 'Published', '2024-04-07 11:50:35', '243300002', '248800009'),
+        8, 'Published', '2024-04-07 11:50:35', '243300002', '248800009'),
 
     ('244400010', '242200001', 
         'Advancing human-computer interaction through augmented reality interfaces', 
         'Exploring novel ways to interact with computers using augmented reality interfaces, enhancing user experience and productivity in various domains such as gaming, education, and healthcare.', 
         'Functions include gesture recognition, object tracking, spatial mapping, user feedback analysis, and usability testing for AR interfaces.', 
         'Requirements: Proficiency in AR development frameworks, understanding of human-centered design principles, experience in UI/UX design, and creativity in AR content creation.', 
-        5, '2024-03-06 14:25:50', 'Published', '2024-03-06 14:25:50', '243300002', '248800010');
+        5, 'Published', '2024-03-06 14:25:50', '243300002', '248800010');
 
 
 -- Insert Teams into Team table
@@ -1337,51 +1336,84 @@ VALUES
     ('244400010', '249900248');
 
 
+-- Insert data into TaskStudent table
 INSERT INTO TaskStudent (taskId, studentId)
 VALUES
-    -- For projectId '244400001' corresponding to team '245500001' and '245500003'
-    ('246600001', '243300001'), -- Code Crusaders (Leader)
-    ('246600001', '243300002'), -- Code Crusaders (Member)
-    ('246600001', '243300003'), -- Code Crusaders (Member)
-    ('246600001', '243300007'), -- Byte Busters (Leader)
-    ('246600001', '243300008'), -- Byte Busters (Member)
+    ('246600001', '243300015'),
+    ('246600001', '243300016'),
+    ('246600001', '243300017'),
+    ('246600002', '243300015'),
+    ('246600002', '243300016'),
+    ('246600002', '243300017'),
+    ('246600003', '243300015'),
+    ('246600003', '243300016'),
+    ('246600003', '243300017'),
+    ('246600004', '243300015'),
+    ('246600004', '243300016'),
+    ('246600004', '243300017'),
+    ('246600005', '243300015'),
+    ('246600005', '243300016'),
+    ('246600005', '243300017'),
+    ('246600006', '243300015'),
+    ('246600006', '243300016'),
+    ('246600006', '243300017'),
+    ('246600007', '243300015'),
+    ('246600007', '243300016'),
+    ('246600007', '243300017'),
+    ('246600008', '243300015'),
+    ('246600008', '243300016'),
+    ('246600008', '243300017');
 
-    -- For projectId '244400002' corresponding to team '245500002' and '245500004'
-    ('246600002', '243300004'), -- Digital Dynamos (Leader)
-    ('246600002', '243300005'), -- Digital Dynamos (Member)
-    ('246600002', '243300006'), -- Digital Dynamos (Member)
-    ('246600002', '243300009'), -- Tech Titan (Leader)
-    ('246600002', '243300010'), -- Tech Titan (Member)
+INSERT INTO TaskStudent (taskId, studentId)
+VALUES
+    ('246600009', '243300002'),
+    ('246600009', '243300018'),
+    ('246600009', '243300019'),
+    ('246600010', '243300002'),
+    ('246600010', '243300018'),
+    ('246600010', '243300019'),
+    ('246600011', '243300002'),
+    ('246600011', '243300018'),
+    ('246600011', '243300019'),
+    ('246600012', '243300002'),
+    ('246600012', '243300018'),
+    ('246600012', '243300019'),
+    ('246600013', '243300002'),
+    ('246600013', '243300018'),
+    ('246600013', '243300019'),
+    ('246600014', '243300002'),
+    ('246600014', '243300018'),
+    ('246600014', '243300019'),
+    ('246600015', '243300002'),
+    ('246600015', '243300018'),
+    ('246600015', '243300019'),
+    ('246600016', '243300002'),
+    ('246600016', '243300018'),
+    ('246600016', '243300019');
 
-    -- For projectId '244400003' corresponding to team '245500006'
-    ('246600003', '243300013'), -- Data Wizards (Leader)
+INSERT INTO TaskStudent (taskId, studentId)
+VALUES
+    ('246600017', '243300020'),
+    ('246600018', '243300020'),
+    ('246600019', '243300020'),
+    ('246600020', '243300020'),
+    ('246600021', '243300020'),
+    ('246600022', '243300020');
 
-    -- For projectId '244400004' corresponding to team '245500008'
-    ('246600004', '243300015'), -- Innovation Squad (Leader)
-    ('246600004', '243300016'), -- Innovation Squad (Member)
-    ('246600004', '243300017'), -- Innovation Squad (Member)
-
-    -- For projectId '244400005' corresponding to team '245500009'
-    ('246600005', '243300018'), -- Digital Mavericks (Leader)
-    ('246600005', '243300002'), -- Digital Mavericks (Member)
-    ('246600005', '243300019'), -- Digital Mavericks (Member)
-
-    -- For projectId '244400006' corresponding to team '245500010'
-    ('246600006', '243300020'), -- Pixel Pioneers (Leader)
-
-    -- For projectId '244400007' corresponding to team '245500007'
-    ('246600007', '243300020'), -- Network Ninjas (Leader)
-
-    -- For projectId '244400008' corresponding to team '245500011'
-    ('246600008', '243300005'), -- Basic Algorithm (Leader)
-    ('246600008', '243300002'), -- Basic Algorithm (Member)
-    ('246600008', '243300009'); -- Basic Algorithm (Member)
+INSERT INTO TaskStudent (taskId, studentId)
+VALUES
+    ('246600023', '243300014'),
+    ('246600024', '243300014'),
+    ('246600025', '243300014'),
+    ('246600026', '243300014'),
+    ('246600027', '243300014'),
+    ('246600028', '243300014');
 	
 
 -- Insert data into GiveUp table
 INSERT INTO GiveUp (projectId, userId, reason, createdAt, status)
 VALUES
-	('244400008', '243300002', 'Not enough energy and resources to continue', '2024-04-15 19:30:45', 'Confirmed');
+	('244400008', '243300002', 'Not enough energy and resources to continue', '2024-04-15 19:30:45', 'Accepted');
 
 
 -- Insert data into FavouriteProject table

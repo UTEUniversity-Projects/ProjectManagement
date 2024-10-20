@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Guna.UI2.WinForms;
 using ProjectManagement.DAOs;
+using ProjectManagement.Enums;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Utils;
@@ -21,11 +22,15 @@ namespace ProjectManagement
         public event EventHandler NotificationJump;
         public event EventHandler ProjectLineClicked;
         public event EventHandler ProjectDeleteClicked;
+        public event EventHandler ProjectFavoriteClicked;
 
         private Project project = new Project();
+        private Users host = new Users();
         private Users creator = new Users();
         private Users instructor = new Users();
         private Notification notification = new Notification();
+
+        private bool isFavorite = false;
 
         public UCProjectLine()
         {
@@ -38,6 +43,10 @@ namespace ProjectManagement
         {
             get { return this.project.ProjectId; }
         }
+        public bool IsFavorite
+        {
+            get { return this.isFavorite; }
+        }
         public Notification GetNotification
         {
             get { return this.notification; }
@@ -47,17 +56,19 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetInformation(Project project)
+        public void SetInformation(Users host, Project project, bool isFavorite)
         {
+            this.host = host;
             this.project = project;
+            this.isFavorite = isFavorite;
             this.creator = UserDAO.SelectOnlyByID(project.CreatedBy);
             this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
+            HideToolBar();
             InitUserControl();
         }
         private void InitUserControl()
         {
-            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
-
+            GunaControlUtil.SetItemFavorite(gButtonStar, isFavorite);
             lblProjectTopic.Text = DataTypeUtil.FormatStringLength(project.Topic, 130);
             gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
@@ -68,10 +79,19 @@ namespace ProjectManagement
         {
             this.BackColor = color;
         }
-        public void HideToolBar()
+        private void HideToolBar()
         {
-            gButtonEdit.Hide();
-            gButtonDelete.Hide();
+            if (project.Status == EProjectStatus.COMPLETED || project.Status == EProjectStatus.GAVEUP)
+            {
+                gButtonEdit.Hide();
+                return;
+            }
+            if (host.Role == EUserRole.STUDENT && host.UserId != project.CreatedBy)
+            {
+                gButtonEdit.Hide();
+                gButtonDelete.Hide();
+                return;
+            }
         }
         public void RemoveProject()
         {
@@ -143,10 +163,15 @@ namespace ProjectManagement
 
         private void gButtonStar_Click(object sender, EventArgs e)
         {
-            // project.IsFavorite = !project.IsFavorite;
+            this.isFavorite = !this.isFavorite;
+            ProjectDAO.UpdateFavorite(this.host.UserId, this.project.ProjectId, this.isFavorite);            
+            GunaControlUtil.SetItemFavorite(gButtonStar, this.isFavorite);
 
-            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
-            ProjectDAO.UpdateFavorite(this.project);
+            OnProjectFavoriteClicked(e);
+        }
+        public void OnProjectFavoriteClicked(EventArgs e)
+        {
+            ProjectFavoriteClicked?.Invoke(this, e);
         }
 
         #endregion

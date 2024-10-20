@@ -247,7 +247,7 @@
             gTextBoxSearch.Name = "gTextBoxSearch";
             gTextBoxSearch.PasswordChar = '\0';
             gTextBoxSearch.PlaceholderForeColor = Color.Gray;
-            gTextBoxSearch.PlaceholderText = "Search projects";
+            gTextBoxSearch.PlaceholderText = "Search project topic";
             gTextBoxSearch.SelectedText = "";
             gTextBoxSearch.ShadowDecoration.CustomizableEdges = customizableEdges12;
             gTextBoxSearch.Size = new Size(377, 40);

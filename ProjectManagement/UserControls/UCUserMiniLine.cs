@@ -12,6 +12,7 @@ using ProjectManagement.Database;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Utils;
+using ProjectManagement.Enums;
 
 namespace ProjectManagement
 {
@@ -27,7 +28,7 @@ namespace ProjectManagement
         private bool isEvaluate = false;
         private Color uCBackColor = Color.White;
         private Color uCHoverColor = SystemColors.ButtonFace;
-
+        private bool isAdd = false;
         public UCUserMiniLine()
         {
             InitializeComponent();
@@ -52,7 +53,10 @@ namespace ProjectManagement
         {
             get { return this.evaluation; }
         }
-
+        public bool IsAdd
+        {
+            get { return this.isAdd; }
+        }
         #endregion
 
         #region FUNCTIONS
@@ -69,6 +73,30 @@ namespace ProjectManagement
             lblUserCode.Text = user.UserId;
             gButtonComplete.Hide();
             gProgressBarToLine.Hide();
+        }
+        public void SetMemberMode(Size size, Color color, ETeamRole role)
+        {
+            SetBackGroundColor(color);
+            SetSize(size);
+            SetMemberRole(role);
+            gButtonAdd.Hide();
+        }
+        private void SetMemberRole(ETeamRole role)
+        {
+            if (role == ETeamRole.LEADER)
+            {
+                lblMemRole.Text = "Leader";
+                gPictureBoxMemRole.Image = Properties.Resources.PicItemLeaderKey;
+            }
+            else
+            {
+                lblMemRole.Text = "Member";
+                gPictureBoxMemRole.Image = Properties.Resources.PicItemMemberKey;
+                gPictureBoxMemRole.Size = new Size(23, 23);
+            }
+
+            gPictureBoxMemRole.Location = new Point(this.Size.Width - 125, 15);
+            lblMemRole.Location = new Point(gPictureBoxMemRole.Location.X + 30, 17);
         }
         public void SetDeleteMode(bool deleteMode)
         {
@@ -151,6 +179,8 @@ namespace ProjectManagement
             gButtonComplete.FillColor = color;
             gButtonComplete.BackColor = color;
             gButtonComplete.PressedColor = color;
+            lblMemRole.BackColor = color;
+            gPictureBoxMemRole.BackColor = color;
         }
         private void ShowUserInformation()
         {
@@ -180,6 +210,7 @@ namespace ProjectManagement
         private void gButtonAdd_Click(object sender, EventArgs e)
         {
             OnButtonAddClicked(EventArgs.Empty);
+            isAdd =!isAdd;
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {

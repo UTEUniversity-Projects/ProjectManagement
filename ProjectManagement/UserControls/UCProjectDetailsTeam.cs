@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
+using ProjectManagement.MetaData;
 using ProjectManagement.Models;
 using ProjectManagement.Process;
 using ProjectManagement.Utils;
@@ -18,17 +19,17 @@ namespace ProjectManagement
     {
 
         private Team team = new Team();
-        private Project project = new Project();
-        private List<Users> members = new List<Users>();
+        private ProjectMeta projectMeta = new ProjectMeta();
+        private List<Member> members = new List<Member>();
 
         public UCProjectDetailsTeam()
         {
             InitializeComponent();
         }
-        public void SetInformation(Team team, Project project)
+        public void SetInformation(Team team, ProjectMeta projectMeta)
         {
             this.team = team;
-            this.project = project;
+            this.projectMeta = projectMeta;
             this.members = TeamDAO.GetMembersByTeamId(team.TeamId);
             InitUserControl();
         }
@@ -40,7 +41,7 @@ namespace ProjectManagement
         }
         private void ShowTeam()
         {
-            FTeamDetails fTeamDetails = new FTeamDetails(team, project);
+            FTeamDetails fTeamDetails = new FTeamDetails(team, projectMeta);
             fTeamDetails.ShowDialog();
         }
 

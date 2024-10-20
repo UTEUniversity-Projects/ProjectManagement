@@ -116,11 +116,6 @@ namespace ProjectManagement.Models
             get { return projectId; }
             set { projectId = value; }
         }
-        public DateTime TheEnd
-        {
-            get { return DateTime.MinValue; }
-            set { }
-        }
 
         #endregion
 

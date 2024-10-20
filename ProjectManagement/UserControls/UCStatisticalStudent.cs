@@ -52,8 +52,8 @@ namespace ProjectManagement
                 Team team = TeamDAO.SelectFollowProject(project.ProjectId);
                 listTasks = TaskDAO.SelectListByTeam(team.TeamId);
 
-                double score = CalculationUtil.CalEvaluations(listTasks, 1, evaluation => evaluation.Score)[0];
-                double contribute = CalculationUtil.CalEvaluations(listTasks, 1, evaluation => evaluation.CompletionRate)[0];
+                double score = CalculationUtil.CalCompletionRate(listTasks, 1)[0];
+                double contribute = CalculationUtil.CalScore(listTasks, 1)[0];
 
                 this.avgContribute += contribute;
 

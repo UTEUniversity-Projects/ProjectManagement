@@ -21,6 +21,7 @@ namespace ProjectManagement
         public UCProjectList()
         {
             InitializeComponent();
+            gGradientButtonFilter.Hide();
         }
 
         #region PROPERTIES

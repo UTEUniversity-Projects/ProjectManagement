@@ -104,12 +104,14 @@ namespace ProjectManagement.Models
             switch (this.type)
             {
                 case ENotificationType.PROJECT:
-                    return Color.FromArgb(255, 87, 87);
-                case ENotificationType.TASK:
                     return Color.FromArgb(94, 148, 255);
-                case ENotificationType.EVALUATION:
+                case ENotificationType.TASK:
                     return Color.FromArgb(45, 237, 55);
+                case ENotificationType.EVALUATION:
+                    return Color.FromArgb(237, 62, 247);
                 case ENotificationType.MEETING:
+                    return Color.FromArgb(255, 87, 87);
+                case ENotificationType.GIVEUP:
                     return Color.FromArgb(252, 182, 3);
                 default:
                     return Color.Gray;
@@ -121,15 +123,19 @@ namespace ProjectManagement.Models
         }
         public static string GetContentTypeRegistered(string teamName, string projectTopic)
         {
-            return string.Format("{0} team has registered for the [{1}] project", teamName, projectTopic);
+            return string.Format("{0} team has REGISTERED for the [{1}] project", teamName, projectTopic);
         }
         public static string GetContentRegisteredMembers(string senderName, string teamName, string projectTopic)
         {
-            return string.Format("{0} has registered team [{1}] with you for the project [{2}]", senderName, teamName, projectTopic);
+            return string.Format("{0} has REGISTERED team [{1}] with you for the project [{2}]", senderName, teamName, projectTopic);
         }
         public static string GetContentTypeAccepted(string senderName, string projectTopic)
         {
-            return string.Format("{0} has agreed with your team for the project [{1}]", senderName, projectTopic);
+            return string.Format("{0} has AGREED with your team for the project [{1}]", senderName, projectTopic);
+        }
+        public static string GetContentTypeRejected(string senderName, string projectTopic)
+        {
+            return string.Format("Ohhh, {0} has REJECTED with your team for the project [{1}]", senderName, projectTopic);
         }
         public static string GetContentTypeTask(string senderName, string taskTitle, string projectTopic)
         {
@@ -154,6 +160,18 @@ namespace ProjectManagement.Models
         public static string GetContentTypeGiveUp(string teamName, string projectTopic)
         {
             return string.Format("The [{0}] team abandoned the the [{1}] project", teamName, projectTopic);
+        }
+        public static string GetContentTypeGiveUpAccepted(string teamName, string projectTopic)
+        {
+            return string.Format("Your request has been ACCEPTED for [{0}] team abandoned the the [{1}] project", teamName, projectTopic);
+        }
+        public static string GetContentTypeGiveUpRejected(string teamName, string projectTopic)
+        {
+            return string.Format("Your request has been REJECTED for [{0}] team abandoned the the [{1}] project", teamName, projectTopic);
+        }
+        public static string GetContentCompletedProject(string projectTopic)
+        {
+            return string.Format("COMPLETED the [{0}] project", projectTopic);
         }
 
         #endregion

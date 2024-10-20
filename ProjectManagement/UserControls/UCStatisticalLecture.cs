@@ -59,11 +59,11 @@ namespace ProjectManagement
             var projectGroupedByMonth = allMonths
                 .GroupJoin(this.listProject,
                            month => month,
-                           project => project.PublicDate.Month,
+                           project => project.CreatedAt.Month,
                            (month, theses) => new
                            {
                                Month = month,
-                               Count = theses.Where(project => project.PublicDate.Year == selectedYear).Count()
+                               Count = theses.Where(project => project.CreatedAt.Year == selectedYear).Count()
                            })
                 .Select(result => new
                 {
