@@ -46,6 +46,7 @@ namespace ProjectManagement.DAOs
         {
             string sqlStr = $"SELECT studentId FROM {DBTableNames.TaskStudent} WHERE taskId = @TaskId";
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TaskId", taskId) };
+
             DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
 
             List<Member> list = new List<Member>();
