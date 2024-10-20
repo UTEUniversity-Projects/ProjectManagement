@@ -24,8 +24,10 @@ namespace ProjectManagement
         private UCProjectDetailsStatistical uCProjectDetailsStatistical = new UCProjectDetailsStatistical();
 
         private bool flagEdited = false;
+        private bool flagWaitingConfirm = false;
         private bool flagDeleted = false;
         private bool flagStuMyTheses = false;
+        private bool isFavorite = false;
 
         public UCProjectDetails()
         {
@@ -55,10 +57,11 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetInformation(Project project, Users host, bool flagStuMyTheses)
+        public void SetInformation(Project project, Users host, bool isFavorite, bool flagStuMyTheses)
         {
             this.project = project;
             this.host = host;
+            this.isFavorite = isFavorite;
             this.flagStuMyTheses = flagStuMyTheses;
             this.instructor = UserDAO.SelectOnlyByID(project.InstructorId);
             InitUserControl();
@@ -67,6 +70,7 @@ namespace ProjectManagement
         {
             this.flagEdited = false;
             this.flagDeleted = false;
+
             gShadowPanelTeam.Controls.Add(showTeam);
 
             ResetProjectInfor();
@@ -79,7 +83,7 @@ namespace ProjectManagement
         {
             this.project = ProjectDAO.SelectOnly(project.ProjectId);
 
-            // GunaControlUtil.SetItemFavorite(gButtonStar, project.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, this.isFavorite);
             gTextBoxStatus.Text = EnumUtil.GetDisplayName(project.Status);
             gTextBoxStatus.FillColor = project.GetStatusColor();
             gTextBoxTopic.Text = project.Topic;
@@ -98,6 +102,12 @@ namespace ProjectManagement
         {
             SetTeamHere(false);
             gGradientButtonReasonDetails.Hide();
+
+            if (project.Status == EProjectStatus.WAITING)
+            {
+                SetWaitingGiveUpMode(true);
+                return;
+            }
 
             if (project.Status == EProjectStatus.PROCESSING || project.Status == EProjectStatus.COMPLETED)
             {
@@ -146,7 +156,7 @@ namespace ProjectManagement
                 this.team = TeamDAO.SelectFollowProject(this.project.ProjectId);
                 if (team != null)
                 {
-                    showTeam.SetInformation(team, project);
+                    showTeam.SetInformation(team, new ProjectMeta(project, isFavorite));
                     showTeam.Location = new Point(5, 5);
                     SetTeamHere(true);
                 }
@@ -184,12 +194,22 @@ namespace ProjectManagement
             gTextBoxState.ForeColor = Color.FromArgb(0, 192, 192);
             SetUpDataViewState();
         }
+        private void SetWaitingGiveUpMode(bool flag)
+        {
+            if (flag == false) return;
+
+            gPictureBoxState.Image = Properties.Resources.GiftWaiting;
+            gTextBoxState.Text = "The project cannot continue !";
+            gTextBoxState.ForeColor = Color.FromArgb(0, 192, 192);
+            gGradientButtonReasonDetails.Show();
+            SetUpDataViewState();
+        }
         private void SetGiveUpMode(bool flag)
         {
             if (flag == false) return;
 
             gPictureBoxState.Image = Properties.Resources.PictureEmptyState;
-            gTextBoxState.Text = "  The project cannot continue !";
+            gTextBoxState.Text = "The project cannot continue !";
             gTextBoxState.ForeColor = Color.Gray;
             gGradientButtonReasonDetails.Show();
             SetUpDataViewState();
@@ -205,6 +225,13 @@ namespace ProjectManagement
         {
             gGradientButtonComplete.Hide();
             gGradientButtonGiveUp.Hide();
+            gGradientButtonConfirm.Hide();
+
+            if (host.Role == EUserRole.LECTURE && project.Status == EProjectStatus.WAITING)
+            {
+                gGradientButtonConfirm.Show();
+                return;
+            }
 
             if (host.Role == EUserRole.LECTURE && project.Status == EProjectStatus.PROCESSING)
             {
@@ -243,7 +270,6 @@ namespace ProjectManagement
                 ptbEmptyState.Show();
                 lblThere.Show();
             }
-
         }
         private void SetStudentRegister(bool flag)
         {
@@ -330,7 +356,7 @@ namespace ProjectManagement
 
         private void gButtonDetails_Click(object sender, EventArgs e)
         {
-            FProjectView fProjectView = new FProjectView(project);
+            FProjectView fProjectView = new FProjectView(new ProjectMeta(project, this.isFavorite));
             fProjectView.ShowDialog();
         }
 
@@ -357,14 +383,16 @@ namespace ProjectManagement
 
         private void gGradientButtonGiveUp_Click(object sender, EventArgs e)
         {
-            FGiveUp fGiveUp = new FGiveUp(this.project, this.host, this.team);
+            FGiveUp fGiveUp = new FGiveUp(new ProjectMeta(this.project, this.isFavorite), this.host, this.team);
             fGiveUp.ConfirmedGivingUp += FGiveUp_ConfirnedGivingUp;
             fGiveUp.ShowDialog();
         }
         private void FGiveUp_ConfirnedGivingUp(object? sender, EventArgs e)
         {
             this.flagEdited = true;
-            SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
+            ProjectDAO.UpdateStatus(this.project, EProjectStatus.WAITING);
+            SetUpDataViewState();
+            SetNewState(EProjectStatus.WAITING, Properties.Resources.PictureEmptyState, "Waiting for Lecture confirm");
         }
 
         #endregion
@@ -373,7 +401,7 @@ namespace ProjectManagement
 
         private void gGradientButtonReasonDetails_Click(object sender, EventArgs e)
         {
-            FGiveUp fGiveUp = new FGiveUp(this.project, this.host, this.team);
+            FGiveUp fGiveUp = new FGiveUp(new ProjectMeta(this.project, this.isFavorite), this.host, this.team);
             GiveUp giveUp = GiveUpDAO.SelectFollowProject(project.ProjectId);
             fGiveUp.SetReadOnly(giveUp);
             fGiveUp.ShowDialog();
@@ -435,7 +463,7 @@ namespace ProjectManagement
             uCProjectDetailsRegistered.Clear();
             foreach (Team team in teams)
             {
-                UCTeamLine line = new UCTeamLine(team);
+                UCTeamLine line = new UCTeamLine(team, host);
                 line.ProjectAddAccepted += ProjectAddAccepted_Clicked;
                 uCProjectDetailsRegistered.AddTeam(line);
             }
@@ -488,5 +516,11 @@ namespace ProjectManagement
 
         #endregion
 
+        private void gGradientButtonConfirm_Click(object sender, EventArgs e)
+        {
+            this.flagEdited = true;
+            ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
+            SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
+        }
     }
 }

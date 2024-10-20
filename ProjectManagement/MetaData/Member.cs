@@ -8,7 +8,7 @@ using ProjectManagement.Models;
 
 namespace ProjectManagement.MetaData
 {
-    internal class Member
+    public class Member
     {
         private Users user;
         private ETeamRole role;

@@ -33,7 +33,7 @@ namespace ProjectManagement
         }
         private void UCProjectMiniLine_Click(object sender, EventArgs e)
         {
-            FProjectView fProjectView = new FProjectView(this.project);
+            FProjectView fProjectView = new FProjectView(new (this.project, false));
             fProjectView.ShowDialog();
         }
     }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
 using ProjectManagement.Models;
-using ProjectManagement.Process;
+using ProjectManagement.MetaData;
 using ProjectManagement.Utils;
 
 namespace ProjectManagement
@@ -22,34 +22,34 @@ namespace ProjectManagement
         public event EventHandler NotificationDeleteClicked;
 
         private Users user = new Users();
-        private Notification notification = new Notification();
+        private NotificationMeta notificationMeta = new NotificationMeta();
 
         private Color lineColor = Color.White;
 
-        public UCNotificationLine(Notification notification)
+        public UCNotificationLine(Users user, NotificationMeta notificationMeta)
         {
             InitializeComponent();
-            this.notification = notification;
+            this.user = user;
+            this.notificationMeta = notificationMeta;
             InitUserControl();
         }
-        public Notification GetNotification
+        public NotificationMeta GetNotificationMeta
         {
-            get { return this.notification; }
+            get { return this.notificationMeta; }
         }
         private void InitUserControl()
         {
-            lblNotification.Text = DataTypeUtil.FormatStringLength(notification.Content.ToString(), 130);
-            lblFrom.Text = user.FullName;
-            lblTime.Text = notification.CreatedAt.ToString("dd/MM/yyyy hh:mm:ss tt");
-            gTextBoxType.Text = EnumUtil.GetDisplayName(notification.Type);
-            gTextBoxType.FillColor = notification.GetTypeColor();
+            lblNotification.Text = DataTypeUtil.FormatStringLength(notificationMeta.Notification.Content.ToString(), 130);
+            lblTime.Text = notificationMeta.Notification.CreatedAt.ToString("dd/MM/yyyy hh:mm:ss tt");
+            gTextBoxType.Text = EnumUtil.GetDisplayName(notificationMeta.Notification.Type);
+            gTextBoxType.FillColor = notificationMeta.Notification.GetTypeColor();
+            GunaControlUtil.SetItemFavorite(gButtonStar, notificationMeta.IsFavorite);
 
-            // GunaControlUtil.SetItemFavorite(gButtonStar, notification.IsFavorite);
-            //if (notification.IsSaw)
-            //{
-            //    this.lineColor = Color.FromArgb(222, 224, 224);
-            //    this.BackColor = lineColor;
-            //}
+            if (notificationMeta.IsSaw)
+            {
+                this.lineColor = Color.FromArgb(222, 224, 224);
+                this.BackColor = lineColor;
+            }
         }
         private void SetColor(Color color)
         {
@@ -60,11 +60,11 @@ namespace ProjectManagement
             this.lineColor = Color.FromArgb(222, 224, 224);
             this.BackColor = lineColor;
 
-            //if (notification.IsSaw != true)
-            //{
-            //    notification.IsSaw = true;
-            //    NotificationDAO.UpdateIsSaw(user.UserId, notification.NotificationId, true);
-            //}
+            if (notificationMeta.IsSaw == false)
+            {
+                notificationMeta.IsSaw = true;
+                NotificationDAO.UpdateIsSaw(user.UserId, notificationMeta.Notification.NotificationId, true);
+            }
         }
         private void UCNotificationLine_MouseEnter(object sender, EventArgs e)
         {
@@ -85,17 +85,17 @@ namespace ProjectManagement
         }
         private void gButtonStar_Click(object sender, EventArgs e)
         {
-            // notification.IsFavorite = !notification.IsFavorite;
-            // GunaControlUtil.SetItemFavorite(gButtonStar, notification.IsFavorite);
-            // NotificationDAO.UpdateIsFavorite(notification.NotificationId, notification.IsFavorite);
+            notificationMeta.IsFavorite = !notificationMeta.IsFavorite;
+            NotificationDAO.UpdateFavorite(user.UserId, notificationMeta.Notification.NotificationId, notificationMeta.IsFavorite);
+            GunaControlUtil.SetItemFavorite(gButtonStar, notificationMeta.IsFavorite);
         }
         private void gButtonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure you want to delete notification " + notification.NotificationId,
+            DialogResult result = MessageBox.Show("Are you sure you want to delete notificationMeta " + notificationMeta.Notification.NotificationId,
                                                     "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                NotificationDAO.Delete(notification);
+                NotificationDAO.Delete(user.UserId, notificationMeta.Notification.NotificationId);
                 OnNotificationDeleteClicked(EventArgs.Empty);
             }
         }
