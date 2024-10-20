@@ -78,8 +78,8 @@ namespace ProjectManagement
             {
                 UCUserMiniLine line = new UCUserMiniLine(member.User);
                 line.SetBackGroundColor(SystemColors.ButtonFace);
-                line.SetSize(new Size(305, 60));
-                line.GButtonAdd.Location = new Point(250, 10);
+                line.SetSize(new Size(285, 60));
+                line.GButtonAdd.Location = new Point(230, 10);
                 line.GButtonAdd.HoverState.FillColor = SystemColors.ButtonFace;
                 line.GButtonAdd.HoverState.Image = null;
                 line.ButtonAddClicked += (sender, e) => ButtonAdd_Clicked(sender, e, member.User);
@@ -147,10 +147,15 @@ namespace ProjectManagement
                     }
                 }
 
-                List<Users> peoples = TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User).ToList();
+                List<Users> peoples = TaskStudentDAO.GetMembersByTaskId(this.task.TaskId).Select(m => m.User).ToList();
                 peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeTask(creator.FullName, task.Title, project.Topic);
-                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, Enums.ENotificationType.TASK);
+                Notification notification = new Notification("Notification", content, ENotificationType.TASK, DateTime.Now);
+                NotificationDAO.InsertOnly(notification);
+                foreach (Users user in peoples)
+                {
+                    NotificationDAO.InsertViewNotification(user.UserId, notification.NotificationId, false);
+                }
 
                 this.flagCheck = true;
                 InitUserControl();

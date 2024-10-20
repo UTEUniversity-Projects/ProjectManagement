@@ -35,6 +35,7 @@ namespace ProjectManagement.DAOs
             set { idStudent = value; }
         }
     }
+
     internal class TaskStudentDAO : DBConnection
     {
         public static void Insert(TaskStudent taskStudent)
@@ -43,8 +44,8 @@ namespace ProjectManagement.DAOs
         }
         public static List<Member> GetMembersByTaskId(string taskId)
         {
-            string sqlStr = $"SELECT * FROM {DBTableNames.TaskStudent} WHERE taskId = @taskId";
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@taskId", taskId) };
+            string sqlStr = $"SELECT studentId FROM {DBTableNames.TaskStudent} WHERE taskId = @TaskId";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TaskId", taskId) };
             DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
 
             List<Member> list = new List<Member>();

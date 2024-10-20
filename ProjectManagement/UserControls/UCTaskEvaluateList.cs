@@ -21,7 +21,6 @@ namespace ProjectManagement
         private Tasks task = new Tasks();
         private Team team = new Team();
         private UCUserMiniLine peopleLine = new UCUserMiniLine();
-        private EvaluationDAO EvaluationDAO = new EvaluationDAO();
 
         public UCTaskEvaluateList()
         {
@@ -42,10 +41,6 @@ namespace ProjectManagement
         }
         private void LoadListRoleLecture()
         {
-            //foreach (Member member in TeamDAO.GetMembersByTeamId(this.team.TeamId))
-            //{
-            //    AddUserMiniLine(member.User);
-            //}
             foreach (Member member in TaskStudentDAO.GetMembersByTaskId(this.task.TaskId))
             {
                 AddUserMiniLine(member.User);

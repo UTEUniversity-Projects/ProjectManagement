@@ -119,6 +119,7 @@ namespace ProjectManagement
         {
             gButtonNotification.Image = null;
             gButtonNotification.FillColor = Color.Transparent;
+            uCNotification.InitUserControl();
             SetButtonClick(gButtonNotification, Properties.Resources.PictureNotificationGradient, uCNotification);
         }
         private void gButtonAccount_Click(object sender, EventArgs e)

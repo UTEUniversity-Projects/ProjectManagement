@@ -90,7 +90,7 @@ namespace ProjectManagement.DAOs
 
         public static void Insert(Tasks task)
         {
-            DBExecution.Insert(task, DBTableNames.Task);
+            DBExecution.Insert(task, DBTableNames.Task, "Create task");
         }
 
         public static void Delete(string taskId)

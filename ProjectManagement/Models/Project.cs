@@ -24,7 +24,6 @@ namespace ProjectManagement.Models
         private string feature;
         private string requirement;
         private int maxMember;
-        private DateTime publicDate;
         private EProjectStatus status;
         private DateTime createdAt;
         private string createdBy;
@@ -42,7 +41,6 @@ namespace ProjectManagement.Models
             feature = string.Empty;
             requirement = string.Empty;
             maxMember = 0;
-            publicDate = DateTime.MinValue;
             status = default;
             createdAt = DateTime.MinValue;
             createdBy = string.Empty;
@@ -50,7 +48,7 @@ namespace ProjectManagement.Models
         }
 
         public Project(string projectId, string instructorId, string topic, string description, string feature, string requirement, 
-            int maxMember, DateTime publicDate, EProjectStatus status, DateTime createdAt, string createdBy, string fieldId)
+            int maxMember, EProjectStatus status, DateTime createdAt, string createdBy, string fieldId)
         {
             this.projectId = projectId;
             this.instructorId = instructorId;
@@ -59,7 +57,6 @@ namespace ProjectManagement.Models
             this.feature = feature;
             this.requirement = requirement;
             this.maxMember = maxMember;
-            this.publicDate = publicDate;
             this.status = status;
             this.createdAt = createdAt;
             this.createdBy = createdBy;
@@ -67,7 +64,7 @@ namespace ProjectManagement.Models
         }
 
         public Project(string instructorId, string topic, string description, string feature, string requirement, 
-            int maxMember, DateTime publicDate, EProjectStatus status, DateTime createdAt, string createdBy, string fieldId)
+            int maxMember, EProjectStatus status, DateTime createdAt, string createdBy, string fieldId)
         {
             this.projectId = ModelUtil.GenerateModelId(EModelClassification.PROJECT);
             this.instructorId = instructorId;
@@ -76,7 +73,6 @@ namespace ProjectManagement.Models
             this.feature = feature;
             this.requirement = requirement;
             this.maxMember = maxMember;
-            this.publicDate = publicDate;
             this.status = status;
             this.createdAt = createdAt;
             this.createdBy = createdBy;
@@ -121,11 +117,6 @@ namespace ProjectManagement.Models
         {
             get { return maxMember; }
             set { maxMember = value; }
-        }
-        public DateTime PublicDate
-        {
-            get { return publicDate; }
-            set { publicDate = value; }
         }
         public EProjectStatus Status
         {
@@ -193,6 +184,8 @@ namespace ProjectManagement.Models
                     return Color.FromArgb(45, 237, 55);
                 case EProjectStatus.GAVEUP:
                     return Color.FromArgb(252, 182, 3);
+                case EProjectStatus.WAITING:
+                    return Color.FromArgb(237, 62, 247);
                 default:
                     return Color.Gray;
             }

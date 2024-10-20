@@ -64,9 +64,13 @@ namespace ProjectManagement.DAOs
 
         #region NOTIFICATION DAO EXECUTION
 
-        public static void Insert(Notification notification, string userId)
+        public static void InsertOnly(Notification notification)
         {
             DBExecution.Insert(notification, DBTableNames.Notification);
+        }
+        public static void Insert(Notification notification, string userId)
+        {
+            InsertOnly(notification);
             InsertViewNotification(userId, notification.NotificationId, false);
         }
         public static void InsertFollowTeam(string teamId, string content, ENotificationType type)
@@ -81,7 +85,7 @@ namespace ProjectManagement.DAOs
                 InsertViewNotification(member.User.UserId, notification.NotificationId, false);
             }
         }
-        private static void InsertViewNotification(string userId, string notificationId, bool seen)
+        public static void InsertViewNotification(string userId, string notificationId, bool seen)
         {
             string sqlStr = string.Format("INSERT INTO {0} (userId, notificationId, seen) " +
                 "VALUES (@UserId, @NotificationId, @Seen)", DBTableNames.ViewNotification);
@@ -89,7 +93,7 @@ namespace ProjectManagement.DAOs
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@UserId", userId),
-                new SqlParameter("NotificationId", notificationId),
+                new SqlParameter("@NotificationId", notificationId),
                 new SqlParameter("@Seen", seen == true ? 1 : 0)
             };
 

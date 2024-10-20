@@ -12,6 +12,7 @@ using ProjectManagement.Models;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 using ProjectManagement.MetaData;
+using System.Diagnostics.Metrics;
 
 namespace ProjectManagement.Forms
 {
@@ -109,14 +110,7 @@ namespace ProjectManagement.Forms
                                                         "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.OK)
                 {
-                    ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
                     GiveUpDAO.Insert(this.giveUp);
-
-                    string content = Notification.GetContentTypeGiveUp(team.TeamName, project.Topic);
-                    var peoples = new List<Users>();
-                    peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User));
-                    peoples.Add(UserDAO.SelectOnlyByID(project.InstructorId));
-                    NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.PROJECT);
 
                     ConfirmedGivingUp?.Invoke(this, e);
                     this.Close();

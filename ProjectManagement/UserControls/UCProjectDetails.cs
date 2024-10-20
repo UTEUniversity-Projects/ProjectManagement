@@ -24,7 +24,6 @@ namespace ProjectManagement
         private UCProjectDetailsStatistical uCProjectDetailsStatistical = new UCProjectDetailsStatistical();
 
         private bool flagEdited = false;
-        private bool flagWaitingConfirm = false;
         private bool flagDeleted = false;
         private bool flagStuMyTheses = false;
         private bool isFavorite = false;
@@ -105,6 +104,7 @@ namespace ProjectManagement
 
             if (project.Status == EProjectStatus.WAITING)
             {
+                SetTeamMode(true);
                 SetWaitingGiveUpMode(true);
                 return;
             }
@@ -148,6 +148,8 @@ namespace ProjectManagement
             gPanelDataView.Controls.Add(gPictureBoxState);
             gPanelDataView.Controls.Add(gTextBoxState);
             gPanelDataView.Controls.Add(gGradientButtonReasonDetails);
+            gPanelDataView.Controls.Add(gGradientButtonConfirm);
+            gPanelDataView.Controls.Add(gGradientButtonReject);
         }
         private void SetTeamMode(bool flagShow)
         {
@@ -202,6 +204,8 @@ namespace ProjectManagement
             gTextBoxState.Text = "The project cannot continue !";
             gTextBoxState.ForeColor = Color.FromArgb(0, 192, 192);
             gGradientButtonReasonDetails.Show();
+            gGradientButtonReject.Show();
+            gGradientButtonConfirm.Show();
             SetUpDataViewState();
         }
         private void SetGiveUpMode(bool flag)
@@ -226,13 +230,14 @@ namespace ProjectManagement
             gGradientButtonComplete.Hide();
             gGradientButtonGiveUp.Hide();
             gGradientButtonConfirm.Hide();
+            gGradientButtonReject.Hide();
 
             if (host.Role == EUserRole.LECTURE && project.Status == EProjectStatus.WAITING)
             {
                 gGradientButtonConfirm.Show();
+                gGradientButtonReject.Show();
                 return;
             }
-
             if (host.Role == EUserRole.LECTURE && project.Status == EProjectStatus.PROCESSING)
             {
                 gGradientButtonComplete.Show();
@@ -304,6 +309,8 @@ namespace ProjectManagement
             {
                 gTextBoxState.ForeColor = Color.FromArgb(0, 192, 192);
             }
+
+            gPanelDataView.Focus();
         }
         private void HideAllButtonMode()
         {
@@ -372,6 +379,9 @@ namespace ProjectManagement
             {
                 ProjectDAO.UpdateStatus(this.project, EProjectStatus.COMPLETED);
 
+                string content = Notification.GetContentCompletedProject(project.Topic);
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.PROJECT);
+
                 this.flagEdited = true;
                 SetNewState(EProjectStatus.COMPLETED, Properties.Resources.GiftCompleted, "Congratulations on completion !");
             }
@@ -384,15 +394,33 @@ namespace ProjectManagement
         private void gGradientButtonGiveUp_Click(object sender, EventArgs e)
         {
             FGiveUp fGiveUp = new FGiveUp(new ProjectMeta(this.project, this.isFavorite), this.host, this.team);
-            fGiveUp.ConfirmedGivingUp += FGiveUp_ConfirnedGivingUp;
+            fGiveUp.ConfirmedGivingUp += FGiveUp_ConfirmedGivingUp;
             fGiveUp.ShowDialog();
         }
-        private void FGiveUp_ConfirnedGivingUp(object? sender, EventArgs e)
+        private void FGiveUp_ConfirmedGivingUp(object? sender, EventArgs e)
         {
-            this.flagEdited = true;
-            ProjectDAO.UpdateStatus(this.project, EProjectStatus.WAITING);
-            SetUpDataViewState();
-            SetNewState(EProjectStatus.WAITING, Properties.Resources.PictureEmptyState, "Waiting for Lecture confirm");
+            if (this.host.Role == EUserRole.STUDENT)
+            {
+                this.flagEdited = true;
+                ProjectDAO.UpdateStatus(this.project, EProjectStatus.WAITING);
+                SetUpDataViewState();
+                SetNewState(EProjectStatus.WAITING, Properties.Resources.PictureEmptyState, "Waiting for Lecture confirm !");
+            }
+            else
+            {
+                ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
+                GiveUpDAO.UpdateStatus(this.project.ProjectId, EGiveUpStatus.ACCEPTED, EGiveUpStatus.PENDING);
+                SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
+            }
+
+            string content = Notification.GetContentTypeGiveUp(team.TeamName, project.Topic);
+            NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.GIVEUP);
+
+            if (this.host.Role == EUserRole.STUDENT)
+            {
+                Notification notification = new Notification("Notification", content, ENotificationType.GIVEUP, DateTime.Now);
+                NotificationDAO.Insert(notification, project.InstructorId);
+            }
         }
 
         #endregion
@@ -484,13 +512,19 @@ namespace ProjectManagement
                     this.teams.Remove(team);
 
                     TeamDAO.DeleteListTeam(this.teams);
+                    string rejectedContent = Notification.GetContentTypeRejected(host.FullName, project.Topic);
+                    foreach (Team t in this.teams)
+                    {
+                        NotificationDAO.InsertFollowTeam(t.TeamId, rejectedContent, ENotificationType.PROJECT);
+                    }
+
                     ProjectDAO.UpdateStatus(this.project, EProjectStatus.PROCESSING);
 
                     this.flagEdited = true;
                     this.project.Status = EProjectStatus.PROCESSING;
 
-                    string content = Notification.GetContentTypeAccepted(host.FullName, project.Topic);
-                    NotificationDAO.InsertFollowTeam(team.TeamId, content, ENotificationType.PROJECT);
+                    string acceptedContent = Notification.GetContentTypeAccepted(host.FullName, project.Topic);
+                    NotificationDAO.InsertFollowTeam(team.TeamId, acceptedContent, ENotificationType.PROJECT);
 
                     SetInitialSate();
                     SetButtonComplete();
@@ -518,9 +552,33 @@ namespace ProjectManagement
 
         private void gGradientButtonConfirm_Click(object sender, EventArgs e)
         {
-            this.flagEdited = true;
-            ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
-            SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
+            DialogResult result = MessageBox.Show("You confirm that you allow " + team.TeamName + " team to abandon the " + project.Topic + " project",
+                                                        "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (result == DialogResult.OK)
+            {
+                this.flagEdited = true;
+                ProjectDAO.UpdateStatus(this.project, EProjectStatus.GAVEUP);
+                GiveUpDAO.UpdateStatus(this.project.ProjectId, EGiveUpStatus.ACCEPTED, EGiveUpStatus.PENDING);
+                SetNewState(EProjectStatus.GAVEUP, Properties.Resources.PictureEmptyState, "The project cannot continue !");
+
+                string content = Notification.GetContentTypeGiveUpAccepted(team.TeamName, project.Topic);
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.GIVEUP);
+            }
+        }
+
+        private void gGradientButtonReject_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("You do not agree to let " + team.TeamName + " abandon the " + project.Topic + " project",
+                                                        "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (result == DialogResult.OK)
+            {
+                ProjectDAO.UpdateStatus(this.project, EProjectStatus.PROCESSING);
+                GiveUpDAO.Delete(project.ProjectId);
+                InitUserControl();
+
+                string content = Notification.GetContentTypeGiveUpRejected(team.TeamName, project.Topic);
+                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.GIVEUP);
+            }
         }
     }
 }

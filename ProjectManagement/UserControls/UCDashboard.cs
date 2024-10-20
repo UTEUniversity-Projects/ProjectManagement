@@ -124,7 +124,6 @@ namespace ProjectManagement
                 projectLine.ProjectLineClicked += ProjectLine_Clicked;
                 projectLine.ProjectFavoriteClicked += ProjectFavorite_Clicked;
                 projectLine.NotificationJump += ProjectLine_NotificationJump;
-                if (user.Role == EUserRole.STUDENT) projectLine.HideToolBar();
                 uCProjectList.AddProject(projectLine);
             }
             uCProjectList.SetNumProject(listProject.Count, true);

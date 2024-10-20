@@ -17,14 +17,13 @@ namespace ProjectManagement.Mappers.Implement
             string feature = row["feature"].ToString();
             string requirement = row["requirement"].ToString();
             int maxMember = int.Parse(row["maxMember"].ToString());
-            DateTime publicDate = DateTime.Parse(row["publicDate"].ToString());
             EProjectStatus status = EnumUtil.GetEnumFromDisplayName<EProjectStatus>(row["status"].ToString());
             DateTime createdAt = DateTime.Parse(row["createdAt"].ToString());
             string createdBy = row["createdBy"].ToString();
             string fieldId = row["fieldId"].ToString();
 
             Project project = new Project(projectId, instructorId, topic, description, feature, requirement, maxMember,
-                publicDate, status, createdAt, createdBy, fieldId);
+                status, createdAt, createdBy, fieldId);
 
             return project;
         }

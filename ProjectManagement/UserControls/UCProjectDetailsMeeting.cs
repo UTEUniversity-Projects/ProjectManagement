@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectManagement.DAOs;
+using ProjectManagement.Enums;
 using ProjectManagement.Models;
 
 namespace ProjectManagement
@@ -51,6 +52,11 @@ namespace ProjectManagement
                 UCMeetingCard uCMeetingCard = new UCMeetingCard(meeting, host);
                 uCMeetingCard.MeetingCardDeleted += UCMeetingCard_MeetingCardDeleted;
                 flpMeetingList.Controls.Add(uCMeetingCard);
+            }
+
+            if (this.project.Status == EProjectStatus.COMPLETED)
+            {
+                gGradientButtonAddMeeting.Hide();
             }
         }
         private void UCMeetingCreate_MeetingCreated(object? sender, EventArgs e)

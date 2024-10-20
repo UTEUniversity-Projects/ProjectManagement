@@ -72,7 +72,7 @@ namespace ProjectManagement
         }
         private void AddMember(Users user)
         {
-            if (members.Count < this.project.MaxMember)
+            if (members.Count + 1 < this.project.MaxMember)
             {
                 UCUserMiniLine line = new UCUserMiniLine(user);
                 line.SetSize(new Size(310, 60));

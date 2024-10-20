@@ -13,6 +13,8 @@ namespace ProjectManagement.Enums
         [Display(Name = "Comment")]
         COMMENT,
         [Display(Name = "Meeting")]
-        MEETING
+        MEETING,
+        [Display(Name = "Give up")]
+        GIVEUP,
     }
 }

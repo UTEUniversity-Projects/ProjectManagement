@@ -63,7 +63,7 @@ namespace ProjectManagement
             foreach (Member member in this.members)
             {
                 UCUserMiniLine line = new UCUserMiniLine(member.User);
-                line.SetMemberMode(new Size(340, 60), SystemColors.ButtonFace, member.Role);
+                line.SetMemberMode(new Size(320, 60), SystemColors.ButtonFace, member.Role);
                 flpMembers.Controls.Add(line);
             }
         }
