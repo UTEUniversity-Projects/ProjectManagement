@@ -22,9 +22,6 @@ namespace ProjectManagement
         private List<double> evaluationOfMembers;
         private List<double> scoreOfMembers;
 
-        private TaskDAO TaskDAO = new TaskDAO();
-        
-
         public UCProjectDetailsStatistical()
         {
             InitializeComponent();
@@ -45,8 +42,8 @@ namespace ProjectManagement
 
         public void UpdateMembers()
         {
-            this.evaluationOfMembers = CalculationUtil.CalEvaluations(this.listTasks, this.members.Count(), evaluation => evaluation.CompletionRate);
-            this.scoreOfMembers = CalculationUtil.CalEvaluations(this.listTasks, this.members.Count(), evaluation => evaluation.Score);
+            this.evaluationOfMembers = CalculationUtil.CalCompletionRate(this.listTasks, this.members.Count());
+            this.scoreOfMembers = CalculationUtil.CalScore(this.listTasks, this.members.Count());
             flpMemberStatistical.Controls.Clear();
             for (int i = 0; i < this.members.Count; i++)
             {
