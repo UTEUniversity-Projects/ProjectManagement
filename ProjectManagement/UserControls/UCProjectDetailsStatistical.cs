@@ -42,8 +42,6 @@ namespace ProjectManagement
 
         public void UpdateMembers()
         {
-            this.evaluationOfMembers = CalculationUtil.CalCompletionRate(this.listTasks, this.members.Count());
-            this.scoreOfMembers = CalculationUtil.CalScore(this.listTasks, this.members.Count());
             flpMemberStatistical.Controls.Clear();
             for (int i = 0; i < this.members.Count; i++)
             {
@@ -51,7 +49,9 @@ namespace ProjectManagement
                 line.SetBackGroundColor(SystemColors.ButtonFace);
                 line.SetSize(new Size(580, 63));
                 line.SetDeleteMode(false);
-                line.SetStatisticalMode((int)this.evaluationOfMembers[i], this.scoreOfMembers[i]);
+                int completion = (int)CalculationUtil.CalCompletionRatePeople(this.members[i].User.UserId, this.listTasks);
+                int score = (int)CalculationUtil.CalScorePeople(this.members[i].User.UserId, this.listTasks);
+                line.SetStatisticalMode(completion, score);
                 flpMemberStatistical.Controls.Add(line);
             }
         }

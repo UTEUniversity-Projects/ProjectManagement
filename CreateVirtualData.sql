@@ -1203,12 +1203,12 @@ VALUES
     ('248500052', 'Quantitative customer satisfaction evaluation utilizing statistical analysis for data-driven insights.', 100, 7.75, 1, '2024-04-07', '242200001', '243300020', '246600020'),
     ('248500053', 'Qualitative productivity assessment to explore factors influencing performance beyond numerical metrics.', 100, 8.0, 1, '2024-04-07', '242200001', '243300020', '246600021'),
     ('248500054', 'Impact evaluation methodology to measure the broader effects and outcomes of interventions or programs.', 100, 8.25, 1, '2024-04-07', '242200001', '243300020', '246600022'),
-    ('248500055', 'Strategic evaluation framework for assessing long-term goals and objectives.', 100, 9.25, 1, '2024-04-07', '242200001', '243300014', '246600023'),
-    ('248500056', 'Continuous performance evaluation system to provide ongoing feedback and support.', 100, 9.75, 1, '2024-04-07', '242200001', '243300014', '246600024'),
-    ('248500057', 'Multi-dimensional peer evaluation process incorporating various perspectives for a holistic view.', 100, 9.25, 1, '2024-04-07', '242200001', '243300014', '246600025'),
-    ('248500058', 'Quantitative customer satisfaction evaluation utilizing statistical analysis for data-driven insights.', 100, 8.75, 1, '2024-04-07', '242200001', '243300014', '246600026'),
-    ('248500059', 'Qualitative productivity assessment to explore factors influencing performance beyond numerical metrics.', 100, 9.25, 1, '2024-04-07', '242200001', '243300014', '246600027'),
-    ('248500060', 'Impact evaluation methodology to measure the broader effects and outcomes of interventions or programs.', 100, 9.75, 1, '2024-04-07', '242200001', '243300014', '246600028'),
+    ('248500055', 'Strategic evaluation framework for assessing long-term goals and objectives.', 100, 9.25, 1, '2024-04-07', '242200001', '243300020', '246600023'),
+    ('248500056', 'Continuous performance evaluation system to provide ongoing feedback and support.', 100, 9.75, 1, '2024-04-07', '242200001', '243300020', '246600024'),
+    ('248500057', 'Multi-dimensional peer evaluation process incorporating various perspectives for a holistic view.', 100, 9.25, 1, '2024-04-07', '242200001', '243300020', '246600025'),
+    ('248500058', 'Quantitative customer satisfaction evaluation utilizing statistical analysis for data-driven insights.', 100, 8.75, 1, '2024-04-07', '242200001', '243300020', '246600026'),
+    ('248500059', 'Qualitative productivity assessment to explore factors influencing performance beyond numerical metrics.', 100, 9.25, 1, '2024-04-07', '242200001', '243300020', '246600027'),
+    ('248500060', 'Impact evaluation methodology to measure the broader effects and outcomes of interventions or programs.', 100, 9.75, 1, '2024-04-07', '242200001', '243300020', '246600028'),
 	('248500061', 'Thorough customer satisfaction evaluation aimed at gauging client contentment and identifying areas for enhancement.', 75, 9.25, 1, '2024-04-07', '242200001', '243300002', '246600009'),
     ('248500062', '', 0, 0.0, 0, '2024-04-07', '242200001', '243300018', '246600009'),
 	('248500063', '', 0, 0.0, 0, '2024-04-07', '242200001', '243300019', '246600009');
@@ -1402,12 +1402,12 @@ VALUES
 
 INSERT INTO TaskStudent (taskId, studentId)
 VALUES
-    ('246600023', '243300014'),
-    ('246600024', '243300014'),
-    ('246600025', '243300014'),
-    ('246600026', '243300014'),
-    ('246600027', '243300014'),
-    ('246600028', '243300014');
+    ('246600023', '243300020'),
+    ('246600024', '243300020'),
+    ('246600025', '243300020'),
+    ('246600026', '243300020'),
+    ('246600027', '243300020'),
+    ('246600028', '243300020');
 	
 
 -- Insert data into GiveUp table

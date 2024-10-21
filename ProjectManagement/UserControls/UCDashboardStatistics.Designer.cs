@@ -30,10 +30,11 @@ namespace ProjectManagement
         /// </summary>
         private void InitializeComponent()
         {
-            Guna.Charts.WinForms.LPoint lPoint5 = new Guna.Charts.WinForms.LPoint();
             Guna.Charts.WinForms.LPoint lPoint6 = new Guna.Charts.WinForms.LPoint();
             Guna.Charts.WinForms.LPoint lPoint7 = new Guna.Charts.WinForms.LPoint();
             Guna.Charts.WinForms.LPoint lPoint8 = new Guna.Charts.WinForms.LPoint();
+            Guna.Charts.WinForms.LPoint lPoint9 = new Guna.Charts.WinForms.LPoint();
+            Guna.Charts.WinForms.LPoint lPoint10 = new Guna.Charts.WinForms.LPoint();
             Guna.Charts.WinForms.ChartFont chartFont25 = new Guna.Charts.WinForms.ChartFont();
             Guna.Charts.WinForms.ChartFont chartFont26 = new Guna.Charts.WinForms.ChartFont();
             Guna.Charts.WinForms.ChartFont chartFont27 = new Guna.Charts.WinForms.ChartFont();
@@ -97,7 +98,7 @@ namespace ProjectManagement
             flpStatus = new FlowLayoutPanel();
             guna2ShadowPanel1 = new Guna.UI2.WinForms.Guna2ShadowPanel();
             gComboBoxTop = new Guna.UI2.WinForms.Guna2ComboBox();
-            label1 = new Label();
+            lblTop = new Label();
             gHorizontalBarChart = new Guna.Charts.WinForms.GunaChart();
             gHorizontalBarDataset = new Guna.Charts.WinForms.GunaHorizontalBarDataset();
             gShadowPanelGeneral.SuspendLayout();
@@ -107,16 +108,18 @@ namespace ProjectManagement
             // 
             // gDoughnutDataset
             // 
-            lPoint5.Label = "Registered";
-            lPoint5.Y = 0D;
-            lPoint6.Label = "Processing";
+            lPoint6.Label = "Registered";
             lPoint6.Y = 0D;
-            lPoint7.Label = "Published";
+            lPoint7.Label = "Processing";
             lPoint7.Y = 0D;
             lPoint8.Label = "Completed";
             lPoint8.Y = 0D;
-            gDoughnutDataset.DataPoints.AddRange(new Guna.Charts.WinForms.LPoint[] { lPoint5, lPoint6, lPoint7, lPoint8 });
-            gDoughnutDataset.FillColors.AddRange(new Color[] { Color.FromArgb(255, 87, 87), Color.FromArgb(94, 148, 255), Color.FromArgb(45, 237, 55), Color.Gray });
+            lPoint9.Label = "GaveUp";
+            lPoint9.Y = 0D;
+            lPoint10.Label = "Published";
+            lPoint10.Y = 0D;
+            gDoughnutDataset.DataPoints.AddRange(new Guna.Charts.WinForms.LPoint[] { lPoint6, lPoint7, lPoint8, lPoint9, lPoint10 });
+            gDoughnutDataset.FillColors.AddRange(new Color[] { Color.FromArgb(255, 87, 87), Color.FromArgb(94, 148, 255), Color.FromArgb(45, 237, 55), Color.FromArgb(252, 182, 3), Color.Gray });
             gDoughnutDataset.Label = "Doughnut";
             gDoughnutDataset.LegendBoxBorderColor = Color.Black;
             gDoughnutDataset.LegendBoxFillColor = Color.Black;
@@ -302,14 +305,14 @@ namespace ProjectManagement
             // 
             flpStatus.Location = new Point(339, 91);
             flpStatus.Name = "flpStatus";
-            flpStatus.Size = new Size(115, 175);
+            flpStatus.Size = new Size(133, 198);
             flpStatus.TabIndex = 8;
             // 
             // guna2ShadowPanel1
             // 
             guna2ShadowPanel1.BackColor = Color.Transparent;
             guna2ShadowPanel1.Controls.Add(gComboBoxTop);
-            guna2ShadowPanel1.Controls.Add(label1);
+            guna2ShadowPanel1.Controls.Add(lblTop);
             guna2ShadowPanel1.Controls.Add(gHorizontalBarChart);
             guna2ShadowPanel1.FillColor = Color.White;
             guna2ShadowPanel1.Location = new Point(523, 20);
@@ -333,7 +336,7 @@ namespace ProjectManagement
             gComboBoxTop.Font = new Font("Segoe UI", 10F);
             gComboBoxTop.ForeColor = Color.FromArgb(68, 88, 112);
             gComboBoxTop.ItemHeight = 30;
-            gComboBoxTop.Items.AddRange(new object[] { "Field", "Lecture" });
+            gComboBoxTop.Items.AddRange(new object[] { "Field", "Technology" });
             gComboBoxTop.Location = new Point(26, 15);
             gComboBoxTop.Name = "gComboBoxTop";
             gComboBoxTop.ShadowDecoration.CustomizableEdges = customizableEdges8;
@@ -341,16 +344,16 @@ namespace ProjectManagement
             gComboBoxTop.TabIndex = 9;
             gComboBoxTop.SelectedValueChanged += gComboBoxTop_SelectedValueChanged;
             // 
-            // label1
+            // lblTop
             // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(252, 15);
-            label1.Name = "label1";
-            label1.Size = new Size(275, 28);
-            label1.TabIndex = 7;
-            label1.Text = "TOP TECHNOLOGY FIELD";
+            lblTop.AutoSize = true;
+            lblTop.BackColor = Color.Transparent;
+            lblTop.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTop.Location = new Point(252, 15);
+            lblTop.Name = "lblTop";
+            lblTop.Size = new Size(275, 28);
+            lblTop.TabIndex = 7;
+            lblTop.Text = "TOP TECHNOLOGY FIELD";
             // 
             // gHorizontalBarChart
             // 
@@ -420,7 +423,7 @@ namespace ProjectManagement
         private Label lblTotalProjects;
         private Guna.UI2.WinForms.Guna2ShadowPanel gShadowPanelProcess;
         private Guna.UI2.WinForms.Guna2ShadowPanel guna2ShadowPanel1;
-        private Label label1;
+        private Label lblTop;
         private Guna.Charts.WinForms.GunaHorizontalBarDataset gHorizontalBarDataset;
         private Guna.Charts.WinForms.GunaChart gMixedBarAndSplineChart;
         private Guna.Charts.WinForms.GunaBarDataset gBarDataset;

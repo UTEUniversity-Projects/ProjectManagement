@@ -62,14 +62,15 @@ namespace ProjectManagement.DAOs
 
             return list.OrderBy(m => m.Role).ToList();
         }
-        public static List<Tasks> SelectListTaskByStudentId(string studentId)
+        public static List<Tasks> SelectListTaskByProjectAndStudent(string projectId, string studentId)
         {
             string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.taskId = {1}.taskId " +
-                                            "WHERE studentId = @studentId ORDER BY {0}.createdAt DESC",
+                                            "WHERE projectId = @projectId AND studentId = @studentId ORDER BY {0}.createdAt DESC",
                                             DBTableNames.Task, DBTableNames.TaskStudent);
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
+                new SqlParameter("@projectId", projectId),
                 new SqlParameter("@studentId", studentId)
             };
 
