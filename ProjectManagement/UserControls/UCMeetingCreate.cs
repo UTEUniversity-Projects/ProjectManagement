@@ -3,6 +3,7 @@ using ProjectManagement.Models;
 using ProjectManagement.DAOs;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.MetaData;
 
 namespace ProjectManagement
 {
@@ -157,7 +158,7 @@ namespace ProjectManagement
                 string content = Notification.GetContentTypeMeeting(meeting.Title, host.FullName);
                 var peoples = new List<Users> { instructor };
                 peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User));
-                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.MEETING);
+                NotificationDAO.InsertFollowPeoples(peoples, content, ENotificationType.MEETING);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);
                 gButtonCancel.PerformClick();
@@ -175,7 +176,7 @@ namespace ProjectManagement
                 string content = Notification.GetContentTypeMeetingUpdated(meeting.Title);
                 var peoples = new List<Users> { instructor };
                 peoples.AddRange(TeamDAO.GetMembersByTeamId(team.TeamId).Select(m => m.User));
-                NotificationDAO.InsertFollowTeam(this.team.TeamId, content, ENotificationType.COMMENT);
+                NotificationDAO.InsertFollowPeoples(peoples, content, ENotificationType.COMMENT);
 
                 MeetingCreated?.Invoke(this.meeting, EventArgs.Empty);
                 gButtonCancel.PerformClick();

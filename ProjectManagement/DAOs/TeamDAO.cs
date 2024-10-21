@@ -193,6 +193,7 @@ namespace ProjectManagement.DAOs
             };
 
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
             int num = 0;
             int.TryParse(dataTable.Rows[0]["NumTeams"].ToString(), out num);
             return num;
