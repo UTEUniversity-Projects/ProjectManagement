@@ -9,7 +9,7 @@ using ProjectManagement.UserControls;
 namespace ProjectManagement.Forms
 {
     public partial class FTaskDetails : Form
-    {
+    {       
 
         private Users host = new Users();
         private Users creator = new Users();

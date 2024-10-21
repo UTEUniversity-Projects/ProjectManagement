@@ -133,13 +133,13 @@ namespace ProjectManagement
         private bool CheckInformationValid()
         {
             WinformControlUtil.RunCheckDataValid(project.CheckTopic() || flagCheck, erpTopic, gTextBoxTopic, "Topic cannot be empty");
-            WinformControlUtil.RunCheckDataValid(project.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
             WinformControlUtil.RunCheckDataValid(this.technologies.Count > 0 || flagCheck, erpTechnology, flpTechnologyList, "Technologies cannot be empty");
             WinformControlUtil.RunCheckDataValid(project.CheckFeature() || flagCheck, erpFunctions, gTextBoxFunctions, "Feature cannot be empty");
             WinformControlUtil.RunCheckDataValid(project.CheckRequirement() || flagCheck, erpRequirements, gTextBoxRequirements, "Requirement cannot be empty");
             WinformControlUtil.RunCheckDataValid(project.CheckInstructorId() || flagCheck, erpInstructor, cmbIDInstructor, "Instructor cannot be empty");
 
-            return project.CheckTopic() && project.CheckDesription() && this.technologies.Count > 0
+            return project.CheckTopic() && project.CheckDescription() && this.technologies.Count > 0
                     && project.CheckFeature() && project.CheckRequirement() && project.CheckInstructorId();
         }
 
@@ -204,7 +204,7 @@ namespace ProjectManagement
         private void gTextBoxDescription_TextChanged(object sender, EventArgs e)
         {
             project.Description = gTextBoxDescription.Text;
-            WinformControlUtil.RunCheckDataValid(project.CheckDesription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(project.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
         }
         private void gTextBoxFunctions_TextChanged(object sender, EventArgs e)
         {

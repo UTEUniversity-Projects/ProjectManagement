@@ -71,7 +71,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Role", EnumUtil.GetDisplayName(role)) 
             };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
             List<string> list = new List<string>();
 
             foreach (DataRow row in dataTable.Rows)
@@ -103,7 +103,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Information", information)
             };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             return dataTable.Rows.Count == 0;
         }

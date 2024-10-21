@@ -7,12 +7,11 @@ namespace ProjectManagement.Database
 {
     internal class DBExecution
     {
-        private static SqlConnection connection = DBConnection.GetConnection();
-
         #region SQL EXECUTION QUERY
 
-        private static DataTable SQLExecuteQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution, bool flag)
+        public static DataTable SQLExecuteQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution)
         {
+            SqlConnection connection = DBConnection.GetConnection();
             DataTable dataTable = new DataTable();
 
             try
@@ -30,7 +29,7 @@ namespace ProjectManagement.Database
                     adapter.Fill(dataTable);
                 }
 
-                if (flag)
+                if (typeExecution != string.Empty)
                 {
                     WinformControlUtil.ShowMessage("Notification", typeExecution + " successfully");
                 }
@@ -46,23 +45,16 @@ namespace ProjectManagement.Database
 
             return dataTable;
 
-        }        
-        
-        public static DataTable ExecuteQuery(string sqlStr, List<SqlParameter> parameters)
-        {
-            return SQLExecuteQuery(sqlStr, parameters, string.Empty, false);
-        }
-        public static DataTable ExecuteQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution)
-        {
-            return SQLExecuteQuery(sqlStr, parameters, typeExecution, true);
         }
 
         #endregion
 
         #region SQL EXECUTION NON QUERY
 
-        private static void SQLExecuteNonQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution, bool flag)
+        public static void SQLExecuteNonQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution)
         {
+            SqlConnection connection = DBConnection.GetConnection();
+
             try
             {
                 connection.Open();
@@ -73,7 +65,7 @@ namespace ProjectManagement.Database
                     cmd.Parameters.Add(param);
                 }
 
-                if (cmd.ExecuteNonQuery() > 0 && flag)
+                if (cmd.ExecuteNonQuery() > 0 && typeExecution != string.Empty)
                 {
                     WinformControlUtil.ShowMessage("Notification", typeExecution + " successfully");
                 }
@@ -88,15 +80,6 @@ namespace ProjectManagement.Database
             }
         }
 
-        public static void ExecuteNonQuery(string sqlStr, List<SqlParameter> parameters)
-        {
-            SQLExecuteNonQuery(sqlStr, parameters, string.Empty, false);
-        }
-        public static void ExecuteNonQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution)
-        {
-            SQLExecuteNonQuery(sqlStr, parameters, typeExecution, true);
-        }
-
         #endregion
 
         #region CRUD OPERATION
@@ -107,7 +90,7 @@ namespace ProjectManagement.Database
                             $"VALUES ({string.Join(", ", typeof(T).GetProperties().Select(p => "@" + p.Name))})";
 
             List<SqlParameter> parameters = DBUtil.GetSqlParameters(model);
-            ExecuteNonQuery(sqlStr, parameters);
+            SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
         public static void Insert<T>(T model, string tableName, string typeExecution)
         {
@@ -115,7 +98,7 @@ namespace ProjectManagement.Database
                             $"VALUES ({string.Join(", ", typeof(T).GetProperties().Select(p => "@" + p.Name))})";
 
             List<SqlParameter> parameters = DBUtil.GetSqlParameters(model);
-            ExecuteNonQuery(sqlStr, parameters, typeExecution);
+            SQLExecuteNonQuery(sqlStr, parameters, typeExecution);
         }
 
         public static void Update<T>(T model, string tableName, string primaryKeyName, string primaryKeyValue)
@@ -126,7 +109,7 @@ namespace ProjectManagement.Database
             List<SqlParameter> parameters = DBUtil.GetSqlParameters(model);
             parameters.Add(new SqlParameter("@" + primaryKeyName + "KEY", primaryKeyValue));
 
-            ExecuteNonQuery(sqlStr, parameters);
+            SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         public static void Delete(string tableName, string primaryKeyName, object primaryKeyValue)
@@ -138,7 +121,7 @@ namespace ProjectManagement.Database
                 new SqlParameter("@" + primaryKeyName, primaryKeyValue)
             };
 
-            ExecuteNonQuery(sqlStr, parameters);
+            SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         #endregion

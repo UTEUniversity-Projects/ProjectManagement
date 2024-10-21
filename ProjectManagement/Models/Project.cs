@@ -147,13 +147,9 @@ namespace ProjectManagement.Models
         {
             return this.topic != string.Empty;
         }
-        public bool CheckDesription()
+        public bool CheckDescription()
         {
             return this.description != string.Empty;
-        }
-        public bool CheckTechnology()
-        {
-            return true;
         }
         public bool CheckFeature()
         {

@@ -49,7 +49,7 @@ namespace ProjectManagement.DAOs
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             foreach (DataRow row in dataTable.Rows)
             {
