@@ -69,7 +69,7 @@ namespace ProjectManagement
             gDateTimePickerStart.Format = DateTimePickerFormat.Custom;
             gDateTimePickerStart.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
 
-            gDateTimePickerEnd.Value = DateTime.Now.AddMinutes(5);
+            gDateTimePickerEnd.Value = DateTime.Now.AddMinutes(6);
             gDateTimePickerEnd.Format = DateTimePickerFormat.Custom;
             gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
 
@@ -136,18 +136,13 @@ namespace ProjectManagement
             {
                 this.task = new Tasks(gDateTimePickerStart.Value, gDateTimePickerEnd.Value, gTextBoxTitle.Text, gTextBoxDescription.Text, 0.0D, EnumUtil.GetEnumFromDisplayName<ETaskPriority>(gComboBoxPriority.SelectedItem.ToString()), DateTime.Now, this.creator.UserId, this.project.ProjectId);
                 TaskDAO.Insert(task);
-                List<Users> assignStudent = new List<Users>();
-                foreach (UCUserMiniLine item in flpMembers.Controls)
+                foreach (Users student in students)
                 {
-                    if (item.IsAdd)
-                    {
-                        TaskStudent taskStudent = new TaskStudent(task.TaskId, item.GetUser.UserId);
-                        TaskStudentDAO.Insert(taskStudent);
-                        EvaluationDAO.InsertAssignStudent(instructor.UserId, task.TaskId, item.GetUser.UserId);
-                    }
+                    TaskDAO.InsertAssignStudent(task.TaskId, student.UserId);
+                    EvaluationDAO.InsertAssignStudent(instructor.UserId, task.TaskId, student.UserId);
                 }
 
-                List<Users> peoples = TaskStudentDAO.GetMembersByTaskId(this.task.TaskId).Select(m => m.User).ToList();
+                List<Users> peoples = TeamDAO.GetMembersByTaskId(this.task.TaskId).Select(m => m.User).ToList();
                 peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeTask(creator.FullName, task.Title, project.Topic);
                 Notification notification = new Notification("Notification", content, ENotificationType.TASK, DateTime.Now);

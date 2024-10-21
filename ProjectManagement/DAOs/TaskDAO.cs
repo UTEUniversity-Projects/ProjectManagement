@@ -60,6 +60,19 @@ namespace ProjectManagement.DAOs
 
             return taskMetas;
         }
+        public static List<Tasks> SelectListTaskByStudent(string studentId)
+        {
+            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.taskId = {1}.taskId " +
+                                            "WHERE projectId = @projectId AND studentId = @studentId ORDER BY {0}.createdAt DESC",
+                                            DBTableNames.Task, DBTableNames.TaskStudent);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@studentId", studentId)
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new TaskMapper());
+        }
         private static List<string> SelectFavoriteList(string userId, string projectId)
         {
             string sqlStr = string.Format("SELECT FT.taskId FROM {0} AS FT " +
@@ -91,6 +104,16 @@ namespace ProjectManagement.DAOs
         public static void Insert(Tasks task)
         {
             DBExecution.Insert(task, DBTableNames.Task, "Create task");
+        }
+        public static void InsertAssignStudent(string taskId, string studentId)
+        {
+            string sqlStr = string.Format("INSERT INTO {0} (taskId, studentId) VALUES (@TaskId, @StudentId)", DBTableNames.TaskStudent);
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TaskId", taskId),
+                new SqlParameter("StudentId", studentId)
+            };
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         public static void Delete(string taskId)
@@ -176,6 +199,8 @@ namespace ProjectManagement.DAOs
 
         #endregion
 
+        #region CHECK INFORMATION
+
         public static bool CheckIsFavorite(string userId, string taskId)
         {
             string sqlStr = string.Format("SELECT 1 FROM {0} WHERE userId = @UserId AND taskId = @TaskId", DBTableNames.FavoriteTask);
@@ -190,5 +215,8 @@ namespace ProjectManagement.DAOs
 
             return dataTable.Rows.Count > 0;
         }
+
+        #endregion
+
     }
 }
