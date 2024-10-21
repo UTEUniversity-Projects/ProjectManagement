@@ -32,7 +32,7 @@ namespace ProjectManagement.DAOs
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             if (dataTable.Rows.Count > 0)
             {
@@ -86,21 +86,6 @@ namespace ProjectManagement.DAOs
 
             return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
         }
-        public static List<Project> SelectListModeNotCompleted(string userId)
-        {
-            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " +
-                                           "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId) " +
-                                           "AND {0}.status = @GaveUp",
-                                            DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam);
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@UserId", userId),
-                new SqlParameter("@GaveUp", EnumUtil.GetDisplayName(EProjectStatus.GAVEUP))
-            };
-
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
-        }
         public static List<Project> SelectListModeMyCompletedProjects(string userId)
         {
             string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " + 
@@ -120,7 +105,7 @@ namespace ProjectManagement.DAOs
         {
             string sqlStr = string.Format("SELECT * FROM {0} WHERE userId = @UserId", DBTableNames.FavoriteProject);
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             List<string> favoriteProjects = new List<string>();
             foreach (DataRow row in dataTable.Rows)
@@ -186,7 +171,7 @@ namespace ProjectManagement.DAOs
                     new SqlParameter("@TechnologyId", technology.TechnologyId)
                 };
 
-                DBExecution.ExecuteNonQuery(sqlStr, parameters);
+                DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
             }
         }
 
@@ -220,7 +205,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Status", EnumUtil.GetDisplayName(status))
             };
 
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
         public static void UpdateFavorite(string userId, string projectId, bool isFavorite) 
         {
@@ -241,7 +226,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@ProjectId", projectId)
             };
 
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         #endregion
@@ -256,7 +241,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@ProjectId", projectId)
             };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             return dataTable.Rows.Count > 0;
         }

@@ -15,7 +15,7 @@ namespace ProjectManagement.Database
 
         public static T GetModel<T>(string sqlStr, List<SqlParameter> parameters, IRowMapper<T> mapper)
         {
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             if (dataTable == null || dataTable.Rows.Count == 0) return default;
 
@@ -36,7 +36,7 @@ namespace ProjectManagement.Database
 
         public static List<T> GetModelList<T>(string sqlStr, List<SqlParameter> parameters, IRowMapper<T> mapper)
         {
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
             List<T> models = new List<T>();
 
             foreach (DataRow row in dataTable.Rows)

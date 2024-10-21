@@ -76,7 +76,7 @@ namespace ProjectManagement.Database
 
         private static int GetLastId(string sqlStr)
         {
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, new List<SqlParameter>());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, new List<SqlParameter>(), string.Empty);
             string str = dataTable.Rows[0]["MaxID"].ToString();
             return Convert.ToInt32(str.Substring(str.Length - 5));
         }

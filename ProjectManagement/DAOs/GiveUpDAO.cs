@@ -31,7 +31,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@ProjectId", projectId),
                 new SqlParameter("@OldStatus", EnumUtil.GetDisplayName(oldStatus))
             };
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
         public static void Insert(GiveUp giveUp)
         {

@@ -29,7 +29,7 @@ namespace ProjectManagement.DAOs
                                             DBTableNames.Notification, DBTableNames.ViewNotification);
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             List<NotificationMeta> list = new List<NotificationMeta>();
             NotificationMapper notificationMapper = new NotificationMapper();
@@ -49,7 +49,7 @@ namespace ProjectManagement.DAOs
         {
             string sqlStr = string.Format("SELECT * FROM {0} WHERE userId = @UserId", DBTableNames.FavoriteNotification);
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             List<string> favoriteProjects = new List<string>();
             foreach (DataRow row in dataTable.Rows)
@@ -97,7 +97,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Seen", seen == true ? 1 : 0)
             };
 
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         public static void Delete(string userId, string notificationId)
@@ -111,7 +111,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@NotificationId", notificationId)
             };
 
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
 
             DBExecution.Delete(DBTableNames.Notification, "notificationId", notificationId);
         }
@@ -127,7 +127,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@NotificationId", notificationId)
             };
 
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
         public static void UpdateFavorite(string userId, string notificationId, bool isFavorite)
         {
@@ -148,7 +148,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@NotificationId", notificationId)
             };
 
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         #endregion

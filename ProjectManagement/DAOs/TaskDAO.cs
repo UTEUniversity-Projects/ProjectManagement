@@ -73,7 +73,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@UserId", userId)
             };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             List<string> list = new List<string>();
             foreach (DataRow row in  dataTable.Rows)
@@ -109,7 +109,7 @@ namespace ProjectManagement.DAOs
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@ProjectId", projectId) };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             foreach (DataRow row in dataTable.Rows)
             {
@@ -140,7 +140,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@TaskId", taskId)
             };
 
-            DBExecution.ExecuteNonQuery(sqlStr, parameters);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         #endregion
@@ -186,7 +186,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@TaskId", taskId)
             };
 
-            DataTable dataTable = DBExecution.ExecuteQuery(sqlStr, parameters);
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
             return dataTable.Rows.Count > 0;
         }
