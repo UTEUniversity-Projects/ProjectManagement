@@ -85,6 +85,16 @@ namespace ProjectManagement.DAOs
                 InsertViewNotification(member.User.UserId, notification.NotificationId, false);
             }
         }
+        public static void InsertFollowPeoples(List<Users> peoples, string content, ENotificationType type)
+        {
+            Notification notification = new Notification("Notification", content, type, DateTime.Now);
+            DBExecution.Insert(notification, DBTableNames.Notification);
+
+            foreach (Users people in peoples)
+            {
+                InsertViewNotification(people.UserId, notification.NotificationId, false);
+            }
+        }
         public static void InsertViewNotification(string userId, string notificationId, bool seen)
         {
             string sqlStr = string.Format("INSERT INTO {0} (userId, notificationId, seen) " +

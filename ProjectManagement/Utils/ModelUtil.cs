@@ -74,6 +74,10 @@ namespace ProjectManagement.Utils
                     return Color.FromArgb(94, 148, 255);
                 case EProjectStatus.COMPLETED:
                     return Color.FromArgb(45, 237, 55);
+                case EProjectStatus.GAVEUP:
+                    return Color.FromArgb(252, 182, 3);
+                case EProjectStatus.WAITING:
+                    return Color.FromArgb(237, 62, 247);
                 default:
                     return Color.Gray;
             }
@@ -89,8 +93,12 @@ namespace ProjectManagement.Utils
                     return 1;
                 case EProjectStatus.COMPLETED:
                     return 2;
-                default:
+                case EProjectStatus.GAVEUP:
                     return 3;
+                case EProjectStatus.PUBLISHED:
+                    return 4;
+                default:
+                    return 5;
             }
         }
     }

@@ -14,8 +14,6 @@ namespace ProjectManagement
         
         private List<Project> listTheses;
 
-        private ProjectDAO ProjectDAO = new ProjectDAO();
-
         public UCDashboardStatistics()
         {
             InitializeComponent();
@@ -43,14 +41,18 @@ namespace ProjectManagement
         void SetupFlpStatus()
         {
             List<EProjectStatus> statusList = new List<EProjectStatus>((EProjectStatus[])Enum.GetValues(typeof(EProjectStatus)));
+            statusList = statusList
+            .OrderBy(status => ModelUtil.GetProjectStatusIndex(status))
+            .ToList();
             foreach (var status in statusList)
             {
+                if (status == EProjectStatus.WAITING) continue;
                 Guna2Button button = new Guna2Button();
-                button.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+                button.Font = new Font("Segoe UI Semibold", 8F, FontStyle.Bold, GraphicsUnit.Point, 0);
                 button.Text = status.ToString();
                 button.ForeColor = Color.White;
-                button.Size = new Size(105, 25);
-                button.BorderRadius = 5;
+                button.Size = new Size(115, 28);
+                button.BorderRadius = 8;
                 button.FillColor = ModelUtil.GetProjectStatusColor(status);
                 this.flpStatus.Controls.Add(button);
             }
@@ -105,39 +107,27 @@ namespace ProjectManagement
         #endregion
 
         #region HORIZONTALBAR CHART
-        
-        IEnumerable<object> ByField()
-        {
-            var projectGroupedByField = this.listTheses
-              .GroupBy(project => project.FieldId)
-              .Select(group => new
-              {
-                  Name = group.Key,
-                  Count = group.Count()
-              });
-            projectGroupedByField = projectGroupedByField.OrderByDescending(item => item.Count);
-            return projectGroupedByField;
-        }
         public void UpdateHorizontalbarChart()
         {
             string selectedFilter = gComboBoxTop.SelectedItem.ToString();
-            var projectGroupedByField = ByField();
-            int max = 5;
-            int i = 0;
+            Dictionary<string, int> groups;
+            if (selectedFilter == "Field")
+            {
+                lblTop.Text = "Top 5 Field";
+                groups = FieldDAO.TopField();
+            } 
+            else
+            {
+                lblTop.Text = "Top 5 Technology";
+                groups = TechnologyDAO.TopTechnology();
+            }
             this.gHorizontalBarDataset.DataPoints.Clear();
             this.gHorizontalBarChart.Datasets.Clear();
-            foreach (var group in projectGroupedByField)
+            foreach (var group in groups)
             {
-                var name = group.GetType().GetProperty("Name").GetValue(group, null).ToString();
-                if (selectedFilter == "Lecture")
-                {
-                    Users user = UserDAO.SelectOnlyByID(name);
-                    name = user.UserName;
-                }
-                var count = (int)group.GetType().GetProperty("Count").GetValue(group, null);
+                var name = group.Key;
+                var count = group.Value;
                 this.gHorizontalBarDataset.DataPoints.Add(name, count);
-                i++;
-                if (i == max) break;
             }
             this.gHorizontalBarChart.Datasets.Add(gHorizontalBarDataset);
             this.gHorizontalBarChart.Update();

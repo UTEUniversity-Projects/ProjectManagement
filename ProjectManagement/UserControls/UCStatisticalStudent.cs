@@ -49,17 +49,13 @@ namespace ProjectManagement
             this.gChart.Datasets.Clear();
             foreach (Project project in this.listProject)
             {
-                Team team = TeamDAO.SelectFollowProject(project.ProjectId);
-                listTasks = TaskDAO.SelectListByTeam(team.TeamId);
+                listTasks = TaskStudentDAO.SelectListTaskByProjectAndStudent(project.ProjectId, this.user.UserId);
 
-                double score = CalculationUtil.CalCompletionRate(listTasks, 1)[0];
-                double contribute = CalculationUtil.CalScore(listTasks, 1)[0];
-
+                double score = CalculationUtil.CalScorePeople(this.user.UserId, listTasks);
+                double contribute = CalculationUtil.CalCompletionRatePeople(this.user.UserId, listTasks);
                 this.avgContribute += contribute;
-
                 this.gLineDataset.DataPoints.Add(project.ProjectId, score);
             }
-
             this.gChart.Datasets.Add(this.gLineDataset);
             this.gChart.Update();
         }
