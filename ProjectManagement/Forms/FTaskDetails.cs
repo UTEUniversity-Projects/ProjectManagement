@@ -4,11 +4,12 @@ using ProjectManagement.Models;
 using ProjectManagement.MetaData;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.UserControls;
 
 namespace ProjectManagement.Forms
 {
     public partial class FTaskDetails : Form
-    {       
+    {
 
         private Users host = new Users();
         private Users creator = new Users();
@@ -18,6 +19,7 @@ namespace ProjectManagement.Forms
         private Team team = new Team();
         private Tasks dynamicTask = new Tasks();
 
+        private UCTaskDetails uCTaskDetails = new UCTaskDetails();
         private UCTaskComment uCTaskComment = new UCTaskComment();
         private UCTaskEvaluateList uCTaskEvaluateList = new UCTaskEvaluateList();
         private UCTaskEvaluateDetails uCTaskEvaluateDetails = new UCTaskEvaluateDetails();
@@ -54,22 +56,11 @@ namespace ProjectManagement.Forms
         {
             this.dynamicTask = taskMeta.Task.Clone();
             InitUserControl();
-            SetViewState();
         }
         private void InitUserControl()
         {
-            lblCreator.Text = creator.FullName;
-            gTextBoxTitle.Text = taskMeta.Task.Title;
-            gTextBoxDescription.Text = taskMeta.Task.Description;
-            gTextBoxProgress.Text = taskMeta.Task.Progress.ToString();
-            gCirclePictureBoxCreator.Image = WinformControlUtil.NameToImage(creator.Avatar);
-            GunaControlUtil.SetItemFavorite(gButtonStar, taskMeta.IsFavorite);
-
-            if (!isProcessing || (host.Role == EUserRole.STUDENT && taskMeta.Task.CreatedBy != host.UserId))
-            {
-                gButtonEdit.Hide();
-                gButtonStar.Location = new Point(383, 17);
-            }
+            uCTaskDetails.SetUpUserControl(host, instructor, project, taskMeta, creator, team, isProcessing);
+            gShadowPanelView.Controls.Add(uCTaskDetails);
 
             uCTaskComment.SetUpUserControl(host, instructor, project, taskMeta.Task, isProcessing);
             gShadowPanelView.Controls.Add(uCTaskComment);
@@ -81,35 +72,16 @@ namespace ProjectManagement.Forms
             uCTaskEvaluateDetails.GButtonBack.Click += GButtonBack_Click;
             gShadowPanelView.Controls.Add(uCTaskEvaluateDetails);
 
-            gGradientButtonComment.PerformClick();
+            gGradientButtonDetails.PerformClick();
         }
-        private void SetViewState()
-        {
-            gButtonCancel.Hide();
-            gButtonSave.Hide();
-            GunaControlUtil.SetTextBoxState(new List<Guna2TextBox> { gTextBoxTitle, gTextBoxDescription, gTextBoxProgress }, true);
-        }
-        private void SetEditState()
-        {
-            gButtonCancel.Show();
-            gButtonSave.Show();
-            GunaControlUtil.SetTextBoxState(new List<Guna2TextBox> { gTextBoxTitle, gTextBoxDescription, gTextBoxProgress }, false);
-        }
-        private bool CheckInformationValid()
-        {
-            WinformControlUtil.RunCheckDataValid(taskMeta.Task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
-            WinformControlUtil.RunCheckDataValid(taskMeta.Task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
-            int progress = 0;
-            bool checkProgress = int.TryParse(gTextBoxProgress.Text, out progress);
-            if (checkProgress) taskMeta.Task.Progress = progress;
-            WinformControlUtil.RunCheckDataValid((checkProgress && taskMeta.Task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
 
-            return taskMeta.Task.CheckTitle() && taskMeta.Task.CheckDescription() && (checkProgress && taskMeta.Task.CheckProgress());
-        }
+
+       
         private void AllButtonStandardColor()
         {
             GunaControlUtil.ButtonStandardColor(gGradientButtonComment, Color.White, Color.White);
             GunaControlUtil.ButtonStandardColor(gGradientButtonEvaluate, Color.White, Color.White);
+            GunaControlUtil.ButtonStandardColor(gGradientButtonDetails, Color.White, Color.White);
         }
         public void PerformNotificationClick(Notification notification)
         {
@@ -121,37 +93,15 @@ namespace ProjectManagement.Forms
 
         #region EVENT BUTTON CLICK
 
-        private void gButtonEdit_Click(object sender, EventArgs e)
-        {
-            SetEditState();
-        }
-        private void gButtonCancel_Click(object sender, EventArgs e)
-        {
-            gTextBoxTitle.Text = taskMeta.Task.Title;
-            gTextBoxDescription.Text = taskMeta.Task.Description;
-            gTextBoxProgress.Text = taskMeta.Task.Progress.ToString();
-            SetViewState();
-        }
-        private void gButtonSave_Click(object sender, EventArgs e)
-        {
-            this.flagCheck = false;
-            if (CheckInformationValid())
-            {
-                this.taskMeta.Task = new Tasks(taskMeta.Task.TaskId, DateTime.MinValue, DateTime.MaxValue, gTextBoxTitle.Text, gTextBoxDescription.Text,
-                    double.Parse(gTextBoxProgress.Text), ETaskPriority.LOW, taskMeta.Task.CreatedAt, this.creator.UserId, this.project.ProjectId);
 
-                TaskDAO.Update(taskMeta.Task);
-                this.flagCheck = true;
-                this.edited = true;
-                SetViewState();
-            }
-        }
+        
         private void gGradientButtonComment_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();
             GunaControlUtil.ButtonSettingColor(gGradientButtonComment);
             uCTaskEvaluateList.Hide();
             uCTaskEvaluateDetails.Hide();
+            uCTaskDetails.Hide();
             uCTaskComment.Show();
         }
         private void gGradientButtonEvaluate_Click(object sender, EventArgs e)
@@ -160,34 +110,22 @@ namespace ProjectManagement.Forms
             GunaControlUtil.ButtonSettingColor(gGradientButtonEvaluate);
             uCTaskComment.Hide();
             uCTaskEvaluateDetails.Hide();
+            uCTaskDetails.Hide();
             uCTaskEvaluateList.Show();
         }
-
+        private void gGradientButtonDetails_Click(object sender, EventArgs e)
+        {
+            AllButtonStandardColor();
+            GunaControlUtil.ButtonSettingColor(gGradientButtonDetails);
+            uCTaskComment.Hide();
+            uCTaskEvaluateDetails.Hide();
+            uCTaskDetails.Show();
+            uCTaskEvaluateList.Hide();
+        }
         #endregion
 
         #region EVENT TEXTCHANGED
 
-        private void gTextBoxTitle_TextChanged(object sender, EventArgs e)
-        {
-            this.dynamicTask.Title = gTextBoxTitle.Text;
-            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
-        }
-        private void gTextBoxDescription_TextChanged(object sender, EventArgs e)
-        {
-            this.dynamicTask.Description = gTextBoxDescription.Text;
-            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
-        }
-        private void gTextBoxProgress_TextChanged(object sender, EventArgs e)
-        {
-            int progress = 0;
-            bool checkProgress = int.TryParse(gTextBoxProgress.Text, out progress);
-            if (checkProgress)
-            {
-                taskMeta.Task.Progress = progress;
-                gProgressBarToLine.Value = progress;
-            }
-            WinformControlUtil.RunCheckDataValid((checkProgress && taskMeta.Task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
-        }
 
         #endregion
 
@@ -214,6 +152,7 @@ namespace ProjectManagement.Forms
         }
 
         #endregion
+
 
     }
 }
