@@ -77,10 +77,16 @@
             erpTitle = new ErrorProvider(components);
             erpDescription = new ErrorProvider(components);
             erpProgress = new ErrorProvider(components);
+            erpStart = new ErrorProvider(components);
+            erpEnd = new ErrorProvider(components);
+            erpPriority = new ErrorProvider(components);
             ((System.ComponentModel.ISupportInitialize)gCirclePictureBoxCreator).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpTitle).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).BeginInit();
             ((System.ComponentModel.ISupportInitialize)erpProgress).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)erpStart).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)erpEnd).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)erpPriority).BeginInit();
             SuspendLayout();
             // 
             // lblPriority
@@ -88,7 +94,7 @@
             lblPriority.AutoSize = true;
             lblPriority.BackColor = Color.Transparent;
             lblPriority.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPriority.Location = new Point(327, 345);
+            lblPriority.Location = new Point(5, 398);
             lblPriority.Name = "lblPriority";
             lblPriority.Size = new Size(94, 28);
             lblPriority.TabIndex = 117;
@@ -107,18 +113,19 @@
             gComboBoxPriority.Font = new Font("Segoe UI", 10F);
             gComboBoxPriority.ForeColor = Color.FromArgb(68, 88, 112);
             gComboBoxPriority.ItemHeight = 30;
-            gComboBoxPriority.Location = new Point(427, 343);
+            gComboBoxPriority.Location = new Point(105, 396);
             gComboBoxPriority.Name = "gComboBoxPriority";
             gComboBoxPriority.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            gComboBoxPriority.Size = new Size(238, 36);
+            gComboBoxPriority.Size = new Size(123, 36);
             gComboBoxPriority.TabIndex = 116;
+            gComboBoxPriority.SelectedIndexChanged += gComboBoxPriority_SelectedIndexChanged;
             // 
             // lblEnd
             // 
             lblEnd.AutoSize = true;
             lblEnd.BackColor = Color.Transparent;
             lblEnd.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblEnd.Location = new Point(4, 405);
+            lblEnd.Location = new Point(348, 343);
             lblEnd.Name = "lblEnd";
             lblEnd.Size = new Size(52, 28);
             lblEnd.TabIndex = 115;
@@ -131,7 +138,7 @@
             gDateTimePickerEnd.FillColor = Color.White;
             gDateTimePickerEnd.Font = new Font("Segoe UI", 9F);
             gDateTimePickerEnd.Format = DateTimePickerFormat.Long;
-            gDateTimePickerEnd.Location = new Point(76, 397);
+            gDateTimePickerEnd.Location = new Point(420, 335);
             gDateTimePickerEnd.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
             gDateTimePickerEnd.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             gDateTimePickerEnd.Name = "gDateTimePickerEnd";
@@ -140,6 +147,7 @@
             gDateTimePickerEnd.Size = new Size(230, 45);
             gDateTimePickerEnd.TabIndex = 112;
             gDateTimePickerEnd.Value = new DateTime(2024, 5, 8, 8, 42, 56, 890);
+            gDateTimePickerEnd.ValueChanged += gDateTimePickerEnd_ValueChanged;
             // 
             // lblStart
             // 
@@ -184,7 +192,7 @@
             gButtonSave.FillColor2 = Color.FromArgb(94, 148, 255);
             gButtonSave.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             gButtonSave.ForeColor = Color.White;
-            gButtonSave.Location = new Point(565, 441);
+            gButtonSave.Location = new Point(550, 444);
             gButtonSave.Name = "gButtonSave";
             gButtonSave.ShadowDecoration.CustomizableEdges = customizableEdges8;
             gButtonSave.Size = new Size(100, 35);
@@ -204,7 +212,7 @@
             gButtonCancel.FillColor = Color.Silver;
             gButtonCancel.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             gButtonCancel.ForeColor = Color.White;
-            gButtonCancel.Location = new Point(436, 441);
+            gButtonCancel.Location = new Point(421, 444);
             gButtonCancel.Name = "gButtonCancel";
             gButtonCancel.ShadowDecoration.CustomizableEdges = customizableEdges10;
             gButtonCancel.Size = new Size(100, 35);
@@ -228,7 +236,7 @@
             gTextBoxProgress.ForeColor = Color.Black;
             gTextBoxProgress.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             gTextBoxProgress.IconLeftOffset = new Point(5, 0);
-            gTextBoxProgress.Location = new Point(587, 396);
+            gTextBoxProgress.Location = new Point(572, 396);
             gTextBoxProgress.Margin = new Padding(3, 4, 3, 4);
             gTextBoxProgress.Name = "gTextBoxProgress";
             gTextBoxProgress.PasswordChar = '\0';
@@ -247,7 +255,7 @@
             lblProgress.AutoSize = true;
             lblProgress.BackColor = Color.Transparent;
             lblProgress.Font = new Font("Trebuchet MS", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblProgress.Location = new Point(325, 405);
+            lblProgress.Location = new Point(258, 400);
             lblProgress.Name = "lblProgress";
             lblProgress.Size = new Size(104, 28);
             lblProgress.TabIndex = 109;
@@ -257,12 +265,12 @@
             // 
             gProgressBarToLine.BorderRadius = 8;
             gProgressBarToLine.CustomizableEdges = customizableEdges13;
-            gProgressBarToLine.Location = new Point(451, 405);
+            gProgressBarToLine.Location = new Point(369, 405);
             gProgressBarToLine.Name = "gProgressBarToLine";
             gProgressBarToLine.ProgressColor = Color.FromArgb(94, 148, 255);
             gProgressBarToLine.ProgressColor2 = Color.FromArgb(255, 77, 165);
             gProgressBarToLine.ShadowDecoration.CustomizableEdges = customizableEdges14;
-            gProgressBarToLine.Size = new Size(111, 20);
+            gProgressBarToLine.Size = new Size(190, 20);
             gProgressBarToLine.TabIndex = 108;
             gProgressBarToLine.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
             gProgressBarToLine.Value = 75;
@@ -306,7 +314,7 @@
             gTextBoxDescription.ReadOnly = true;
             gTextBoxDescription.SelectedText = "";
             gTextBoxDescription.ShadowDecoration.CustomizableEdges = customizableEdges16;
-            gTextBoxDescription.Size = new Size(653, 109);
+            gTextBoxDescription.Size = new Size(640, 109);
             gTextBoxDescription.TabIndex = 106;
             gTextBoxDescription.TextOffset = new Point(5, 0);
             gTextBoxDescription.Click += gTextBoxDescription_TextChanged;
@@ -349,7 +357,7 @@
             gTextBoxTitle.ReadOnly = true;
             gTextBoxTitle.SelectedText = "";
             gTextBoxTitle.ShadowDecoration.CustomizableEdges = customizableEdges18;
-            gTextBoxTitle.Size = new Size(653, 65);
+            gTextBoxTitle.Size = new Size(640, 65);
             gTextBoxTitle.TabIndex = 105;
             gTextBoxTitle.TextOffset = new Point(5, 0);
             gTextBoxTitle.Click += gTextBoxTitle_TextChanged;
@@ -412,7 +420,7 @@
             gButtonEdit.HoverState.Image = (Image)resources.GetObject("resource.Image");
             gButtonEdit.Image = (Image)resources.GetObject("gButtonEdit.Image");
             gButtonEdit.ImageSize = new Size(24, 24);
-            gButtonEdit.Location = new Point(636, 17);
+            gButtonEdit.Location = new Point(615, 17);
             gButtonEdit.Name = "gButtonEdit";
             gButtonEdit.PressedColor = Color.White;
             gButtonEdit.ShadowDecoration.CustomizableEdges = customizableEdges21;
@@ -434,7 +442,7 @@
             gButtonStar.HoverState.FillColor = Color.White;
             gButtonStar.Image = (Image)resources.GetObject("gButtonStar.Image");
             gButtonStar.ImageSize = new Size(25, 25);
-            gButtonStar.Location = new Point(590, 17);
+            gButtonStar.Location = new Point(568, 17);
             gButtonStar.Name = "gButtonStar";
             gButtonStar.PressedColor = Color.White;
             gButtonStar.ShadowDecoration.CustomizableEdges = customizableEdges23;
@@ -452,6 +460,21 @@
             // erpProgress
             // 
             erpProgress.ContainerControl = this;
+            // 
+            // erpStart
+            // 
+            erpStart.ContainerControl = this;
+            erpStart.Icon = (Icon)resources.GetObject("erpStart.Icon");
+            // 
+            // erpEnd
+            // 
+            erpEnd.ContainerControl = this;
+            erpEnd.Icon = (Icon)resources.GetObject("erpEnd.Icon");
+            // 
+            // erpPriority
+            // 
+            erpPriority.ContainerControl = this;
+            erpPriority.Icon = (Icon)resources.GetObject("erpPriority.Icon");
             // 
             // UCTaskDetails
             // 
@@ -485,6 +508,9 @@
             ((System.ComponentModel.ISupportInitialize)erpTitle).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpDescription).EndInit();
             ((System.ComponentModel.ISupportInitialize)erpProgress).EndInit();
+            ((System.ComponentModel.ISupportInitialize)erpStart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)erpEnd).EndInit();
+            ((System.ComponentModel.ISupportInitialize)erpPriority).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -515,5 +541,8 @@
         private ErrorProvider erpTitle;
         private ErrorProvider erpDescription;
         private ErrorProvider erpProgress;
+        private ErrorProvider erpStart;
+        private ErrorProvider erpEnd;
+        private ErrorProvider erpPriority;
     }
 }

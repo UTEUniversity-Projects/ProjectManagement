@@ -232,6 +232,8 @@ namespace ProjectManagement.DAOs
 
         #endregion
 
+        #region CHECK INFORMATION
+
         public static bool CheckIsFavorite(string userId, string projectId)
         {
             string sqlStr = string.Format("SELECT 1 FROM {0} WHERE userId = @UserId AND projectId = @ProjectId", DBTableNames.FavoriteProject);
@@ -246,6 +248,8 @@ namespace ProjectManagement.DAOs
 
             return dataTable.Rows.Count > 0;
         }
+
+        #endregion
 
     }
 }

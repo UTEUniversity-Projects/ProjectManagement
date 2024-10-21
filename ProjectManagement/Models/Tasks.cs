@@ -146,14 +146,5 @@ namespace ProjectManagement.Models
 
         #endregion
 
-        #region FUNCTIONS
-
-        public Tasks Clone()
-        {
-            return new Tasks(taskId, startAt, endAt, title, description, progress, priority, createdAt, createdBy, projectId);
-        }
-
-        #endregion
-
     }
 }

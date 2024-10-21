@@ -2,34 +2,38 @@
 using ProjectManagement.Utils;
 using System.Data;
 using System.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ProjectManagement.Database
 {
     internal class DBExecution
     {
+
         #region SQL EXECUTION QUERY
 
         public static DataTable SQLExecuteQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution)
         {
-            SqlConnection connection = DBConnection.GetConnection();
             DataTable dataTable = new DataTable();
+            SqlConnection connection = DBConnection.GetConnection();
 
             try
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand(sqlStr, connection);
 
-                foreach (var param in parameters)
+                using (SqlCommand cmd = new SqlCommand(sqlStr, connection))
                 {
-                    cmd.Parameters.Add(param);
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.Add(param);
+                    }
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(dataTable);
+                    }
                 }
 
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                {
-                    adapter.Fill(dataTable);
-                }
-
-                if (typeExecution != string.Empty)
+                if (!string.IsNullOrEmpty(typeExecution))
                 {
                     WinformControlUtil.ShowMessage("Notification", typeExecution + " successfully");
                 }
@@ -44,7 +48,6 @@ namespace ProjectManagement.Database
             }
 
             return dataTable;
-
         }
 
         #endregion
@@ -58,16 +61,18 @@ namespace ProjectManagement.Database
             try
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand(sqlStr, connection);
 
-                foreach (var param in parameters)
+                using (SqlCommand cmd = new SqlCommand(sqlStr, connection))
                 {
-                    cmd.Parameters.Add(param);
-                }
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.Add(param);
+                    }
 
-                if (cmd.ExecuteNonQuery() > 0 && typeExecution != string.Empty)
-                {
-                    WinformControlUtil.ShowMessage("Notification", typeExecution + " successfully");
+                    if (cmd.ExecuteNonQuery() > 0 && !string.IsNullOrEmpty(typeExecution))
+                    {
+                        WinformControlUtil.ShowMessage("Notification", typeExecution + " successfully");
+                    }
                 }
             }
             catch (Exception ex)
@@ -78,6 +83,83 @@ namespace ProjectManagement.Database
             {
                 connection.Close();
             }
+        }
+
+        #endregion
+
+        #region CALL STORED PROCEDURE
+
+        public static void ExecuteStoredProcedure(string procedureName, List<SqlParameter> parameters, string typeExecution)
+        {
+            SqlConnection connection = DBConnection.GetConnection();
+
+            try
+            {
+                connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(procedureName, connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.Add(param);
+                    }
+
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        WinformControlUtil.ShowMessage("Notification", typeExecution + " successfully");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WinformControlUtil.ShowMessage("Notification", typeExecution + " failed: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        #endregion
+
+        #region CALL FUNCTION
+
+        public static DataTable ExecuteFunction(string functionName, List<SqlParameter> parameters)
+        {
+            DataTable resultTable = new DataTable();
+            SqlConnection connection = DBConnection.GetConnection();
+
+            try
+            {
+                connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(functionName, connection))
+                {
+                    cmd.CommandType = CommandType.Text;
+
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.Add(param);
+                    }
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        resultTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WinformControlUtil.ShowMessage("Notification", "Execution failed: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return resultTable;
         }
 
         #endregion

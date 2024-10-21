@@ -29,11 +29,6 @@ namespace ProjectManagement.DAOs
             return new Evaluation();
         }
 
-        public static List<Evaluation> SelectListByTask(string taskId)
-        {
-            return DBGetModel.GetModelList(DBTableNames.Evaluation, "taskId", taskId, new EvaluationMapper());
-        }
-
         public static List<Evaluation> SelectListByUser(string studentId)
         {
             return DBGetModel.GetModelList(DBTableNames.Evaluation, "studentId", studentId, new EvaluationMapper());
@@ -43,21 +38,6 @@ namespace ProjectManagement.DAOs
 
         #region EVALUATION DAO EXECUTION
 
-        public static void InsertFollowTeam(string instructorId, string taskId, string teamId)
-        {
-            string sqlStr = string.Format("SELECT studentId FROM {0} WHERE teamId = @TeamId", DBTableNames.JoinTeam);
-
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
-
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            foreach (DataRow row in dataTable.Rows)
-            {
-                Evaluation evaluation = new Evaluation(string.Empty, 0.0D, 0.0D, false, DateTime.Now, 
-                    instructorId, row["studentId"].ToString(), taskId);
-                DBExecution.Insert(evaluation, DBTableNames.Evaluation);
-            }
-        }
         public static void InsertAssignStudent(string instructorId, string taskId, string studentId)
         {
             Evaluation evaluation = new Evaluation(string.Empty, 0.0D, 0.0D, false, DateTime.Now,

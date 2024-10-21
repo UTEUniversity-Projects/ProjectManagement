@@ -17,7 +17,6 @@ namespace ProjectManagement.Forms
         private Project project = new Project();
         private TaskMeta taskMeta = new TaskMeta();
         private Team team = new Team();
-        private Tasks dynamicTask = new Tasks();
 
         private UCTaskDetails uCTaskDetails = new UCTaskDetails();
         private UCTaskComment uCTaskComment = new UCTaskComment();
@@ -38,25 +37,20 @@ namespace ProjectManagement.Forms
             this.creator = creator;
             this.team = team;
             this.isProcessing = isProcessing;
-            SetUpUserControl();
+            InitUserControl();
         }
 
         #region PROPERTIES
 
         public bool Edited
         {
-            get { return this.edited; }
+            get { return this.uCTaskDetails.Edited; }
         }
 
         #endregion
 
         #region FUNCTIONS
 
-        private void SetUpUserControl()
-        {
-            this.dynamicTask = taskMeta.Task.Clone();
-            InitUserControl();
-        }
         private void InitUserControl()
         {
             uCTaskDetails.SetUpUserControl(host, instructor, project, taskMeta, creator, team, isProcessing);
@@ -65,7 +59,7 @@ namespace ProjectManagement.Forms
             uCTaskComment.SetUpUserControl(host, instructor, project, taskMeta.Task, isProcessing);
             gShadowPanelView.Controls.Add(uCTaskComment);
 
-            uCTaskEvaluateList.SetUpUserControl(project, taskMeta.Task, team, host);
+            uCTaskEvaluateList.SetUpUserControl(taskMeta.Task, host);
             uCTaskEvaluateList.ClickEvaluate += Line_ClickEvaluate;
             gShadowPanelView.Controls.Add(uCTaskEvaluateList);
 
@@ -92,9 +86,7 @@ namespace ProjectManagement.Forms
         #endregion
 
         #region EVENT BUTTON CLICK
-
-
-        
+                
         private void gGradientButtonComment_Click(object sender, EventArgs e)
         {
             AllButtonStandardColor();

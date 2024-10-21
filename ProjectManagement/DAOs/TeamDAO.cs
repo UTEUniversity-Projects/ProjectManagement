@@ -138,20 +138,7 @@ namespace ProjectManagement.DAOs
             {
                 Delete(row["teamId"].ToString());
             }
-        }        
-
-        public static void UpdateStatus(string teamId, string status)
-        {
-            string sqlStr = string.Format("UPDATE {0} SET status = @Status WHERE teamId = @TeamId", DBTableNames.Team);
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@Status", status),
-                new SqlParameter("@TeamId", teamId)
-            };
-
-            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
-        }       
+        }  
 
         #endregion
 
@@ -170,6 +157,25 @@ namespace ProjectManagement.DAOs
                 Users student = UserDAO.SelectOnlyByID(row["studentId"].ToString());
                 ETeamRole role = EnumUtil.GetEnumFromDisplayName<ETeamRole>(row["role"].ToString());
                 DateTime joinAt = DateTime.Parse(row["joinAt"].ToString());
+
+                list.Add(new Member(student, role, joinAt));
+            }
+
+            return list.OrderBy(m => m.Role).ToList();
+        }
+        public static List<Member> GetMembersByTaskId(string taskId)
+        {
+            string sqlStr = $"SELECT studentId FROM {DBTableNames.TaskStudent} WHERE taskId = @TaskId";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TaskId", taskId) };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Member> list = new List<Member>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Users student = UserDAO.SelectOnlyByID(row["studentId"].ToString());
+                ETeamRole role = default;
+                DateTime joinAt = DateTime.Now;
 
                 list.Add(new Member(student, role, joinAt));
             }

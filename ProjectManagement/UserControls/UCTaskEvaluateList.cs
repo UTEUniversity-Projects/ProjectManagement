@@ -17,9 +17,8 @@ namespace ProjectManagement
     public partial class UCTaskEvaluateList : UserControl
     {
         public event EventHandler ClickEvaluate;
-        private Project project = new Project();
         private Tasks task = new Tasks();
-        private Team team = new Team();
+        private List<Member> assignedStudent = new List<Member>();
         private UCUserMiniLine peopleLine = new UCUserMiniLine();
 
         public UCTaskEvaluateList()
@@ -30,18 +29,27 @@ namespace ProjectManagement
         {
             get { return this.peopleLine; }
         }
-        public void SetUpUserControl(Project project, Tasks task, Team team, Users user)
+        public void SetUpUserControl(Tasks task, Users user)
         {
-            this.project = project;
             this.task = task;
-            this.team = team;
+            this.assignedStudent = TeamDAO.GetMembersByTaskId(this.task.TaskId);
+
             flpMembers.Controls.Clear();
-            if (user.Role == EUserRole.LECTURE) LoadListRoleLecture();
-            else AddUserMiniLine(user);
+            if (user.Role == EUserRole.LECTURE)
+            {
+                LoadListRoleLecture();
+            }
+            else
+            {
+                if (this.assignedStudent.FirstOrDefault(s => s.User.UserId == user.UserId) != null)
+                {
+                    AddUserMiniLine(user);
+                }
+            }
         }
         private void LoadListRoleLecture()
         {
-            foreach (Member member in TaskStudentDAO.GetMembersByTaskId(this.task.TaskId))
+            foreach (Member member in this.assignedStudent)
             {
                 AddUserMiniLine(member.User);
             }

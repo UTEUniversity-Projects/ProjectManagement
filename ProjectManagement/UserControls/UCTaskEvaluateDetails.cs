@@ -20,14 +20,10 @@ namespace ProjectManagement
     public partial class UCTaskEvaluateDetails : UserControl
     {
         
-        private Project project = new Project();
         private Tasks task = new Tasks();
         private Users student = new Users();
         private Users host = new Users();
         private Evaluation evaluation = new Evaluation();
-
-        private EvaluationDAO EvaluationDAO = new EvaluationDAO();
-        private NotificationDAO NotificationDAO = new NotificationDAO();
 
         private bool isProcessing = true;
         private bool flagCheck = false;
@@ -50,7 +46,6 @@ namespace ProjectManagement
 
         public void SetUpUserControl(Project project, Tasks task, Users student, Evaluation evaluation, Users host, bool isProcessing)
         {
-            this.project = project;
             this.task = task;
             this.student = student;
             this.evaluation = evaluation;

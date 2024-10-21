@@ -34,6 +34,11 @@ namespace ProjectManagement.UserControls
             InitializeComponent();
         }
 
+        public bool Edited
+        {
+            get { return this.edited; }
+        }
+
         public void SetUpUserControl(Users host, Users instructor, Project project, TaskMeta taskMeta, Users creator, Team team, bool isProcessing)
         {
             this.host = host;
@@ -42,6 +47,7 @@ namespace ProjectManagement.UserControls
             this.taskMeta = taskMeta;
             this.creator = creator;
             this.team = team;
+            this.dynamicTask = taskMeta.Task;
             this.isProcessing = isProcessing;
             InitUserControl();
         }
@@ -68,7 +74,12 @@ namespace ProjectManagement.UserControls
             }
 
             gDateTimePickerStart.Value = taskMeta.Task.StartAt;
+            gDateTimePickerStart.Format = DateTimePickerFormat.Custom;
+            gDateTimePickerStart.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
+
             gDateTimePickerEnd.Value = taskMeta.Task.EndAt;
+            gDateTimePickerEnd.Format = DateTimePickerFormat.Custom;
+            gDateTimePickerEnd.CustomFormat = "dd/MM/yyyy HH:mm:ss tt";
 
             gCirclePictureBoxCreator.Image = WinformControlUtil.NameToImage(creator.Avatar);
             GunaControlUtil.SetItemFavorite(gButtonStar, taskMeta.IsFavorite);
@@ -76,7 +87,7 @@ namespace ProjectManagement.UserControls
             if (!isProcessing || (host.Role == EUserRole.STUDENT && taskMeta.Task.CreatedBy != host.UserId))
             {
                 gButtonEdit.Hide();
-                gButtonStar.Location = new Point(383, 17);
+                gButtonStar.Location = new Point(610, 17);
             }
 
             SetViewState();
@@ -85,27 +96,6 @@ namespace ProjectManagement.UserControls
         private void gButtonEdit_Click(object sender, EventArgs e)
         {
             SetEditState();
-        }
-        private void gTextBoxTitle_TextChanged(object sender, EventArgs e)
-        {
-            this.dynamicTask.Title = gTextBoxTitle.Text;
-            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
-        }
-        private void gTextBoxDescription_TextChanged(object sender, EventArgs e)
-        {
-            this.dynamicTask.Description = gTextBoxDescription.Text;
-            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
-        }
-        private void gTextBoxProgress_TextChanged(object sender, EventArgs e)
-        {
-            int progress = 0;
-            bool checkProgress = int.TryParse(gTextBoxProgress.Text, out progress);
-            if (checkProgress)
-            {
-                taskMeta.Task.Progress = progress;
-                gProgressBarToLine.Value = progress;
-            }
-            WinformControlUtil.RunCheckDataValid((checkProgress && taskMeta.Task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
         }
         private void gButtonCancel_Click(object sender, EventArgs e)
         {
@@ -131,24 +121,61 @@ namespace ProjectManagement.UserControls
         {
             gButtonCancel.Hide();
             gButtonSave.Hide();
+            gDateTimePickerStart.Enabled = false;
+            gDateTimePickerEnd.Enabled = false;
+            gComboBoxPriority.Enabled = false;
             GunaControlUtil.SetTextBoxState(new List<Guna2TextBox> { gTextBoxTitle, gTextBoxDescription, gTextBoxProgress }, true);
         }
         private void SetEditState()
         {
             gButtonCancel.Show();
             gButtonSave.Show();
+            gDateTimePickerStart.Enabled = true;
+            gDateTimePickerEnd.Enabled = true;
+            gComboBoxPriority.Enabled = true;
             GunaControlUtil.SetTextBoxState(new List<Guna2TextBox> { gTextBoxTitle, gTextBoxDescription, gTextBoxProgress }, false);
         }
         private bool CheckInformationValid()
         {
-            WinformControlUtil.RunCheckDataValid(taskMeta.Task.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
-            WinformControlUtil.RunCheckDataValid(taskMeta.Task.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
+            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckProgress() || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
+            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "The end time must be after the start time");
+
+            return dynamicTask.CheckTitle() && dynamicTask.CheckDescription() && dynamicTask.CheckProgress() && dynamicTask.CheckEnd();
+        }
+
+        private void gTextBoxTitle_TextChanged(object sender, EventArgs e)
+        {
+            this.dynamicTask.Title = gTextBoxTitle.Text;
+            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckTitle() || flagCheck, erpTitle, gTextBoxTitle, "Title cannot be empty");
+        }
+        private void gTextBoxDescription_TextChanged(object sender, EventArgs e)
+        {
+            this.dynamicTask.Description = gTextBoxDescription.Text;
+            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckDescription() || flagCheck, erpDescription, gTextBoxDescription, "Description cannot be empty");
+        }
+        private void gTextBoxProgress_TextChanged(object sender, EventArgs e)
+        {
             int progress = 0;
             bool checkProgress = int.TryParse(gTextBoxProgress.Text, out progress);
-            if (checkProgress) taskMeta.Task.Progress = progress;
-            WinformControlUtil.RunCheckDataValid((checkProgress && taskMeta.Task.CheckProgress()) || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
+            this.dynamicTask.Progress = progress;
+            gProgressBarToLine.Value = progress;
+            WinformControlUtil.RunCheckDataValid(this.dynamicTask.CheckProgress() || flagCheck, erpProgress, gTextBoxProgress, "Can only take values from 0 to 100");
+        }
+        private void gDateTimePickerEnd_ValueChanged(object sender, EventArgs e)
+        {
+            this.dynamicTask.EndAt = gDateTimePickerEnd.Value;
+            WinformControlUtil.RunCheckDataValid(dynamicTask.CheckEnd() || flagCheck, erpEnd, gDateTimePickerEnd, "The end time must be after the start time");
+        }
+        private void gComboBoxPriority_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (gComboBoxPriority.SelectedItem != null &&
+            Enum.TryParse<ETaskPriority>(gComboBoxPriority.SelectedItem.ToString(), out var priority))
+            {
+                this.dynamicTask.Priority = priority;
+            }
 
-            return taskMeta.Task.CheckTitle() && taskMeta.Task.CheckDescription() && (checkProgress && taskMeta.Task.CheckProgress());
         }
     }
 }
