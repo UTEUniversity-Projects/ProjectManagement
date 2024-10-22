@@ -15,8 +15,6 @@ namespace ProjectManagement.Database
         {
             SqlConnection connection = DBConnection.GetConnection();
             DataTable dataTable = new DataTable();
-            SqlConnection connection = DBConnection.GetConnection();
-
             try
             {
                 connection.Open();

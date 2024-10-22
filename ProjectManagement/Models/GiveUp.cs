@@ -1,4 +1,5 @@
-﻿using ProjectManagement.Enums;
+﻿using ProjectManagement.DAOs;
+using ProjectManagement.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +76,7 @@ namespace ProjectManagement.Models
 
         public bool CheckReason()
         {
-            return this.reason != string.Empty;
+            return GiveUpDAO.CheckIsNotEmpty(this.Reason, "Reason");
         }
 
         #endregion
