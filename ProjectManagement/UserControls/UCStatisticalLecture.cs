@@ -20,7 +20,6 @@ namespace ProjectManagement
     {
         private Users user = new Users();
         private List<Project> listProject;
-        private ProjectDAO ProjectDAO = new ProjectDAO();
         public UCStatisticalLecture()
         {
             InitializeComponent();
@@ -56,31 +55,19 @@ namespace ProjectManagement
         {
             var allMonths = Enumerable.Range(1, 12);
             int selectedYear = (int)gComboBoxSelectYear.SelectedItem;
-            var projectGroupedByMonth = allMonths
-                .GroupJoin(this.listProject,
-                           month => month,
-                           project => project.CreatedAt.Month,
-                           (month, theses) => new
-                           {
-                               Month = month,
-                               Count = theses.Where(project => project.CreatedAt.Year == selectedYear).Count()
-                           })
-                .Select(result => new
-                {
-                    result.Month,
-                    result.Count
-                });
-            CultureInfo culture = CultureInfo.InvariantCulture;
-            DateTimeFormatInfo dtfi = culture.DateTimeFormat;
-            string monthName;
+            var filterProjects = this.listProject
+                                .Where(project => project.CreatedAt.Year == selectedYear)
+                                .ToList();
+            var projectGroupedByMonth = ProjectDAO.GroupedByMonth(filterProjects);
             this.gSplineDataset.DataPoints.Clear();
             this.gBarDataset.DataPoints.Clear();
             this.gMixedBarAndSplineChart.Datasets.Clear();
             foreach (var group in projectGroupedByMonth)
             {
-                monthName = dtfi.GetMonthName(group.Month);
-                this.gSplineDataset.DataPoints.Add(monthName, group.Count);
-                this.gBarDataset.DataPoints.Add(monthName, group.Count);
+                string monthName = group.Key;
+                int count = group.Value;
+                this.gSplineDataset.DataPoints.Add(monthName, count);
+                this.gBarDataset.DataPoints.Add(monthName, count);
             }
             this.gMixedBarAndSplineChart.Datasets.Add(gBarDataset);
             this.gMixedBarAndSplineChart.Datasets.Add(gSplineDataset);
