@@ -117,45 +117,5 @@ namespace ProjectManagement.DAOs
 
         #endregion
 
-        #region CHECK INFORMATIONS
-
-        public static bool CheckIsNotEmpty(string input, string fieldName)
-        {
-            string sqlStr = "SELECT IsValid FROM dbo.IsNotEmpty(@input, @fieldName)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@input", input),
-                new SqlParameter("@fieldName", fieldName)
-            };
-
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            if (dataTable != null && dataTable.Rows.Count > 0)
-            {
-                return Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-            }
-
-            return false;
-        }
-        public static bool CheckStart(DateTime startAt, string fieldName)
-        {
-            string sqlStr = "SELECT IsValid FROM dbo.FUNC_CheckStartDate(@startAt, @fieldName)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@startAt", startAt),
-                new SqlParameter("@fieldName", fieldName)
-            };
-
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            if (dataTable != null && dataTable.Rows.Count > 0)
-            {
-                return Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-            }
-            return false;
-        }
-        #endregion
     }
 }

@@ -126,19 +126,19 @@ namespace ProjectManagement.Models
 
         public bool CheckTitle()
         {
-            return MeetingDAO.CheckIsNotEmpty(this.Title, "Title");
+            return DAOUtils.CheckIsNotEmpty(this.Title, "Title");
         }
         public bool CheckDescription()
         {
-            return MeetingDAO.CheckIsNotEmpty(this.Description, "Description");
+            return DAOUtils.CheckIsNotEmpty(this.Description, "Description");
         }
         public bool CheckStart()
         {
-            return MeetingDAO.CheckStart(this.StartAt, "StartAt");
+            return DAOUtils.CheckStartDate(this.StartAt, "StartAt");
         }
         public bool CheckLocation()
         {
-            return MeetingDAO.CheckIsNotEmpty(this.Location, "Location");
+            return DAOUtils.CheckIsNotEmpty(this.Location, "Location");
         }
 
         #endregion

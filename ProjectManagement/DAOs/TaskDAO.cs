@@ -19,60 +19,12 @@ namespace ProjectManagement.DAOs
 {
     internal class TaskDAO : DBConnection
     {
-        #region CHECK INFORMATIONS
-        public static bool CheckIsNotEmpty(string input, string fieldName)
-        {
-            string sqlStr = "SELECT * FROM dbo.FUNC_IsNotEmpty(@Input, @FieldName)";
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-            new SqlParameter("@Input", input),
-            new SqlParameter("@FieldName", fieldName)
-            };
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-            return dataTable.Rows.Count > 0 && Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-        }
-        public static bool CheckIsValidInRange(double value, double minValue, double maxValue, string fieldName)
-        {
-            string sqlStr = "SELECT IsValid, Message FROM FUNC_IsValidInRange(@Value, @MinValue, @MaxValue, @FieldName)";
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@Value", value),
-                new SqlParameter("@MinValue", minValue),
-                new SqlParameter("@MaxValue", maxValue),
-                new SqlParameter("@FieldName", fieldName)
-            };
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-            return dataTable.Rows.Count > 0 && Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-        }
-        public static bool CheckStartDate(DateTime startDate, string fieldName)
-        {
-            string sqlStr = "SELECT IsValid, Message FROM FUNC_CheckStartDate(@StartAt, @FieldName)";
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@StartAt", startDate),
-                new SqlParameter("@FieldName", fieldName)
-            };
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-            return dataTable.Rows.Count > 0 && Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-        }
-        public static bool CheckEndDate(DateTime startDate, DateTime endDate, string fieldName)
-        {
-            string sqlStr = "SELECT IsValid, Message FROM FUNC_CheckEndDate(@StartAt, @EndAt, @FieldName)";
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@StartAt", startDate),
-                new SqlParameter("@EndAt", endDate),
-                new SqlParameter("@FieldName", fieldName)
-            };
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-            return dataTable.Rows.Count > 0 && Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-        }
-        #endregion
 
         #region SELECT TASKS
+
         public static Tasks SelectOnly(string taskId)
         {
-            string sqlStr = string.Format("Select * From FUNC_GetTaskById(@taskId)");
+            string sqlStr = string.Format("SELECT * FROM FUNC_GetTaskById(@taskId)");
 
 
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -221,7 +173,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@projectId", task.ProjectId)
             };
 
-            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Create task");
         }
         public static void InsertAssignStudent(string taskId, string studentId)
         {
@@ -353,7 +305,7 @@ namespace ProjectManagement.DAOs
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@ProjectId", projectId),
-                new SqlParameter("@TitleSyntax", title + "%") // Tìm các task bắt đầu với 'title'
+                new SqlParameter("@TitleSyntax", title + "%")
             };
 
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
@@ -390,9 +342,9 @@ namespace ProjectManagement.DAOs
 
         #region CHECK INFORMATION
 
-        public static bool CheckIsFavorite(string userId, string taskId)
+        public static bool CheckIsFavoriteTask(string userId, string taskId)
         {
-            string sqlStr = "SELECT IsFavorite FROM FUNC_CheckIsFavorite(@UserId, @TaskId)";
+            string sqlStr = "SELECT IsFavorite FROM FUNC_CheckIsFavoriteTask(@UserId, @TaskId)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -405,6 +357,8 @@ namespace ProjectManagement.DAOs
         }
 
         #endregion
+
+        #region GET MEMBERS
 
         public static List<Member> GetMembersByTaskId(string taskId)
         {
@@ -425,6 +379,8 @@ namespace ProjectManagement.DAOs
 
             return list.OrderBy(m => m.Role).ToList();
         }
+
+        #endregion
 
     }
 }

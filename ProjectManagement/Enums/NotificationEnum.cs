@@ -16,5 +16,7 @@ namespace ProjectManagement.Enums
         MEETING,
         [Display(Name = "Give up")]
         GIVEUP,
+        [Display(Name = "0")]
+        NONE
     }
 }

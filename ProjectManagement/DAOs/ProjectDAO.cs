@@ -402,9 +402,9 @@ namespace ProjectManagement.DAOs
 
         #region CHECK INFORMATION
 
-        public static bool CheckIsFavorite(string userId, string projectId)
+        public static bool CheckIsFavoriteProject(string userId, string projectId)
         {
-            string sqlStr = "SELECT dbo.FUNC_CheckIsFavorite(@UserId, @ProjectId)";
+            string sqlStr = "SELECT dbo.FUNC_CheckIsFavoriteProject(@UserId, @ProjectId)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {

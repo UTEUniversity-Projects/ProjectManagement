@@ -42,7 +42,7 @@ namespace ProjectManagement.DAOs
                 list.Add(new NotificationMeta(notification, isSaw, favoriteNotifications.Contains(notification.NotificationId)));
             }
 
-            return list;
+            return list.OrderByDescending(n => n.Notification.CreatedAt).ToList();
         }
         // 2.
         private static List<string> GetFavoriteList(string userId)
@@ -75,7 +75,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@NotificationId", notification.NotificationId),
                 new SqlParameter("@Title", notification.Title),
                 new SqlParameter("@Content", notification.Content),
-                new SqlParameter("@Type", notification.Type),
+                new SqlParameter("@Type", EnumUtil.GetDisplayName(notification.Type)),
                 new SqlParameter("@CreatedAt", notification.CreatedAt)
             };
             DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);

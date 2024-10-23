@@ -37,7 +37,7 @@ namespace ProjectManagement.DAOs
         }
         public static void Insert(Comment comment)
         {
-            string sqlStr = "EXEC CreateComment @commentId, @content, @createdAt, @createdBy, @taskId";
+            string sqlStr = "EXEC PROC_CreateComment @commentId, @content, @createdAt, @createdBy, @taskId";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -49,29 +49,5 @@ namespace ProjectManagement.DAOs
             };
             DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Create Comment");
         }
-
-        #region CHECK INFORMATIONS
-
-        public static bool CheckIsNotEmpty(string input, string fieldName)
-        {
-            string sqlStr = "SELECT IsValid FROM dbo.IsNotEmpty(@input, @fieldName)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@input", input),
-                new SqlParameter("@fieldName", fieldName)
-            };
-
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            if (dataTable != null && dataTable.Rows.Count > 0)
-            {
-                return Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-            }
-
-            return false;
-        }
-
-        #endregion
     }
 }

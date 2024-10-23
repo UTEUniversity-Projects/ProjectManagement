@@ -83,7 +83,7 @@ namespace ProjectManagement.Models
 
         public bool CheckContent()
         {
-            return CommentDAO.CheckIsNotEmpty(this.Content, "Content");
+            return DAOUtils.CheckIsNotEmpty(this.Content, "Content");
         }
 
         #endregion

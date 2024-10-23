@@ -328,20 +328,20 @@ namespace ProjectManagement
         }
         public void PerformNotificationClick(Notification notification)
         {
-            this.notification = notification;
-            if (this.notification.Type == ENotificationType.MEETING)
-            {
-                gGradientButtonMeetings.PerformClick();
-                return;
-            }
+            //this.notification = notification;
+            //if (this.notification.Type == ENotificationType.MEETING)
+            //{
+            //    gGradientButtonMeetings.PerformClick();
+            //    return;
+            //}
 
-            if (this.notification.Type != ENotificationType.PROJECT)
-            {
-                gGradientButtonTasks.PerformClick();
-                UCProjectDetailsTasks uCProjectDetailsTasks = new UCProjectDetailsTasks();
-                uCProjectDetailsTasks.SetUpUserControl(host, instructor, team, project, project.Status == EProjectStatus.PROCESSING);
-                // uCProjectDetailsTasks.PerformNotificationClick(notification.Type);
-            }
+            //if (this.notification.Type != ENotificationType.PROJECT)
+            //{
+            //    gGradientButtonTasks.PerformClick();
+            //    UCProjectDetailsTasks uCProjectDetailsTasks = new UCProjectDetailsTasks();
+            //    uCProjectDetailsTasks.SetUpUserControl(host, instructor, team, project, project.Status == EProjectStatus.PROCESSING);
+            //    uCProjectDetailsTasks.PerformNotificationClick(notification.Type);
+            //}
         }
 
         #endregion
@@ -444,7 +444,7 @@ namespace ProjectManagement
             AllButtonStandardColor();
             GunaControlUtil.ButtonSettingColor(gGradientButtonTasks);
             UCProjectDetailsTasks uCProjectDetailsTasks = new UCProjectDetailsTasks();
-            uCProjectDetailsTasks.SetUpUserControl(host, instructor, team, project, project.Status == EProjectStatus.PROCESSING);
+            uCProjectDetailsTasks.SetUpUserControl(host, instructor, team, project);
             gPanelDataView.Controls.Clear();
             gPanelDataView.Controls.Add(uCProjectDetailsTasks);
         }
@@ -519,6 +519,7 @@ namespace ProjectManagement
                     }
 
                     ProjectDAO.UpdateStatus(this.project, EProjectStatus.PROCESSING);
+                    TeamDAO.UpdateTeamStatus(team.TeamId, ETeamStatus.ACCEPTED);
 
                     this.flagEdited = true;
                     this.project.Status = EProjectStatus.PROCESSING;

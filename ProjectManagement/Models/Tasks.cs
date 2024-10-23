@@ -126,23 +126,23 @@ namespace ProjectManagement.Models
 
         public bool CheckTitle()
         {
-            return TaskDAO.CheckIsNotEmpty(this.title, "Title");
+            return DAOUtils.CheckIsNotEmpty(this.title, "Title");
         }
         public bool CheckDescription()
         {
-            return TaskDAO.CheckIsNotEmpty(this.description, "Description");
+            return DAOUtils.CheckIsNotEmpty(this.description, "Description");
         }
         public bool CheckProgress()
         {
-            return TaskDAO.CheckIsValidInRange(this.progress, 0, 100, "Progress");
+            return DAOUtils.CheckIsValidInRange(this.progress, 0, 100, "Progress");
         }
         public bool CheckStart()
         {
-            return TaskDAO.CheckStartDate(this.StartAt, "StartAt");
+            return DAOUtils.CheckStartDate(this.StartAt, "StartAt");
         }
         public bool CheckEnd()
         {
-            return TaskDAO.CheckEndDate(this.StartAt, this.EndAt, "EndAt");
+            return DAOUtils.CheckEndDate(this.StartAt, this.EndAt, "EndAt");
         }
 
         #endregion

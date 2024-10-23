@@ -154,59 +154,6 @@ namespace ProjectManagement.DAOs
 
 
         #endregion
-        #region CHECK INFORMATIONS
-        public static bool CheckIsNotEmpty(string input, string fieldName)
-        {
-            string sqlStr = "SELECT * FROM dbo.FUNC_IsNotEmpty(@Input, @FieldName)";
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-            new SqlParameter("@Input", input),
-            new SqlParameter("@FieldName", fieldName)
-            };
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-            return dataTable.Rows.Count > 0 && Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-        }
-        public static bool CheckNonExist(string tableName, string field, string information)
-        {
-            string sqlStr = "EXEC PROC_CheckNonExist @TableName, @Field, @Information";
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@TableName", tableName),
-                new SqlParameter("@Field", field),
-                new SqlParameter("@Information", information)
-            };
-
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            if (dataTable.Rows.Count > 0)
-            {
-                bool isValid = Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-                return isValid;
-            }
-
-            return false;
-        }
         
-        public static bool CheckIsValidAge(DateTime dateOfBirth, string fieldName) 
-        {
-            string sqlStr = "SELECT * FROM FUNC_CheckAge(@DateOfBirth, @FieldName)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@DateOfBirth", dateOfBirth),
-                new SqlParameter("@FieldName", fieldName)
-            };
-
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            if (dataTable.Rows.Count > 0)
-            {
-                bool isValid = Convert.ToBoolean(dataTable.Rows[0]["IsValid"]);
-                return isValid;
-            }
-            return false;
-        }
-        #endregion
     }
 }

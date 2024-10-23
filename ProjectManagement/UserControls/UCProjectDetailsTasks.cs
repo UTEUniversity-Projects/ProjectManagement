@@ -32,13 +32,13 @@ namespace ProjectManagement
 
         #region FUNCTIONS
 
-        public void SetUpUserControl(Users user, Users instructor, Team team, Project project, bool isProcessing)
+        public void SetUpUserControl(Users user, Users instructor, Team team, Project project)
         {
             this.user = user;
             this.instructor = instructor;
             this.team = team;
             this.project = project;
-            this.isProcessing = isProcessing;
+            this.isProcessing = project.Status == EProjectStatus.PROCESSING;
             InitUserControl();
         }
         private void InitUserControl()
@@ -66,7 +66,7 @@ namespace ProjectManagement
         private void UCTaskCreate_TasksCreateClicked(object sender, EventArgs e)
         {
             Tasks task = TaskDAO.SelectOnly(uCTaskCreate.GetTasks.TaskId);
-            TaskMeta taskMeta = new TaskMeta(task, TaskDAO.CheckIsFavorite(user.UserId, task.TaskId));
+            TaskMeta taskMeta = new TaskMeta(task, TaskDAO.CheckIsFavoriteTask(user.UserId, task.TaskId));
 
             this.listTask.Add(new TaskMeta(task, false));
             UCTaskMiniLine line = new UCTaskMiniLine(user, instructor, project, taskMeta, isProcessing);

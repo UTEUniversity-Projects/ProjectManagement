@@ -18,7 +18,7 @@ namespace ProjectManagement.DAOs
         // 1.
         public static Evaluation SelectOnly(string taskId, string studentId)
         {
-            string sqlStr = string.Format("SELECT * FROM dbo.FUNC_GetEvaluation(@TaskId, @StudentId)");
+            string sqlStr = string.Format("SELECT * FROM FUNC_GetEvaluation(@TaskId, @StudentId)");
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@TaskId", taskId),

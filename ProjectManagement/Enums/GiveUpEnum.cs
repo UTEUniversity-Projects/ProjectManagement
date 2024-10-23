@@ -14,6 +14,8 @@ namespace ProjectManagement.Enums
         [Display(Name = "Accepted")]
         ACCEPTED,
         [Display(Name = "Rejected")]
-        REJECTED
+        REJECTED,
+        [Display(Name = "0")]
+        NONE
     }
 }

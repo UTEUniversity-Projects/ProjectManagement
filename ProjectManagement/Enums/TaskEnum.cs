@@ -16,7 +16,9 @@ namespace ProjectManagement.Enums
         [Display(Name = "Completed")]
         COMPLETED,
         [Display(Name = "Canceled")]
-        CANCELED
+        CANCELED,
+        [Display(Name = "0")]
+        NONE
     }
     public enum ETaskPriority
     {
