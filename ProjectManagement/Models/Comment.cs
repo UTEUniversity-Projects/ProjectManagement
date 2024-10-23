@@ -1,7 +1,10 @@
 ﻿using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
-
+using ProjectManagement.Database;
+using System.Data;
+using System.Data.SqlClient;
+using ProjectManagement.DAOs;
 namespace ProjectManagement.Models
 {
     public class Comment
@@ -80,7 +83,7 @@ namespace ProjectManagement.Models
 
         public bool CheckContent()
         {
-            return this.content != string.Empty;
+            return CommentDAO.CheckIsNotEmpty(this.Content, "Content");
         }
 
         #endregion
