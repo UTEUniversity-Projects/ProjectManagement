@@ -9,6 +9,7 @@ namespace ProjectManagement.Process
         public static double CalScorePeople(string peopleId, List<Tasks> listTasks)
         {
             double result = 0;
+            if (listTasks.Count == 0 || listTasks == null) return result;
             foreach (Tasks task in listTasks)
             {
                 Evaluation evaluation = EvaluationDAO.SelectOnly(task.TaskId, peopleId);    
@@ -19,6 +20,7 @@ namespace ProjectManagement.Process
         public static double CalCompletionRatePeople(string peopleId, List<Tasks> listTasks)
         {
             double result = 0;
+            if (listTasks.Count == 0 || listTasks == null) return result;
             foreach (Tasks task in listTasks)
             {
                 Evaluation evaluation = EvaluationDAO.SelectOnly(task.TaskId, peopleId);
@@ -26,9 +28,21 @@ namespace ProjectManagement.Process
             }
             return result / listTasks.Count;
         }
-        public static int CalStatisticalProject(List<Tasks> listTasks)
+        public static int CalAvgProgress(List<Tasks> listTasks)
         {
-            return (int)(listTasks.Any() ? listTasks.Average(task => task.Progress) : 0);
+            if (listTasks == null || listTasks.Count == 0)
+                return 0;
+
+            double totalProgress = 0;
+
+            foreach (var task in listTasks)
+            {
+                totalProgress += task.Progress;
+            }
+
+            int averageProgress = (int)(totalProgress / listTasks.Count);
+
+            return averageProgress;
         }
     }
 }

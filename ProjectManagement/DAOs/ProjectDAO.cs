@@ -16,6 +16,7 @@ using System.Data.SqlClient;
 using System.Web;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Microsoft.VisualBasic.ApplicationServices;
+using System.Globalization;
 
 namespace ProjectManagement.DAOs
 {
@@ -91,6 +92,19 @@ namespace ProjectManagement.DAOs
             }
 
             return projectList;
+        }
+        public static List<Project> SelectByLectureAndYear(string userId, int year)
+        {
+            string sqlStr = string.Format("SELECT * FROM {0} WHERE instructorId = @UserId AND YEAR(createdAt) = @YearSelected",
+            DBTableNames.Project);
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@YearSelected", year)
+            };
+
+            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
         }
         public static List<Project> SelectListRoleStudent(string userId)
         {
@@ -391,6 +405,120 @@ namespace ProjectManagement.DAOs
             return dataTable.Rows.Count > 0 && Convert.ToBoolean(dataTable.Rows[0][0]);
         }
 
+        #endregion
+
+        #region STATISTICAL
+
+        public static DataTable CreateProjectTable(List<Project> listProjects)
+        {
+            DataTable projectTable = new DataTable();
+            projectTable.Columns.Add("projectId", typeof(string));
+            projectTable.Columns.Add("instructorId", typeof(string));
+            projectTable.Columns.Add("topic", typeof(string));
+            projectTable.Columns.Add("description", typeof(string));
+            projectTable.Columns.Add("feature", typeof(string));
+            projectTable.Columns.Add("requirement", typeof(string));
+            projectTable.Columns.Add("maxMember", typeof(int));
+            projectTable.Columns.Add("status", typeof(string));
+            projectTable.Columns.Add("createdAt", typeof(DateTime));
+            projectTable.Columns.Add("createdBy", typeof(string));
+            projectTable.Columns.Add("fieldId", typeof(string));
+
+            foreach (var project in listProjects)
+            {
+                projectTable.Rows.Add(
+                    project.ProjectId, project.InstructorId, project.Topic, project.Description,
+                    project.Feature, project.Requirement, project.MaxMember, EnumUtil.GetDisplayName(project.Status),
+                    project.CreatedAt, project.FieldId);
+            }
+            return projectTable;
+        }
+        public static Dictionary<string, int> GroupedByMonth(List<Project> listProjects)
+        {
+            DataTable projectTable = CreateProjectTable(listProjects);
+            string sqlStr = "SELECT MonthName, ProjectCount FROM dbo.FUNC_GetProjectsGroupedByMonth(@ProjectList)" +
+                            "ORDER BY MonthNumber;";
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                 new SqlParameter
+                 {
+                    ParameterName = "@ProjectList",
+                    SqlDbType = SqlDbType.Structured, 
+                    TypeName = "ProjectTableType", 
+                    Value = projectTable
+                 }
+            };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            Dictionary<string, int> result = new Dictionary<string, int>();
+            if (dataTable.Rows.Count > 0)
+            {
+                foreach(DataRow row in dataTable.Rows)
+                {
+                    string monthName = row["MonthName"].ToString();
+                    int projectCount = Convert.ToInt32(row["ProjectCount"]);
+
+                    result.Add(monthName, projectCount);
+                }
+            }
+            return result;
+        }
+        public static Dictionary<EProjectStatus, int> GroupedByStatus(List<Project> listProjects)
+        {
+            DataTable projectTable = CreateProjectTable(listProjects);
+            string sqlStr = "SELECT * FROM dbo.FUNC_GetProjectsGroupedByStatus(@ProjectList)";
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                 new SqlParameter
+                 {
+                    ParameterName = "@ProjectList",
+                    SqlDbType = SqlDbType.Structured,
+                    TypeName = "ProjectTableType",
+                    Value = projectTable
+                 }
+            };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            Dictionary<EProjectStatus, int> result = new Dictionary<EProjectStatus, int>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                EProjectStatus status = EnumUtil.GetEnumFromDisplayName<EProjectStatus>(row["ProjectStatus"].ToString());
+                int projectCount = Convert.ToInt32(row["ProjectCount"]);
+
+                result.Add(status, projectCount);
+            }
+            return result;
+        }
+        public static Dictionary<string, int> GetTopField(List<Project> listProjects)
+        {
+            DataTable projectTable = CreateProjectTable(listProjects);
+            string sqlStr = "SELECT * FROM FUNC_GetTopFieldsByProjects(@ProjectList) ORDER BY ProjectCount DESC";
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                 new SqlParameter
+                 {
+                    ParameterName = "@ProjectList",
+                    SqlDbType = SqlDbType.Structured,
+                    TypeName = "ProjectTableType",
+                    Value = projectTable
+                 }
+            };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            MessageBox.Show(dataTable.Rows.Count.ToString());
+
+            Dictionary<string, int> result = new Dictionary<string, int>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                string fieldName = row["FieldName"].ToString();
+                int projectCount = Convert.ToInt32(row["ProjectCount"]);
+                MessageBox.Show($"FieldName: {row["FieldName"]}, ProjectCount: {row["ProjectCount"]}");
+                result.Add(fieldName, projectCount);
+            }
+            return result;
+        }
         #endregion
 
     }

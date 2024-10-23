@@ -180,18 +180,16 @@ namespace ProjectManagement.Models
 
         public bool CheckFullName()
         {
-            return this.fullName != string.Empty;
+            return UserDAO.CheckIsNotEmpty(this.fullName, "FullName");
         }
         public bool CheckCitizenCode()
         {
-            return this.citizenCode != string.Empty
-                    && UserDAO.CheckNonExist(DBTableNames.User, "citizencode", this.citizenCode);
+            return UserDAO.CheckIsNotEmpty(this.citizenCode, "CitizenCode")
+                    && UserDAO.CheckNonExist("Users", "citizencode", this.citizenCode);
         }
         public bool CheckBirthday()
         {
-            TimeSpan difference = DateTime.Now - this.dateOfBirth;
-            int age = (int)(difference.TotalDays / 365.25);
-            return age >= 18;
+            return UserDAO.CheckIsValidAge(this.dateOfBirth, "DateOfBirth");
         }
         public bool CheckGender()
         {
@@ -199,18 +197,18 @@ namespace ProjectManagement.Models
         }
         public bool CheckEmail()
         {
-            return this.email != string.Empty
-                    && UserDAO.CheckNonExist(DBTableNames.User, "email", this.email);
+            return UserDAO.CheckIsNotEmpty(this.email, "Email")
+                    && UserDAO.CheckNonExist("Users", "email", this.email);
         }
         public bool CheckPhoneNumber()
         {
-            return this.phoneNumber != string.Empty && this.phoneNumber.All(char.IsDigit)
-                    && UserDAO.CheckNonExist(DBTableNames.User, "phoneNumber", this.phoneNumber);
+            return UserDAO.CheckIsNotEmpty(this.phoneNumber, "PhoneNumber") && this.phoneNumber.All(char.IsDigit)
+                    && UserDAO.CheckNonExist("Users", "phoneNumber", this.phoneNumber);
         }
         public bool CheckUserName()
         {
-            return this.userName != string.Empty
-                    && UserDAO.CheckNonExist(DBTableNames.User, "userName", this.userName);
+            return UserDAO.CheckIsNotEmpty(this.userName, "UserName")
+                   && UserDAO.CheckNonExist("Users", "userName", this.userName);
         }
         public bool CheckRole()
         {
@@ -218,19 +216,19 @@ namespace ProjectManagement.Models
         }
         public bool CheckWorkCode()
         {
-            return this.workCode != string.Empty;
+            return UserDAO.CheckIsNotEmpty(this.workCode, "WorkCode");
         }
         public bool CheckUniversity()
         {
-            return this.university != string.Empty;
+            return UserDAO.CheckIsNotEmpty(this.university, "University");
         }
         public bool CheckFaculty()
         {
-            return this.faculty != string.Empty;
+            return UserDAO.CheckIsNotEmpty(this.faculty, "Faculty");
         }
         public bool CheckPassWord(string confirmPassword)
         {
-            return this.password != string.Empty && this.password == confirmPassword;
+            return UserDAO.CheckIsNotEmpty(this.password, "Password") && this.password == confirmPassword;
         }
 
         #endregion
