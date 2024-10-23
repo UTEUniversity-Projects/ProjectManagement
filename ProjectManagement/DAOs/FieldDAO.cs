@@ -3,6 +3,7 @@ using ProjectManagement.Mappers.Implement;
 using ProjectManagement.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -24,42 +25,23 @@ namespace ProjectManagement.DAOs
         }
         public static Dictionary<string, int> TopField()
         {
-            string query = @"
-            SELECT TOP 5 f.name AS FieldName, COUNT(p.FieldId) AS ProjectCount
-            FROM Project p
-            JOIN Field f ON p.FieldId = f.fieldId
-            GROUP BY f.name
-            ORDER BY ProjectCount DESC;";
-            var results = new Dictionary<string, int>();
-            SqlConnection connection = DBConnection.GetConnection();
+            string sqlStr = "SELECT * FROM FUNC_GetTopField() ORDER BY ProjectCount DESC";
 
-            try
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, new List<SqlParameter>(), string.Empty);
+            Dictionary<string, int> result = new Dictionary<string, int>();
+
+            if (dataTable.Rows.Count > 0)
             {
-                connection.Open();
-
-                using (var command = new SqlCommand(query, connection))
-                using (var reader = command.ExecuteReader())
+                foreach (DataRow row in dataTable.Rows)
                 {
-                    while (reader.Read())
-                    {
-                        string fieldName = reader["FieldName"].ToString();
-                        int projectCount = Convert.ToInt32(reader["ProjectCount"]);
+                    string fieldName = row["FieldName"].ToString();
+                    int projectCount = Convert.ToInt32(row["ProjectCount"]);
 
-                        results.Add(fieldName, projectCount);
-                    }
+                    result.Add(fieldName, projectCount);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
-                    connection.Close();
-            }
 
-            return results;
+            return result;
         }
     }
 }

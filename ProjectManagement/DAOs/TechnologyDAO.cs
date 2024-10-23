@@ -3,6 +3,7 @@ using ProjectManagement.Mappers.Implement;
 using ProjectManagement.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -39,43 +40,23 @@ namespace ProjectManagement.DAOs
         }
         public static Dictionary<string, int> TopTechnology()
         {
-            string query = @"
-            SELECT TOP 5 t.name AS TechnologyName, COUNT(ft.technologyId) AS ProjectCount
-            FROM FieldTechnology ft
-            JOIN Technology t ON ft.technologyId = t.TechnologyId
-            GROUP BY t.name
-            ORDER BY ProjectCount DESC;";
+            string sqlStr = "SELECT * FROM FUNC_GetTopTechnology() ORDER BY ProjectCount DESC";
 
-            var results = new Dictionary<string, int>();
-            SqlConnection connection = DBConnection.GetConnection();
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, new List<SqlParameter>(), string.Empty);
+            Dictionary<string, int> result = new Dictionary<string, int>();
 
-            try
+            if (dataTable.Rows.Count > 0)
             {
-                connection.Open();
-
-                using (var command = new SqlCommand(query, connection))
-                using (var reader = command.ExecuteReader())
+                foreach (DataRow row in dataTable.Rows)
                 {
-                    while (reader.Read())
-                    {
-                        string technologyName = reader["TechnologyName"].ToString();
-                        int projectCount = Convert.ToInt32(reader["ProjectCount"]);
+                    string technologyName = row["TechnologyName"].ToString();
+                    int projectCount = Convert.ToInt32(row["ProjectCount"]);
 
-                        results.Add(technologyName, projectCount);
-                    }
+                    result.Add(technologyName, projectCount);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
-                    connection.Close();
-            }
 
-            return results;
+            return result;
         }
 
     }

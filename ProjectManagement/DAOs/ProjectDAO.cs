@@ -62,16 +62,28 @@ namespace ProjectManagement.DAOs
         }
         public static List<Project> SelectByLectureAndYear(string userId, int year)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE instructorId = @UserId AND YEAR(createdAt) = @YearSelected",
-            DBTableNames.Project);
+            string sqlStr = "SELECT * FROM FUNC_GetProjectByLectureAndYear(@UserId, @YearSelected)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@UserId", userId),
                 new SqlParameter("@YearSelected", year)
             };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+            List<Project> listProjects = new List<Project>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                ProjectMapper projectMapper = new ProjectMapper();
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Project project = projectMapper.MapRow(row);
+                    listProjects.Add(project);
+                }
+            }
+
+            return listProjects;
         }
         public static List<Project> SelectListRoleStudent(string userId)
         {

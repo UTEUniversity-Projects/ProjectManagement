@@ -451,4 +451,35 @@ BEGIN
 END;
 
 
+-- Field DAO
+CREATE FUNCTION FUNC_GetTopField()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT TOP 5 
+        f.name AS FieldName, 
+        COUNT(p.fieldId) AS ProjectCount
+    FROM Project p
+    JOIN Field f ON p.fieldId = f.fieldId
+    GROUP BY f.name
+);
+
+
+SELECT * FROM FUNC_GetTopField() ORDER BY ProjectCount DESC
+
+-- Technology DAO
+CREATE FUNCTION FUNC_GetTopTechnology()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT TOP 5 
+        t.name AS TechnologyName, 
+        COUNT(ft.technologyId) AS ProjectCount
+    FROM FieldTechnology ft
+    JOIN Technology t ON ft.technologyId = t.technologyId
+    GROUP BY t.name
+);
+SELECT * FROM FUNC_GetTopTechnology() ORDER BY ProjectCount DESC
 
