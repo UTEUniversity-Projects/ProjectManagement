@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.DAOs;
 
 namespace ProjectManagement.Models
 {
@@ -94,6 +95,15 @@ namespace ProjectManagement.Models
         {
             get { return this.status; }
             set { this.status = value; }
+        }
+
+        #endregion
+
+        #region CHECK INFORMATION
+
+        public bool CheckTeamName()
+        {
+            return DAOUtils.CheckIsNotEmpty(this.teamName, "Team name");
         }
 
         #endregion

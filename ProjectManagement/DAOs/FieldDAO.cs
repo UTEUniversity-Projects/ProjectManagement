@@ -3,6 +3,7 @@ using ProjectManagement.Mappers.Implement;
 using ProjectManagement.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,45 @@ namespace ProjectManagement.DAOs
     {
         public static Field SelectOnlyById(string fieldId)
         {
-            return DBGetModel.GetModel(DBTableNames.Field, "fieldId", fieldId, new FieldMapper());
+            string sqlStr = "SELECT * FROM FUNC_SelectFieldById(@FieldId)";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@FieldId", fieldId)
+            };
+
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                FieldMapper fieldMapper = new FieldMapper();
+                return fieldMapper.MapRow(dataTable.Rows[0]);
+            }
+
+            return null;
         }
         public static List<Field> SelectList()
         {
-            string sqlStr = string.Format("SELECT * FROM {0}", DBTableNames.Field);
+            string sqlStr = "SELECT * FROM FUNC_SelectAllFields()";
 
-            return DBGetModel.GetModelList(sqlStr, new List<SqlParameter>(), new FieldMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, new List<SqlParameter>(), string.Empty);
+
+            List<Field> fields = new List<Field>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                FieldMapper fieldMapper = new FieldMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Field field = fieldMapper.MapRow(row);
+                    fields.Add(field);
+                }
+            }
+
+            return fields;
         }
+
         public static Dictionary<string, int> TopField()
         {
             string query = @"

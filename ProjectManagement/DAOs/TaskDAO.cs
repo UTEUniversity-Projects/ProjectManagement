@@ -406,7 +406,25 @@ namespace ProjectManagement.DAOs
 
         #endregion
 
+        public static List<Member> GetMembersByTaskId(string taskId)
+        {
+            string sqlStr = $"SELECT studentId FROM {DBTableNames.TaskStudent} WHERE taskId = @TaskId";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TaskId", taskId) };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
+            List<Member> list = new List<Member>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Users student = UserDAO.SelectOnlyByID(row["studentId"].ToString());
+                ETeamRole role = default;
+                DateTime joinAt = DateTime.Now;
+
+                list.Add(new Member(student, role, joinAt));
+            }
+
+            return list.OrderBy(m => m.Role).ToList();
+        }
 
     }
 }

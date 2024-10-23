@@ -27,6 +27,5 @@ namespace ProjectManagement.Mappers.Implement
 
             return project;
         }
-
     }
 }

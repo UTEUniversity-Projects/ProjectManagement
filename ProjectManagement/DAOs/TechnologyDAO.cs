@@ -3,6 +3,7 @@ using ProjectManagement.Mappers.Implement;
 using ProjectManagement.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -14,24 +15,57 @@ namespace ProjectManagement.DAOs
     {
         public static List<Technology> SelectListByProject(string projectId)
         {
-            string sqlStr = string.Format("SELECT T.* FROM {0} AS T " +
-                "JOIN (SELECT technologyId FROM {1} WHERE projectId = @ProjectId) AS PT ON T.technologyId = PT.technologyId",
-                DBTableNames.Technology, DBTableNames.ProjectTechnology);
+            string sqlStr = "SELECT * FROM FUNC_SelectTechnologiesByProject(@ProjectId)";
 
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@ProjectId", projectId) };
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", projectId)
+            };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new TechnologyMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Technology> technologies = new List<Technology>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                TechnologyMapper technologyMapper = new TechnologyMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Technology technology = technologyMapper.MapRow(row);
+                    technologies.Add(technology);
+                }
+            }
+
+            return technologies;
         }
         public static List<Technology> SelectListByField(string fieldId)
         {
-            string sqlStr = string.Format("SELECT T.* FROM {0} AS T " +
-                "JOIN (SELECT technologyId FROM {1} WHERE fieldId = @FieldId) AS PT ON T.technologyId = PT.technologyId",
-                DBTableNames.Technology, DBTableNames.FieldTechnology);
+            string sqlStr = "SELECT * FROM FUNC_SelectTechnologiesByField(@FieldId)";
 
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@FieldId", fieldId) };
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@FieldId", fieldId)
+            };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new TechnologyMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Technology> technologies = new List<Technology>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                TechnologyMapper technologyMapper = new TechnologyMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Technology technology = technologyMapper.MapRow(row);
+                    technologies.Add(technology);
+                }
+            }
+
+            return technologies;
         }
+
         public static string GetListTechnology(string projectId)
         {
             List<Technology> technologies = SelectListByProject(projectId);

@@ -21,26 +21,45 @@ using System.Globalization;
 namespace ProjectManagement.DAOs
 {
     internal class ProjectDAO : DBConnection
-    {       
+    {
 
         #region SELECT PROJECT
 
         public static Project SelectOnly(string projectId)
         {
-            return DBGetModel.GetModel(DBTableNames.Project, "projectId", projectId, new ProjectMapper());
-        }
-        public static Project SelectFollowTeam(string teamId)
-        {
-            string sqlStr = $"SELECT projectId FROM {DBTableNames.Team} WHERE teamId = @TeamId";
+            string sqlStr = $"SELECT * FROM FUNC_GetProjectById(@projectId)";
 
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TeamId", teamId) };
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@projectId", projectId)
+            };
 
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
-            if (dataTable.Rows.Count > 0)
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                ProjectMapper projectMapper = new ProjectMapper();
+                return projectMapper.MapRow(dataTable.Rows[0]);
+            }
+
+            return null;
+        }
+        public static Project SelectFollowTeam(string teamId)
+        {
+            string sqlStr = $"SELECT projectId FROM FUNC_GetProjectIdByTeamId(@TeamId)";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TeamId", teamId)
+            };
+
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
             {
                 return SelectOnly(dataTable.Rows[0]["projectId"].ToString());
             }
+
             return new Project();
         }
 
@@ -50,15 +69,29 @@ namespace ProjectManagement.DAOs
 
         public static List<Project> SelectListRoleLecture(string userId)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE instructorId = @UserId",
-                DBTableNames.Project);
+            string sqlStr = "SELECT * FROM FUNC_GetProjectsByInstructorId(@UserId)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@UserId", userId)
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Project> projectList = new List<Project>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                ProjectMapper projectMapper = new ProjectMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Project project = projectMapper.MapRow(row);
+                    projectList.Add(project);
+                }
+            }
+
+            return projectList;
         }
         public static List<Project> SelectByLectureAndYear(string userId, int year)
         {
@@ -75,10 +108,7 @@ namespace ProjectManagement.DAOs
         }
         public static List<Project> SelectListRoleStudent(string userId)
         {
-            string sqlStr = string.Format("SELECT {0}.* FROM {0} WHERE status IN (@Published, @Registered) " +
-                                           "AND NOT EXISTS(SELECT 1 FROM {1} WHERE {1}.projectId = {0}.projectId " +
-                                           "AND teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId))",
-                                           DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam);
+            string sqlStr = "SELECT * FROM FUNC_GetProjectsForStudent(@UserId, @Published, @Registered)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -87,27 +117,52 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Registered", EnumUtil.GetDisplayName(EProjectStatus.REGISTERED))
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Project> projectList = new List<Project>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                ProjectMapper projectMapper = new ProjectMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Project project = projectMapper.MapRow(row);
+                    projectList.Add(project);
+                }
+            }
+
+            return projectList;
         }
         public static List<Project> SelectListModeMyProjects(string userId)
         {
-            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " +
-                                           "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId)",
-                                            DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam);
+            string sqlStr = "SELECT * FROM FUNC_GetMyProjects(@UserId)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@UserId", userId)
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Project> projectList = new List<Project>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                ProjectMapper projectMapper = new ProjectMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Project project = projectMapper.MapRow(row);
+                    projectList.Add(project);
+                }
+            }
+
+            return projectList;
         }
         public static List<Project> SelectListModeMyCompletedProjects(string userId)
         {
-            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " + 
-                                            "WHERE {1}.teamId IN (SELECT teamId FROM {2} WHERE studentId = @UserId) " + 
-                                            "AND {0}.status = @Completed",
-                                            DBTableNames.Project, DBTableNames.Team, DBTableNames.JoinTeam); 
+            string sqlStr = "SELECT * FROM FUNC_GetMyCompletedProjects(@UserId, @Completed)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -115,21 +170,22 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Completed", EnumUtil.GetDisplayName(EProjectStatus.COMPLETED))
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
-        }
-        public static List<string> GetFavoriteList(string userId)
-        {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE userId = @UserId", DBTableNames.FavoriteProject);
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
-            List<string> favoriteProjects = new List<string>();
-            foreach (DataRow row in dataTable.Rows)
+            List<Project> projectList = new List<Project>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
             {
-                favoriteProjects.Add(row["projectId"].ToString());
+                ProjectMapper projectMapper = new ProjectMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Project project = projectMapper.MapRow(row);
+                    projectList.Add(project);
+                }
             }
 
-            return favoriteProjects;
+            return projectList;
         }
 
         #endregion
@@ -138,8 +194,7 @@ namespace ProjectManagement.DAOs
 
         public static List<Project> SearchRoleLecture(string userId, string topic)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE instructorId = @UserId AND topic LIKE @TopicSyntax",
-                                DBTableNames.Project);
+            string sqlStr = "SELECT * FROM FUNC_SearchRoleLecture(@UserId, @TopicSyntax)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -147,13 +202,26 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@TopicSyntax", topic + "%")
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
+            List<Project> projectList = new List<Project>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                ProjectMapper projectMapper = new ProjectMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Project project = projectMapper.MapRow(row);
+                    projectList.Add(project);
+                }
+            }
+
+            return projectList;
         }
         public static List<Project> SearchRoleStudent(string topic)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE status IN (@Published, @Registered) AND topic LIKE @TopicSyntax",
-                                    DBTableNames.Project);
+            string sqlStr = "SELECT * FROM FUNC_SearchRoleStudent(@TopicSyntax, @Published, @Registered)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -162,22 +230,55 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@Registered", EnumUtil.GetDisplayName(EProjectStatus.REGISTERED))
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new ProjectMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Project> projectList = new List<Project>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                ProjectMapper projectMapper = new ProjectMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Project project = projectMapper.MapRow(row);
+                    projectList.Add(project);
+                }
+            }
+
+            return projectList;
         }
 
         #endregion
 
-        #region PROJECT DAO EXECUTION
+        #region PROJECT DAO CRUD
 
         public static void Insert(Project project, List<Technology> technologies)
         {
-            DBExecution.Insert(project, DBTableNames.Project, "Create");
-            InsertProjectTechnology(project.ProjectId, technologies);       
+            string sqlStr = "EXEC PROC_InsertProject @ProjectId, @InstructorId, @Topic, @Description, @Feature, @Requirement," +
+                " @MaxMember, @Status, @CreatedAt, @CreatedBy, @FieldId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", project.ProjectId),
+                new SqlParameter("@InstructorId", project.InstructorId),
+                new SqlParameter("@Topic", project.Topic),
+                new SqlParameter("@Description", project.Description),
+                new SqlParameter("@Feature", project.Feature),
+                new SqlParameter("@Requirement", project.Requirement),
+                new SqlParameter("@MaxMember", project.MaxMember),
+                new SqlParameter("@Status", EnumUtil.GetDisplayName(project.Status)),
+                new SqlParameter("@CreatedAt", project.CreatedAt),
+                new SqlParameter("@CreatedBy", project.CreatedBy),
+                new SqlParameter("@FieldId", project.FieldId)
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Insert Project");
+
+            InsertProjectTechnology(project.ProjectId, technologies);
         }
-        private static void InsertProjectTechnology(string projectId, List<Technology> technologies)
+        public static void InsertProjectTechnology(string projectId, List<Technology> technologies)
         {
-            string sqlStr = string.Format("INSERT INTO {0} (projectId, technologyId) VALUES (@ProjectId, @TechnologyId)",
-                DBTableNames.ProjectTechnology);
+            string sqlStr = "EXEC PROC_InsertProjectTechnology @ProjectId, @TechnologyId";
 
             foreach (Technology technology in technologies)
             {
@@ -190,30 +291,35 @@ namespace ProjectManagement.DAOs
                 DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
             }
         }
-
-        public static void Delete(string projectId)
-        {
-            TeamDAO.DeleteFollowProject(projectId);
-            TaskDAO.DeleteFollowProject(projectId);
-
-            DBExecution.Delete(DBTableNames.Meeting, "projectId", projectId);
-            DBExecution.Delete(DBTableNames.GiveUp, "projectId", projectId);
-            DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", projectId);
-            DBExecution.Delete(DBTableNames.FavoriteProject, "projectId", projectId);
-
-            DBExecution.Delete(DBTableNames.Project, "projectId", projectId);
-        }
-
+        
         public static void Update(Project project, List<Technology> technologies)
         {
             DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", project.ProjectId);
-            DBExecution.Update(project, DBTableNames.Project, "projectId", project.ProjectId);
+
+            string sqlStr = "EXEC PROC_UpdateProject @ProjectId, @InstructorId, @Topic, @Description, @Feature, @Requirement, @MaxMember, @Status, @CreatedAt, @CreatedBy, @FieldId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ProjectId", project.ProjectId),
+                new SqlParameter("@InstructorId", project.InstructorId),
+                new SqlParameter("@Topic", project.Topic),
+                new SqlParameter("@Description", project.Description),
+                new SqlParameter("@Feature", project.Feature),
+                new SqlParameter("@Requirement", project.Requirement),
+                new SqlParameter("@MaxMember", project.MaxMember),
+                new SqlParameter("@Status", EnumUtil.GetDisplayName(project.Status)),
+                new SqlParameter("@CreatedAt", project.CreatedAt),
+                new SqlParameter("@CreatedBy", project.CreatedBy),
+                new SqlParameter("@FieldId", project.FieldId)
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Update Project");
+
             InsertProjectTechnology(project.ProjectId, technologies);
         }
         public static void UpdateStatus(Project project, EProjectStatus status)
         {
-            string sqlStr = string.Format("UPDATE {0} SET status = @Status WHERE projectId = @ProjectId",
-                                                DBTableNames.Project);
+            string sqlStr = "EXEC PROC_UpdateProjectStatus @ProjectId, @Status";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -223,22 +329,29 @@ namespace ProjectManagement.DAOs
 
             DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
-        public static void UpdateFavorite(string userId, string projectId, bool isFavorite) 
+        public static void UpdateFavorite(string userId, string projectId, bool isFavorite)
         {
-            string sqlStr = string.Empty;
-
-            if (isFavorite == false)
-            {
-                sqlStr = string.Format("DELETE FROM {0} WHERE userId = @UserId AND projectId = @ProjectId", DBTableNames.FavoriteProject);
-            }
-            else
-            {
-                sqlStr = string.Format("INSERT INTO {0} (userId, projectId) VALUES (@UserId, @ProjectId)", DBTableNames.FavoriteProject);
-            }
+            string sqlStr = "EXEC PROC_UpdateFavoriteProject @UserId, @ProjectId, @IsFavorite";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@UserId", userId),
+                new SqlParameter("@ProjectId", projectId),
+                new SqlParameter("@IsFavorite", isFavorite)
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
+        }
+
+        public static void Delete(string projectId)
+        {
+            TaskDAO.DeleteFollowProject(projectId);
+            TeamDAO.DeleteFollowProject(projectId);
+
+            string sqlStr = "EXEC PROC_DeleteProject @ProjectId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
                 new SqlParameter("@ProjectId", projectId)
             };
 
@@ -247,12 +360,40 @@ namespace ProjectManagement.DAOs
 
         #endregion
 
+        #region PROJECT DAO UTIL
+
+        public static List<string> SelectFavoriteList(string userId)
+        {
+            string sqlStr = "SELECT * FROM FUNC_GetFavoriteProjects(@UserId)";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@UserId", userId)
+            };
+
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<string> favoriteProjects = new List<string>();
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    favoriteProjects.Add(row["projectId"].ToString());
+                }
+            }
+
+            return favoriteProjects;
+        }
+
+        #endregion
+
         #region CHECK INFORMATION
 
         public static bool CheckIsFavorite(string userId, string projectId)
         {
-            string sqlStr = string.Format("SELECT 1 FROM {0} WHERE userId = @UserId AND projectId = @ProjectId", DBTableNames.FavoriteProject);
-           
+            string sqlStr = "SELECT dbo.FUNC_CheckIsFavorite(@UserId, @ProjectId)";
+
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@UserId", userId),
@@ -261,7 +402,7 @@ namespace ProjectManagement.DAOs
 
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
-            return dataTable.Rows.Count > 0;
+            return dataTable.Rows.Count > 0 && Convert.ToBoolean(dataTable.Rows[0][0]);
         }
 
         #endregion

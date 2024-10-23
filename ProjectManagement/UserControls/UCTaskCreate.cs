@@ -142,7 +142,7 @@ namespace ProjectManagement
                     EvaluationDAO.InsertAssignStudent(instructor.UserId, task.TaskId, student.UserId);
                 }
 
-                List<Users> peoples = TeamDAO.GetMembersByTaskId(this.task.TaskId).Select(m => m.User).ToList();
+                List<Users> peoples = TaskDAO.GetMembersByTaskId(this.task.TaskId).Select(m => m.User).ToList();
                 peoples.Add(this.instructor);
                 string content = Notification.GetContentTypeTask(creator.FullName, task.Title, project.Topic);
                 Notification notification = new Notification("Notification", content, ENotificationType.TASK, DateTime.Now);

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.DAOs;
 
 namespace ProjectManagement.Models
 {
@@ -145,24 +146,23 @@ namespace ProjectManagement.Models
 
         public bool CheckTopic()
         {
-            // gọi function FUNC_CheckNotEmpty(@Topic)
-            return this.topic != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.topic, "Topic");
         }
         public bool CheckDescription()
         {
-            return this.description != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.description, "Description");
         }
         public bool CheckFeature()
         {
-            return this.feature != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.feature, "Features");
         }
         public bool CheckRequirement()
         {
-            return this.requirement != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.requirement, "Requirements");
         }
         public bool CheckInstructorId()
         {
-            return this.instructorId != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.instructorId, "Instructor");
         }
 
         #endregion
