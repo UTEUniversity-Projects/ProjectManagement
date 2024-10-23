@@ -25,8 +25,7 @@ namespace ProjectManagement.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=HUY\\SQLEXPRESS;Initial Catalog=ProjectManagement;Integrated Security=" +
-            "True;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.;Initial Catalog=ProjectManagement;User ID=sa;Password=123456;")]
         public string conStr {
             get {
                 return ((string)(this["conStr"]));

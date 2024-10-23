@@ -89,7 +89,7 @@ namespace ProjectManagement.DAOs
             {
                 new SqlParameter("@MeetingId", meeting.MeetingId)
             };
-            DBExecution.ExecuteStoredProcedure(procedureName, parameters, "Delete Meeting");
+            DBExecution.SQLExecuteNonQuery(procedureName, parameters, "Delete Meeting");
 
         }
         public static void Update(Meeting meeting)
@@ -109,7 +109,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@ProjectId", meeting.ProjectId)
             };
 
-            DBExecution.ExecuteStoredProcedure(procedureName, parameters, string.Empty);
+            DBExecution.SQLExecuteNonQuery(procedureName, parameters, string.Empty);
         }
 
         #endregion
