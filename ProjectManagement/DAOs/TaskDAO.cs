@@ -127,30 +127,27 @@ namespace ProjectManagement.DAOs
 
             return taskMetas;
         }
-        public static List<Tasks> SelectListTaskByStudent(string studentId)
+        public static List<Tasks> SelectListTaskByStudent(string projectId, string studentId)
         {
-            string sqlStr = string.Format("SELECT * FROM FUNC_GetTasksByStudentId(@studentId) ORDER BY createdAt DESC");
+            string sqlStr = string.Format("SELECT * FROM FUNC_GetTasksByProjectAndStudent(@ProjectId, @StudentId)");
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
-                new SqlParameter("@studentId", studentId)
+                new SqlParameter("@ProjectId", projectId),
+                new SqlParameter("@StudentId", studentId)
             };
-
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-            if (dataTable != null && dataTable.Rows.Count > 0)
+
+            List<Tasks> tasksList = new List<Tasks>();
+            TaskMapper taskMapper = new TaskMapper();
+
+            foreach (DataRow row in dataTable.Rows)
             {
-                List<Tasks> tasksList = new List<Tasks>();
-                TaskMapper taskMapper = new TaskMapper();
-
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    Tasks task = taskMapper.MapRow(row);
-
-                    tasksList.Add(task);
-                }
-                return tasksList;
+                Tasks task = taskMapper.MapRow(row);
+                tasksList.Add(task);
             }
-            return new List<Tasks>();
+
+            return tasksList;
         }
         public static List<Tasks> SelectListTaskByProject(string projectId)
         {

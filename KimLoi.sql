@@ -1,5 +1,65 @@
 ﻿go
 -- Class Task DAO
+-- View
+-- 1. VIEW_TaskByStudent
+CREATE VIEW VIEW_TaskByStudent AS
+SELECT 
+    T.taskId,
+    T.title,
+    T.description,
+    T.startAt,
+    T.endAt,
+    T.progress,
+    T.priority,
+    T.createdAt,
+    T.createdBy,
+    T.projectId,
+    TS.studentId
+FROM 
+    Task T
+INNER JOIN TaskStudent TS ON T.taskId = TS.taskId;
+GO
+
+-- 2. VIEW_TasksByProject
+CREATE VIEW VIEW_TasksByProject AS
+SELECT 
+    taskId,
+    title,
+    description,
+    startAt,
+    endAt,
+    progress,
+    priority,
+    createdAt,
+    createdBy,
+    projectId
+FROM 
+    Task;
+GO
+-- 3. VIEW_TasksByTeam
+CREATE VIEW VIEW_TasksByTeam AS
+SELECT 
+    T.taskId,
+    T.title,
+    T.description,
+    T.projectId,
+    TE.teamId,
+    TE.status
+FROM 
+    Task T
+INNER JOIN Team TE ON T.projectId = TE.projectId;
+
+-- 4. VIEW VIEW_FavoriteTasks
+CREATE VIEW VIEW_FavoriteTasks AS
+SELECT 
+    FT.taskId,
+    FT.userId
+FROM 
+    FavoriteTask FT
+INNER JOIN Task T ON FT.taskId = T.taskId;
+GO
+
+-- Hàm sử dụng
 -- 1. FUNC_GetTaskById
 CREATE FUNCTION FUNC_GetTaskById(@taskId VARCHAR(20))
 RETURNS TABLE
@@ -24,7 +84,8 @@ RETURN
 );
 go
 -- 2. FUNC_GetTasksByTeamId
-CREATE FUNCTION FUNC_GetTasksByTeamId (
+CREATE FUNCTION FUNC_GetTasksByTeamId
+(
     @TeamId VARCHAR(20),
     @AcceptedStatus VARCHAR(20)
 )
@@ -32,27 +93,29 @@ RETURNS TABLE
 AS
 RETURN
 (
-    SELECT T.*
-    FROM Task T
-    INNER JOIN Team TE ON T.projectId = TE.projectId
-    WHERE TE.teamId = @TeamId
-    AND TE.status = @AcceptedStatus
+    SELECT *
+    FROM VIEW_TasksByTeam
+    WHERE teamId = @TeamId AND status = @AcceptedStatus
 );
+
 go
 -- 3. FUNC_GetTasksByStudentId
-CREATE FUNCTION FUNC_GetTasksByStudentId
+CREATE FUNCTION FUNC_GetTasksByProjectAndStudent
 (
-    @studentId VARCHAR(20)
+    @ProjectId VARCHAR(20),
+    @StudentId VARCHAR(20)
 )
 RETURNS TABLE
 AS
 RETURN
 (
-    SELECT T.*
-    FROM Task T
-    INNER JOIN TaskStudent TS ON T.taskId = TS.taskId
-    WHERE TS.studentId = @studentId
+    SELECT TOP 100 PERCENT *
+    FROM VIEW_TaskByStudent
+    WHERE projectId = @ProjectId AND studentId = @StudentId
+    ORDER BY createdAt DESC
 );
+
+
 go
 -- 4. FUNC_GetTaskIdsByProjectId
 CREATE FUNCTION FUNC_GetTaskIdsByProjectId
@@ -63,8 +126,8 @@ RETURNS TABLE
 AS
 RETURN
 (
-    SELECT * 
-    FROM Task
+    SELECT taskId 
+    FROM VIEW_TasksByProject
     WHERE projectId = @ProjectId
 );
 go
@@ -78,16 +141,12 @@ RETURNS TABLE
 AS
 RETURN
 (
-    SELECT FT.taskId
-    FROM FavoriteTask AS FT
-    JOIN (
-        SELECT taskId 
-        FROM Task 
-        WHERE projectId = @ProjectId
-    ) AS T 
-    ON FT.taskId = T.taskId 
-    WHERE FT.userId = @UserId
+    SELECT taskId
+    FROM VIEW_FavoriteTasks
+    WHERE userId = @UserId 
+      AND taskId IN (SELECT taskId FROM VIEW_TasksByProject WHERE projectId = @ProjectId)
 );
+
 go
 -- 6. PROC_AddTask
 CREATE PROCEDURE PROC_AddTask
@@ -219,11 +278,12 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT *
-    FROM Task
+    FROM VIEW_TasksByStudent
     WHERE projectId = @ProjectId 
       AND title LIKE @TitleSyntax
     ORDER BY createdAt DESC;
 END;
+
 go
 -- 15. FUNC_CheckIsFavorite
 CREATE FUNCTION FUNC_CheckIsFavorite
@@ -242,6 +302,24 @@ RETURN
 
 go
 -- Class Give up DAO
+
+-- View 
+-- 1. VIEW_GiveUpDetails
+CREATE VIEW VIEW_GiveUpDetails AS
+SELECT 
+    G.projectId,
+    G.userId,
+    G.reason,
+    G.createdAt,
+    G.status,
+    U.fullName AS UserName
+FROM 
+    GiveUp G
+INNER JOIN Users U ON G.userId = U.userId;
+go
+
+
+-- Hàm sử dụng
 -- 1. FUNC_SelectGiveUpByProjectId
 go
 CREATE FUNCTION FUNC_SelectGiveUpByProjectId
@@ -253,9 +331,10 @@ AS
 RETURN
 (
     SELECT *
-    FROM GiveUp
+    FROM VIEW_GiveUpDetails   -- sử dụng view
     WHERE projectId = @ProjectId
 );
+
 go
 -- 2. PROC_UpdateGiveUpStatus
 CREATE PROCEDURE PROC_UpdateGiveUpStatus
@@ -304,6 +383,14 @@ END;
 go
 
 -- Class User DAO
+-- VIEW
+-- 1. VIEW_UserDetails
+CREATE VIEW VIEW_UserDetails AS
+SELECT *
+FROM Users;
+GO
+
+-- Hàm sử dụng
 -- 1. FUNC_SelectUsersByUserNameAndRole
 CREATE FUNCTION FUNC_SelectUsersByUserNameAndRole
 (
@@ -315,10 +402,9 @@ AS
 RETURN
 (
     SELECT *
-    FROM Users
+    FROM VIEW_UserDetails
     WHERE userName LIKE @UserNameSyntax AND role = @Role
 );
-
 go
 
 -- 2. FUNC_SelectUserById
@@ -331,9 +417,10 @@ AS
 RETURN
 (
     SELECT *
-    FROM Users
+    FROM VIEW_UserDetails
     WHERE userId = @UserId
 );
+
 go 
 
 -- 3. FUNC_SelectUserByEmailAndPassword
@@ -347,7 +434,7 @@ AS
 RETURN
 (
     SELECT *
-    FROM Users
+    FROM VIEW_UserDetails
     WHERE email = @Email AND password = @Password
 );
 go
@@ -362,9 +449,10 @@ AS
 RETURN
 (
     SELECT userId
-    FROM Users
+    FROM VIEW_UserDetails
     WHERE role = @Role
 );
+
 go
 -- 5. PROC_InsertUser
 CREATE PROCEDURE PROC_InsertUser
