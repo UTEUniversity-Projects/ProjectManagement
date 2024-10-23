@@ -15,7 +15,6 @@ namespace ProjectManagement.Database
         {
             SqlConnection connection = DBConnection.GetConnection();
             DataTable dataTable = new DataTable();
-            SqlConnection connection = DBConnection.GetConnection();
 
             try
             {
@@ -84,83 +83,6 @@ namespace ProjectManagement.Database
             {
                 connection.Close();
             }
-        }
-
-        #endregion
-
-        #region CALL STORED PROCEDURE
-
-        public static void ExecuteStoredProcedure(string procedureName, List<SqlParameter> parameters, string typeExecution)
-        {
-            SqlConnection connection = DBConnection.GetConnection();
-
-            try
-            {
-                connection.Open();
-
-                using (SqlCommand cmd = new SqlCommand(procedureName, connection))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    foreach (var param in parameters)
-                    {
-                        cmd.Parameters.Add(param);
-                    }
-
-                    if (cmd.ExecuteNonQuery() > 0)
-                    {
-                        WinformControlUtil.ShowMessage("Notification", typeExecution + " successfully");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                WinformControlUtil.ShowMessage("Notification", typeExecution + " failed: " + ex.Message);
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
-
-        #endregion
-
-        #region CALL FUNCTION
-
-        public static DataTable ExecuteFunction(string functionName, List<SqlParameter> parameters)
-        {
-            DataTable resultTable = new DataTable();
-            SqlConnection connection = DBConnection.GetConnection();
-
-            try
-            {
-                connection.Open();
-
-                using (SqlCommand cmd = new SqlCommand(functionName, connection))
-                {
-                    cmd.CommandType = CommandType.Text;
-
-                    foreach (var param in parameters)
-                    {
-                        cmd.Parameters.Add(param);
-                    }
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        resultTable.Load(reader);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                WinformControlUtil.ShowMessage("Notification", "Execution failed: " + ex.Message);
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return resultTable;
         }
 
         #endregion

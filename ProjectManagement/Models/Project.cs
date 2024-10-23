@@ -145,6 +145,7 @@ namespace ProjectManagement.Models
 
         public bool CheckTopic()
         {
+            // gọi function FUNC_CheckNotEmpty(@Topic)
             return this.topic != string.Empty;
         }
         public bool CheckDescription()

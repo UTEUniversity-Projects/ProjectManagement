@@ -60,7 +60,7 @@ namespace ProjectManagement.DAOs
 
             return taskMetas;
         }
-        public static List<Tasks> SelectListTaskByStudent(string studentId)
+        public static List<Tasks> SelectListTaskByStudent(string projectId, string studentId)
         {
             string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.taskId = {1}.taskId " +
                                             "WHERE projectId = @projectId AND studentId = @studentId ORDER BY {0}.createdAt DESC",
@@ -68,6 +68,7 @@ namespace ProjectManagement.DAOs
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
+                new SqlParameter("@projectId", projectId),
                 new SqlParameter("@studentId", studentId)
             };
 
@@ -217,6 +218,8 @@ namespace ProjectManagement.DAOs
         }
 
         #endregion
+
+
 
     }
 }
