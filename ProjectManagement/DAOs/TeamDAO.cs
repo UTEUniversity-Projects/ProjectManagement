@@ -106,15 +106,8 @@ namespace ProjectManagement.DAOs
 
         public static void Delete(string teamId)
         {
-            string sqlStr = string.Format("UPDATE {0} SET status = @Rejected WHERE teamId = @TeamId", DBTableNames.Team);
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@TeamId", teamId),
-                new SqlParameter("@Rejected", EnumUtil.GetDisplayName(ETeamStatus.REJECTED))
-            };
-
-            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
+            DBExecution.Delete(DBTableNames.JoinTeam, "teamId", teamId);
+            DBExecution.Delete(DBTableNames.Team, "teamId", teamId);
         }
         public static void DeleteListTeam(List<Team> teams)
         {
