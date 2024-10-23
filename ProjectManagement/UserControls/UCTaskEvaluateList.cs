@@ -32,7 +32,7 @@ namespace ProjectManagement
         public void SetUpUserControl(Tasks task, Users user)
         {
             this.task = task;
-            this.assignedStudent = TeamDAO.GetMembersByTaskId(this.task.TaskId);
+            this.assignedStudent = TaskDAO.GetMembersByTaskId(this.task.TaskId);
 
             flpMembers.Controls.Clear();
             if (user.Role == EUserRole.LECTURE)

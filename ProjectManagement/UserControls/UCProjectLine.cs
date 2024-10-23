@@ -96,8 +96,8 @@ namespace ProjectManagement
         public void RemoveProject()
         {
             ProjectDAO.Delete(project.ProjectId);
-            List<Team> listTeam = TeamDAO.SelectList(this.project.ProjectId);
-            TeamDAO.DeleteListTeam(listTeam);
+            // List<Team> listTeam = TeamDAO.SelectList(this.project.ProjectId);
+            // TeamDAO.DeleteListTeam(listTeam);
 
             OnProjectDeleteClicked(EventArgs.Empty);
         }

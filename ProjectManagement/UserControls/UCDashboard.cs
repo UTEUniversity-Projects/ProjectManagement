@@ -61,7 +61,7 @@ namespace ProjectManagement
         public void SetInformation(Users user)
         {
             this.user = user;
-            this.favoriteProjects = ProjectDAO.GetFavoriteList(this.user.UserId);
+            this.favoriteProjects = ProjectDAO.SelectFavoriteList(this.user.UserId);
             gGradientButtonProjects.PerformClick();
             fProjectFilter.SetUpFilter(user);
             fProjectFilter.ListProject = this.currentList;
