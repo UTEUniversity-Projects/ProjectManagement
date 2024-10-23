@@ -34,7 +34,7 @@ namespace ProjectManagement
             this.listTasks = TaskDAO.SelectListByTeam(this.team.TeamId);
             UpdateMembers();
             UpdateChart();
-            this.gProgressBar.Value = CalculationUtil.CalStatisticalProject(this.listTasks);
+            this.gProgressBar.Value = CalculationUtil.CalAvgProgress(this.listTasks);
             this.lblTotalProgress.Text = this.gProgressBar.Value.ToString() + "%";
         }
 
