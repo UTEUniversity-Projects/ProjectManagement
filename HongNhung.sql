@@ -1,5 +1,5 @@
 --Class Comment DAO
---1. VIEW VIEW_CommentWithUser
+--1. VIEW_CommentWithUser
 CREATE VIEW VIEW_CommentWithUser AS
 SELECT 
     c.*

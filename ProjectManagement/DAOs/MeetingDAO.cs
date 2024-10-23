@@ -66,7 +66,7 @@ namespace ProjectManagement.DAOs
 
         public static void Insert(Meeting meeting)
         {
-            string sqlStr = "EXEC CreateMeeting @meetingId, @title, @description, @startAt, @location, @link, @createdAt, @createdBy, @projectId";
+            string sqlStr = "EXEC PROC_CreateMeeting @meetingId, @title, @description, @startAt, @location, @link, @createdAt, @createdBy, @projectId";
              
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -84,17 +84,21 @@ namespace ProjectManagement.DAOs
         }
         public static void Delete(Meeting meeting)
         {
-            string procedureName = "dbo.PROC_DeleteMeeting";
+            string sqlStr = "EXEC dbo.PROC_DeleteMeeting @MeetingId";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@MeetingId", meeting.MeetingId)
             };
-            DBExecution.SQLExecuteNonQuery(procedureName, parameters, "Delete Meeting");
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Delete Meeting");
 
         }
+
         public static void Update(Meeting meeting)
         {
-            string procedureName = "dbo.PROC_UpdateMeeting";
+            string sqlStr = "EXEC dbo.PROC_UpdateMeeting " +
+                            "@MeetingId, @Title, @Description, " +
+                            "@StartAt, @Location, @Link, " +
+                            "@CreatedAt, @CreatedBy, @ProjectId";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -108,8 +112,7 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@CreatedBy", meeting.CreatedBy),
                 new SqlParameter("@ProjectId", meeting.ProjectId)
             };
-
-            DBExecution.SQLExecuteNonQuery(procedureName, parameters, string.Empty);
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         #endregion
