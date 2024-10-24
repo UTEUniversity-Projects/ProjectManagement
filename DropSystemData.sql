@@ -1,6 +1,8 @@
 -- DROP all triggers
-DROP TRIGGER TRIG_TeamRegisterdProject
-DROP TRIGGER TRIG_DeleteProject
+DROP TRIGGER TRIG_TeamRegisterdProject;
+DROP TRIGGER TRIG_SetProjectWaiting;
+DROP TRIGGER TRIG_ResetProjectProcessing;
+DROP TRIGGER TRIG_DeleteTechnologyBeforeUpdateProject;
 
 -- DROP all tables
 DROP TABLE FieldTechnology;

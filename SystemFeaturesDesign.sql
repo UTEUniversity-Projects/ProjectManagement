@@ -11,25 +11,54 @@ BEGIN
 END
 GO
 
--- 2. TRIG_DeleteProject
-CREATE TRIGGER TRIG_DeleteProject
-ON Project
-INSTEAD OF DELETE
+-- 2. TRIG_SetProjectWaiting
+CREATE TRIGGER TRIG_SetProjectWaiting
+ON GiveUp
+AFTER INSERT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM deleted WHERE status = 'Processing')
-    BEGIN
-        RAISERROR('You cannot delete a project that is in progress', 16, 1);
-        ROLLBACK TRANSACTION;
-    END
-    ELSE
-    BEGIN
-        DELETE FROM Project
-        WHERE projectId IN (SELECT projectId FROM deleted);
-    END
+    UPDATE Project
+    SET status = 'Waiting'
+    WHERE projectId IN (SELECT projectId FROM inserted);
 END
 GO
 
+-- 3. TRIG_ResetProjectProcessing
+CREATE TRIGGER TRIG_ResetProjectProcessing
+ON GiveUp
+AFTER DELETE
+AS
+BEGIN
+    UPDATE Project
+    SET status = 'Processing'
+    WHERE projectId IN (SELECT projectId FROM deleted);
+END
+GO
+
+-- 4. TRIG_DeleteTechnologyBeforeUpdateProject
+CREATE TRIGGER TRIG_DeleteTechnologyBeforeUpdateProject
+ON Project
+INSTEAD OF UPDATE
+AS
+BEGIN
+    DELETE FROM ProjectTechnology
+    WHERE projectId IN (SELECT projectId FROM inserted);
+
+    UPDATE Project
+    SET instructorId = inserted.instructorId,
+        topic = inserted.topic,
+        description = inserted.description,
+        feature = inserted.feature,
+        requirement = inserted.requirement,
+        maxMember = inserted.maxMember,
+        status = inserted.status,
+        createdAt = inserted.createdAt,
+        createdBy = inserted.createdBy,
+        fieldId = inserted.fieldId
+    FROM inserted
+    WHERE Project.projectId = inserted.projectId;
+END
+GO
 
 -- CREATE VIEWS
 -- 1. VIEW_CanRegisterdProject
@@ -486,8 +515,6 @@ CREATE PROCEDURE PROC_DeleteProject
 )
 AS
 BEGIN
-    DELETE FROM Task WHERE projectId = @ProjectId;
-    DELETE FROM Team WHERE projectId = @ProjectId;
     DELETE FROM Meeting WHERE projectId = @ProjectId;
     DELETE FROM GiveUp WHERE projectId = @ProjectId;
     DELETE FROM ProjectTechnology WHERE projectId = @ProjectId;
@@ -870,7 +897,7 @@ RETURNS TABLE
 AS
 RETURN
 (
-    SELECT taskId 
+    SELECT * 
     FROM VIEW_TasksByProject
     WHERE projectId = @ProjectId
 );
