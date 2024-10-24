@@ -13,6 +13,7 @@ using ProjectManagement.Utils;
 using Microsoft.VisualBasic.ApplicationServices;
 using ProjectManagement.MetaData;
 using ProjectManagement.Mappers;
+using Guna.UI2.AnimatorNS;
 
 namespace ProjectManagement.DAOs
 {
@@ -21,12 +22,10 @@ namespace ProjectManagement.DAOs
         
         #region SELECT NOTIFICATION
 
+        // 1.
         public static List<NotificationMeta> SelectList(string userId)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} AS N JOIN (SELECT * FROM {1} WHERE userId = @UserId) AS VN " +
-                                            "ON N.notificationId = VN.notificationId " +
-                                            "ORDER BY createdAt DESC",
-                                            DBTableNames.Notification, DBTableNames.ViewNotification);
+            string sqlStr = string.Format("SELECT * FROM dbo.FUNC_GetNotificationsByUserId(@UserId)");
 
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
@@ -43,11 +42,12 @@ namespace ProjectManagement.DAOs
                 list.Add(new NotificationMeta(notification, isSaw, favoriteNotifications.Contains(notification.NotificationId)));
             }
 
-            return list;
+            return list.OrderByDescending(n => n.Notification.CreatedAt).ToList();
         }
+        // 2.
         private static List<string> GetFavoriteList(string userId)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE userId = @UserId", DBTableNames.FavoriteNotification);
+            string sqlStr = string.Format("SELECT * FROM dbo.FUNC_GetFavoriteNotifications(@UserId)");
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@UserId", userId) };
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
@@ -64,10 +64,23 @@ namespace ProjectManagement.DAOs
 
         #region NOTIFICATION DAO EXECUTION
 
+        // 3.
         public static void InsertOnly(Notification notification)
         {
-            DBExecution.Insert(notification, DBTableNames.Notification);
+            string sqlStr = "EXEC dbo.PROC_AddNotification " +
+                            "@NotificationId, @Title, @Content, @Type, @CreatedAt";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@NotificationId", notification.NotificationId),
+                new SqlParameter("@Title", notification.Title),
+                new SqlParameter("@Content", notification.Content),
+                new SqlParameter("@Type", EnumUtil.GetDisplayName(notification.Type)),
+                new SqlParameter("@CreatedAt", notification.CreatedAt)
+            };
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
+
         public static void Insert(Notification notification, string userId)
         {
             InsertOnly(notification);
@@ -76,7 +89,7 @@ namespace ProjectManagement.DAOs
         public static void InsertFollowTeam(string teamId, string content, ENotificationType type)
         {
             Notification notification = new Notification("Notification", content, type, DateTime.Now);
-            DBExecution.Insert(notification, DBTableNames.Notification);
+            InsertOnly(notification);
 
             List<Member> members = TeamDAO.GetMembersByTeamId(teamId);
 
@@ -88,32 +101,33 @@ namespace ProjectManagement.DAOs
         public static void InsertFollowPeoples(List<Users> peoples, string content, ENotificationType type)
         {
             Notification notification = new Notification("Notification", content, type, DateTime.Now);
-            DBExecution.Insert(notification, DBTableNames.Notification);
+            InsertOnly(notification);
 
             foreach (Users people in peoples)
             {
                 InsertViewNotification(people.UserId, notification.NotificationId, false);
             }
         }
+
+        // 4.
         public static void InsertViewNotification(string userId, string notificationId, bool seen)
         {
-            string sqlStr = string.Format("INSERT INTO {0} (userId, notificationId, seen) " +
-                "VALUES (@UserId, @NotificationId, @Seen)", DBTableNames.ViewNotification);
+            string sqlStr = "EXEC dbo.PROC_AddViewNotification @UserId, @NotificationId, @Seen";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@UserId", userId),
                 new SqlParameter("@NotificationId", notificationId),
-                new SqlParameter("@Seen", seen == true ? 1 : 0)
+                new SqlParameter("@Seen", seen ? 1 : 0)
             };
 
             DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
+        // 5.
         public static void Delete(string userId, string notificationId)
         {
-            string sqlStr = string.Format("DELETE FROM {0} WHERE userId = @UserId AND notificationId = @NotificationId",
-                                                DBTableNames.ViewNotification);
+            string sqlStr = string.Format("EXEC dbo.PROC_DeleteNotification @UserId, @NotificationId");
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -122,13 +136,12 @@ namespace ProjectManagement.DAOs
             };
 
             DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
-
-            DBExecution.Delete(DBTableNames.Notification, "notificationId", notificationId);
         }
+
+        // 6.
         public static void UpdateIsSaw(string userId, string notificationId, bool flag)
         {
-            string sqlStr = string.Format("UPDATE {0} SET seen = @Seen WHERE userId = @UserId AND notificationId = @NotificationId",
-                                                DBTableNames.ViewNotification);
+            string sqlStr = string.Format("EXEC dbo.PROC_UpdateViewNotification @Seen, @UserId, @NotificationId");
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -139,21 +152,15 @@ namespace ProjectManagement.DAOs
 
             DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
+
+        // 7.
         public static void UpdateFavorite(string userId, string notificationId, bool isFavorite)
         {
-            string sqlStr = string.Empty;
-
-            if (isFavorite == false)
-            {
-                sqlStr = string.Format("DELETE FROM {0} WHERE userId = @UserId AND notificationId = @NotificationId", DBTableNames.FavoriteNotification);
-            }
-            else
-            {
-                sqlStr = string.Format("INSERT INTO {0} (userId, notificationId) VALUES (@UserId, @NotificationId)", DBTableNames.FavoriteNotification);
-            }
+            string sqlStr = string.Format("EXEC dbo.PROC_UpdateFavoriteNotification @IsFavorite, @UserId, @NotificationId");
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
+                new SqlParameter("@IsFavorite", isFavorite ? 1 : 0),
                 new SqlParameter("@UserId", userId),
                 new SqlParameter("@NotificationId", notificationId)
             };

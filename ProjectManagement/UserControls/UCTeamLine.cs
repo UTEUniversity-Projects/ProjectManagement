@@ -47,7 +47,7 @@ namespace ProjectManagement
         private void SetInformation()
         {
             this.project = ProjectDAO.SelectFollowTeam(team.TeamId);
-            this.isFavorite = ProjectDAO.CheckIsFavorite(user.UserId, project.ProjectId);
+            this.isFavorite = ProjectDAO.CheckIsFavoriteProject(user.UserId, project.ProjectId);
             InitUserControl();
         }
         private void InitUserControl()

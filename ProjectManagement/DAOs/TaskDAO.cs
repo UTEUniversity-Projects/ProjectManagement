@@ -12,6 +12,8 @@ using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 using ProjectManagement.MetaData;
 using Microsoft.VisualBasic.ApplicationServices;
+using static TheArtOfDevHtmlRenderer.Adapters.RGraphicsPath;
+using System.Windows.Forms;
 
 namespace ProjectManagement.DAOs
 {
@@ -22,30 +24,47 @@ namespace ProjectManagement.DAOs
 
         public static Tasks SelectOnly(string taskId)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE taskId = @TaskId", DBTableNames.Task);
+            string sqlStr = string.Format("SELECT * FROM FUNC_GetTaskById(@taskId)");
 
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@TaskId", taskId)
             };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
 
-            return DBGetModel.GetModel(sqlStr, parameters, new TaskMapper());
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                TaskMapper taskMapper = new TaskMapper();
+                return taskMapper.MapRow(dataTable.Rows[0]);
+            }
+
+            return null;
         }
         public static List<Tasks> SelectListByTeam(string teamId)
         {
-            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.projectId = {1}.projectId " +
-                                            "WHERE teamId = @TeamId AND status = @Accepted " + "" +
-                                            "ORDER BY {0}.createdAt DESC",
-                                            DBTableNames.Task, DBTableNames.Team);
+            string sqlStr = string.Format("SELECT * FROM FUNC_GetTasksByTeamId(@TeamId, @Accepted) ORDER BY createdAt DESC");
 
-            List<SqlParameter> parameters = new List<SqlParameter>
+            List <SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@TeamId", teamId),
                 new SqlParameter("@Accepted", EnumUtil.GetDisplayName(ETeamStatus.ACCEPTED))
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new TaskMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+            if (dataTable != null && dataTable.Rows.Count > 0) {
+                List<Tasks> tasksList = new List<Tasks>();
+                TaskMapper taskMapper = new TaskMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Tasks task = taskMapper.MapRow(row);
+
+                    tasksList.Add(task);
+                }
+                return tasksList;
+            }
+            return new List<Tasks>();
         }
         public static List<TaskMeta> SelectListTaskMeta(string userId, string teamId, string projectId)
         {
@@ -60,25 +79,55 @@ namespace ProjectManagement.DAOs
 
             return taskMetas;
         }
-        public static List<Tasks> SelectListTaskByStudent(string studentId)
+        public static List<Tasks> SelectListTaskByStudent(string projectId, string studentId)
         {
-            string sqlStr = string.Format("SELECT {0}.* FROM {0} INNER JOIN {1} ON {0}.taskId = {1}.taskId " +
-                                            "WHERE projectId = @projectId AND studentId = @studentId ORDER BY {0}.createdAt DESC",
-                                            DBTableNames.Task, DBTableNames.TaskStudent);
+            string sqlStr = string.Format("SELECT * FROM FUNC_GetTasksByProjectAndStudent(@ProjectId, @StudentId)");
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
-                new SqlParameter("@studentId", studentId)
+                new SqlParameter("@ProjectId", projectId),
+                new SqlParameter("@StudentId", studentId)
+            };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Tasks> tasksList = new List<Tasks>();
+            TaskMapper taskMapper = new TaskMapper();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Tasks task = taskMapper.MapRow(row);
+                tasksList.Add(task);
+            }
+
+            return tasksList;
+        }
+        public static List<Tasks> SelectListTaskByProject(string projectId)
+        {
+            string sqlStr = string.Format("SELECT * FROM FUNC_GetTaskIdsByProjectId(@projectId) ORDER BY createdAt DESC");
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@projectId", projectId)
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new TaskMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                List<Tasks> tasksList = new List<Tasks>();
+                TaskMapper taskMapper = new TaskMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Tasks task = taskMapper.MapRow(row);
+                    tasksList.Add(task);
+                }
+                return tasksList;
+            }
+            return new List<Tasks>();
         }
         private static List<string> SelectFavoriteList(string userId, string projectId)
         {
-            string sqlStr = string.Format("SELECT FT.taskId FROM {0} AS FT " +
-                "JOIN (SELECT taskId FROM {1} WHERE projectId = @ProjectId) AS T " +
-                "ON FT.taskId = T.taskId " +
-                "WHERE userId = @UserId", DBTableNames.FavoriteTask, DBTableNames.Task);
+            string sqlStr = "SELECT * FROM FUNC_GetFavoriteTasksByProjectIdAndUserId(@ProjectId, @UserId)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -87,15 +136,21 @@ namespace ProjectManagement.DAOs
             };
 
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            List<string> list = new List<string>();
-            foreach (DataRow row in  dataTable.Rows)
+            if (dataTable != null && dataTable.Rows.Count > 0)
             {
-                list.Add(row["taskId"].ToString());
+                List<string> list = new List<string>();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    string taskId = row["taskId"].ToString();
+                    list.Add(taskId);
+                }
+                return list;
             }
 
-            return list;
+            return new List<string>();
         }
+
 
         #endregion
 
@@ -103,46 +158,127 @@ namespace ProjectManagement.DAOs
 
         public static void Insert(Tasks task)
         {
-            DBExecution.Insert(task, DBTableNames.Task, "Create task");
+            string sqlStr = "EXEC PROC_AddTask @taskId, @startAt, @endAt, @title, @description, @progress, @priority, @createdBy, @projectId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@taskId", task.TaskId),
+                new SqlParameter("@startAt", task.StartAt),
+                new SqlParameter("@endAt", task.EndAt),
+                new SqlParameter("@title", task.Title),
+                new SqlParameter("@description", task.Description),
+                new SqlParameter("@progress", task.Progress),
+                new SqlParameter("@priority", EnumUtil.GetDisplayName(task.Priority)),
+                new SqlParameter("@createdBy", task.CreatedBy),
+                new SqlParameter("@projectId", task.ProjectId)
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Create task");
         }
         public static void InsertAssignStudent(string taskId, string studentId)
         {
-            string sqlStr = string.Format("INSERT INTO {0} (taskId, studentId) VALUES (@TaskId, @StudentId)", DBTableNames.TaskStudent);
+            string sqlStr = "EXEC PROC_InsertAssignStudent @taskId, @studentId";
+
             List<SqlParameter> parameters = new List<SqlParameter>
             {
-                new SqlParameter("@TaskId", taskId),
-                new SqlParameter("StudentId", studentId)
+                new SqlParameter("@taskId", taskId),
+                new SqlParameter("@studentId", studentId)
             };
+
             DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
+        public static void DeleteTaskStudentByTaskId(string taskId)
+        {
+            string sqlStr = "EXEC PROC_DeleteTaskStudentByTaskId @taskId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@taskId", taskId)
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
+        }
+        public static void DeleteFavoriteTaskByTaskId(string taskId)
+        {
+            string sqlStr = "EXEC PROC_DeleteFavoriteTaskByTaskId @taskId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@taskId", taskId)
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
+        }
         public static void Delete(string taskId)
         {
-            DBExecution.Delete(DBTableNames.Evaluation, "taskId", taskId);
-            DBExecution.Delete(DBTableNames.Comment, "taskId", taskId);
+            //DBExecution.Delete(DBTableNames.Evaluation, "taskId", taskId);
+            //DBExecution.Delete(DBTableNames.Comment, "taskId", taskId);
 
-            DBExecution.Delete(DBTableNames.TaskStudent, "taskId", taskId);
-            DBExecution.Delete(DBTableNames.FavoriteTask, "taskId", taskId);
+            DeleteTaskStudentByTaskId(taskId);
+            DeleteFavoriteTaskByTaskId(taskId);
 
-            DBExecution.Delete(DBTableNames.Task, "taskId", taskId);
+            string sqlStr = "EXEC PROC_DeleteTaskByTaskId @taskId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@taskId", taskId)
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
+        
         public static void DeleteFollowProject(string projectId)
         {
-            string sqlStr = string.Format("SELECT taskId FROM {0} WHERE projectId = @ProjectId", DBTableNames.Task);
+            List<Tasks> listTasks = SelectListTaskByProject(projectId);
 
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@ProjectId", projectId) };
-
-            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
-
-            foreach (DataRow row in dataTable.Rows)
+            foreach (Tasks task in listTasks)
             {
-                Delete(row["taskId"].ToString());
+                Delete(task.TaskId);
             }
         }
 
         public static void Update(Tasks task)
         {
-            DBExecution.Update(task, DBTableNames.Task, "taskId", task.TaskId);
+            string sqlStr = "EXEC PROC_UpdateTask @TaskId, @Title, @Description, @StartAt, @EndAt, @Progress, @Priority";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TaskId", task.TaskId),
+                new SqlParameter("@Title", task.Title),
+                new SqlParameter("@Description", task.Description),
+                new SqlParameter("@StartAt", task.StartAt),
+                new SqlParameter("@EndAt", task.EndAt),
+                new SqlParameter("@Progress", task.Progress),
+                new SqlParameter("@priority", EnumUtil.GetDisplayName(task.Priority))
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Update Task");
+        }
+       
+        public static void DeleteFavoritesTask(string userId, string taskId)
+        {
+            string sqlStr = "EXEC PROC_DeleteFavoriteTask @userId, @taskId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@userId", userId),
+                new SqlParameter("@taskId", taskId),
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Update Task");
+        }
+        public static void InsertFavoritesTask(string userId, string taskId)
+        {
+            string sqlStr = "EXEC PROC_InsertFavoriteTask @userId, @taskId";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@userId", userId),
+                new SqlParameter("@taskId", taskId),
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, "Update Task");
         }
         public static void UpdateFavorite(string userId, string taskId, bool isFavorite)
         {
@@ -150,20 +286,12 @@ namespace ProjectManagement.DAOs
 
             if (isFavorite == false)
             {
-                sqlStr = string.Format("DELETE FROM {0} WHERE userId = @UserId AND taskId = @TaskId", DBTableNames.FavoriteTask);
+                DeleteFavoritesTask(userId, taskId);
             }
             else
             {
-                sqlStr = string.Format("INSERT INTO {0} (userId, taskId) VALUES (@UserId, @TaskId)", DBTableNames.FavoriteTask);
+                InsertFavoritesTask(userId, taskId);
             }
-
-            List<SqlParameter> parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@UserId", userId),
-                new SqlParameter("@TaskId", taskId)
-            };
-
-            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
         }
 
         #endregion
@@ -172,8 +300,7 @@ namespace ProjectManagement.DAOs
 
         private static List<Tasks> SearchTaskTitle(string projectId, string title)
         {
-            string sqlStr = string.Format("SELECT * FROM {0} WHERE projectId = @ProjectId AND title LIKE @TitleSyntax ORDER BY createdAt DESC",
-                                DBTableNames.Task);
+            string sqlStr = "EXEC PROC_SearchTaskByTitle @ProjectId, @TitleSyntax";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -181,7 +308,21 @@ namespace ProjectManagement.DAOs
                 new SqlParameter("@TitleSyntax", title + "%")
             };
 
-            return DBGetModel.GetModelList(sqlStr, parameters, new TaskMapper());
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                List<Tasks> tasksList = new List<Tasks>();
+                TaskMapper taskMapper = new TaskMapper();
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Tasks task = taskMapper.MapRow(row);
+
+                    tasksList.Add(task);
+                }
+                return tasksList;
+            }
+            return new List<Tasks>();
         }
         public static List<TaskMeta> SearchTaskMetaTitle(string userId, string projectId, string title)
         {
@@ -201,9 +342,9 @@ namespace ProjectManagement.DAOs
 
         #region CHECK INFORMATION
 
-        public static bool CheckIsFavorite(string userId, string taskId)
+        public static bool CheckIsFavoriteTask(string userId, string taskId)
         {
-            string sqlStr = string.Format("SELECT 1 FROM {0} WHERE userId = @UserId AND taskId = @TaskId", DBTableNames.FavoriteTask);
+            string sqlStr = "SELECT IsFavorite FROM FUNC_CheckIsFavoriteTask(@UserId, @TaskId)";
 
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -212,8 +353,31 @@ namespace ProjectManagement.DAOs
             };
 
             DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+            return dataTable != null && dataTable.Rows.Count > 0;
+        }
 
-            return dataTable.Rows.Count > 0;
+        #endregion
+
+        #region GET MEMBERS
+
+        public static List<Member> GetMembersByTaskId(string taskId)
+        {
+            string sqlStr = $"SELECT studentId FROM {DBTableNames.TaskStudent} WHERE taskId = @TaskId";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@TaskId", taskId) };
+            DataTable dataTable = DBExecution.SQLExecuteQuery(sqlStr, parameters, string.Empty);
+
+            List<Member> list = new List<Member>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Users student = UserDAO.SelectOnlyByID(row["studentId"].ToString());
+                ETeamRole role = default;
+                DateTime joinAt = DateTime.Now;
+
+                list.Add(new Member(student, role, joinAt));
+            }
+
+            return list.OrderBy(m => m.Role).ToList();
         }
 
         #endregion

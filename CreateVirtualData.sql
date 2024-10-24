@@ -6,8 +6,6 @@
 --USE ProjectManagement;
 --GO
 
--- DROP TABLE FieldTechnology, FavoriteProject, FavoriteTask, FavoriteNotification, GiveUp, TaskStudent, ProjectTechnology, ViewNotification, Notification, JoinTeam, Evaluation, Comment, Meeting, Task, Team, Project, Technology, Field, Users;
-
 CREATE TABLE Users (
     userId VARCHAR(20),
     userName VARCHAR(50) NOT NULL,
@@ -26,18 +24,21 @@ CREATE TABLE Users (
 	joinAt DATETIME NOT NULL,
     CONSTRAINT PK_User PRIMARY KEY (userId)
 );
+GO
 
 CREATE TABLE Field (
     fieldId VARCHAR(20),
     name NVARCHAR(100) NOT NULL,
     CONSTRAINT PK_Field PRIMARY KEY (fieldId)
 );
+GO
 
 CREATE TABLE Technology (
     technologyId VARCHAR(20),
     name NVARCHAR(100) NOT NULL,
     CONSTRAINT PK_Technology PRIMARY KEY (technologyId)
 );
+GO
 
 CREATE TABLE Project (
     projectId VARCHAR(20),
@@ -55,6 +56,7 @@ CREATE TABLE Project (
     CONSTRAINT FK_ProjectLecture FOREIGN KEY (instructorId) REFERENCES Users(userId),
 	CONSTRAINT FK_ProjectField FOREIGN KEY (fieldId) REFERENCES Field(fieldId)
 );
+GO
 
 CREATE TABLE Team (
     teamId VARCHAR(20),
@@ -68,6 +70,7 @@ CREATE TABLE Team (
     CONSTRAINT FK_TeamStudent FOREIGN KEY (createdBy) REFERENCES Users(userId),
 	CONSTRAINT FK_TeamProject FOREIGN KEY (projectId) REFERENCES Project(projectId)
 );
+GO
 
 CREATE TABLE Task (
     taskId VARCHAR(20),
@@ -84,6 +87,7 @@ CREATE TABLE Task (
 	CONSTRAINT FK_TaskUser FOREIGN KEY (createdBy) REFERENCES Users(userId),
 	CONSTRAINT FK_TaskProject FOREIGN KEY (projectId) REFERENCES Project(projectId)
 );
+GO
 
 CREATE TABLE Meeting (
     meetingId VARCHAR(20),
@@ -99,6 +103,7 @@ CREATE TABLE Meeting (
 	CONSTRAINT FK_MeetingUser FOREIGN KEY (createdBy) REFERENCES Users(userId),
 	CONSTRAINT FK_MeetingProject FOREIGN KEY (projectId) REFERENCES Project(projectId)
 );
+GO
 
 CREATE TABLE Comment (
     commentId VARCHAR(20),
@@ -110,6 +115,7 @@ CREATE TABLE Comment (
 	CONSTRAINT FK_CommentUser FOREIGN KEY (createdBy) REFERENCES Users(userId),
 	CONSTRAINT FK_CommentTask FOREIGN KEY (taskId) REFERENCES Task(taskId)
 );
+GO
 
 CREATE TABLE Evaluation (
     evaluationId VARCHAR(20),
@@ -126,6 +132,7 @@ CREATE TABLE Evaluation (
 	CONSTRAINT FK_EvaluationStudent FOREIGN KEY (studentId) REFERENCES Users(userId),
 	CONSTRAINT FK_EvaluationTask FOREIGN KEY (taskId) REFERENCES Task(taskId)
 );
+GO
 
 CREATE TABLE Notification (
     notificationId VARCHAR(20),
@@ -135,6 +142,7 @@ CREATE TABLE Notification (
     createdAt DATETIME NOT NULL,
     CONSTRAINT PK_Notification PRIMARY KEY (notificationId)
 );
+GO
 
 CREATE TABLE JoinTeam (
 	teamId VARCHAR(20),
@@ -145,6 +153,7 @@ CREATE TABLE JoinTeam (
 	CONSTRAINT FK_JT_Team FOREIGN KEY (teamId) REFERENCES Team(teamId),
 	CONSTRAINT FK_JT_Student FOREIGN KEY (studentId) REFERENCES Users(userId)
 );
+GO
 
 CREATE TABLE ViewNotification (
     userId VARCHAR(20),
@@ -154,6 +163,7 @@ CREATE TABLE ViewNotification (
     CONSTRAINT FK_VN_User FOREIGN KEY (userId) REFERENCES Users(userId),
     CONSTRAINT FK_VN_Notification FOREIGN KEY (notificationId) REFERENCES Notification(notificationId)
 );
+GO
 
 CREATE TABLE ProjectTechnology (
     projectId VARCHAR(20),
@@ -162,6 +172,7 @@ CREATE TABLE ProjectTechnology (
     CONSTRAINT FK_PT_Project FOREIGN KEY (projectId) REFERENCES Project(projectId),
     CONSTRAINT FK_PT_Technology FOREIGN KEY (technologyId) REFERENCES Technology(technologyId)
 );
+GO
 
 CREATE TABLE TaskStudent (
     taskId VARCHAR(20),
@@ -170,6 +181,7 @@ CREATE TABLE TaskStudent (
     CONSTRAINT FK_TS_Task FOREIGN KEY (taskId) REFERENCES Task(taskId),
     CONSTRAINT FK_TS_Student FOREIGN KEY (studentId) REFERENCES Users(userId)
 );
+GO
 
 CREATE TABLE GiveUp (
 	projectId VARCHAR(20),
@@ -181,6 +193,7 @@ CREATE TABLE GiveUp (
 	CONSTRAINT FK_GU_Project FOREIGN KEY (projectId) REFERENCES Project(projectId),
 	CONSTRAINT FK_GU_User FOREIGN KEY (userId) REFERENCES Users(userId)
 );
+GO
 
 CREATE TABLE FavoriteProject (
 	userId VARCHAR(20),
@@ -189,6 +202,7 @@ CREATE TABLE FavoriteProject (
 	CONSTRAINT FK_FP_User FOREIGN KEY (userId) REFERENCES Users(userId),
 	CONSTRAINT FK_FP_Project FOREIGN KEY (projectId) REFERENCES Project(projectId)
 );
+GO
 
 CREATE TABLE FavoriteTask (
 	userId VARCHAR(20),
@@ -197,6 +211,7 @@ CREATE TABLE FavoriteTask (
 	CONSTRAINT FK_FT_User FOREIGN KEY (userId) REFERENCES Users(userId),
 	CONSTRAINT FK_FT_Task FOREIGN KEY (taskId) REFERENCES Task(taskId)
 );
+GO
 
 CREATE TABLE FavoriteNotification (
 	userId VARCHAR(20),
@@ -205,6 +220,7 @@ CREATE TABLE FavoriteNotification (
 	CONSTRAINT FK_FN_User FOREIGN KEY (userId) REFERENCES Users(userId),
 	CONSTRAINT FK_FN_Notification FOREIGN KEY (notificationId) REFERENCES Notification(notificationId)
 );
+GO
 
 CREATE TABLE FieldTechnology (
     fieldId VARCHAR(20),
@@ -213,7 +229,7 @@ CREATE TABLE FieldTechnology (
     CONSTRAINT FK_FT_Field FOREIGN KEY (fieldId) REFERENCES Field(fieldId),
     CONSTRAINT FK_FT_Technology FOREIGN KEY (technologyId) REFERENCES Technology(technologyId)
 );
-
+GO
 
 -- Insert data into Users table with role Lecture
 INSERT INTO Users (userId, userName, fullName, password, email, phoneNumber, dateOfBirth, citizenCode, university, faculty, workCode, gender, avatar, role, joinAt)

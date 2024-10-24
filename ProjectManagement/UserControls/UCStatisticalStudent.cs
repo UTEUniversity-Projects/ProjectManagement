@@ -49,7 +49,7 @@ namespace ProjectManagement
             this.gChart.Datasets.Clear();
             foreach (Project project in this.listProject)
             {
-                listTasks = TaskDAO.SelectListTaskByStudent(this.user.UserId);
+                listTasks = TaskDAO.SelectListTaskByStudent(project.ProjectId, this.user.UserId);
 
                 double score = CalculationUtil.CalScorePeople(this.user.UserId, listTasks);
                 double contribute = CalculationUtil.CalCompletionRatePeople(this.user.UserId, listTasks);

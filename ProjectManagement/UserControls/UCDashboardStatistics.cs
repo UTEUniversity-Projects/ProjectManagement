@@ -12,7 +12,7 @@ namespace ProjectManagement
     public partial class UCDashboardStatistics : UserControl
     {
         
-        private List<Project> listTheses;
+        private List<Project> listProjects;
 
         public UCDashboardStatistics()
         {
@@ -24,7 +24,7 @@ namespace ProjectManagement
 
         public void SetInformation(List<Project> listTheses)
         {
-            this.listTheses = listTheses;
+            this.listProjects = listTheses;
             SetupUserControl();
         }
         void SetupUserControl()
@@ -63,20 +63,16 @@ namespace ProjectManagement
         #region DOUGHNUT CHART
         public void UpdateDoughnutChart()
         {
-            this.lblTotal.Text = this.listTheses.Count.ToString();
-            var projectGroupedByStatus = this.listTheses
-            .GroupBy(project => project.Status)
-            .Select(group => new
-            {
-                Status = group.Key,
-                Count = group.Count(),
-            });
+            this.lblTotal.Text = this.listProjects.Count.ToString();
+            var projectGroupedByStatus = ProjectDAO.GroupedByStatus(this.listProjects);
             this.gDoughnutChart.Datasets.Clear();
             foreach (var group in projectGroupedByStatus)
             {
-                int ind = ModelUtil.GetProjectStatusIndex(group.Status);
-                this.gDoughnutDataset.DataPoints[ind].Y = group.Count;
-                this.gDoughnutDataset.FillColors[ind] = ModelUtil.GetProjectStatusColor(group.Status);
+                EProjectStatus status = group.Key;
+                int count = group.Value;
+                int ind = ModelUtil.GetProjectStatusIndex(status);
+                this.gDoughnutDataset.DataPoints[ind].Y = count;
+                this.gDoughnutDataset.FillColors[ind] = ModelUtil.GetProjectStatusColor(status);
             }
             this.gDoughnutChart.Datasets.Add(gDoughnutDataset);
             this.gDoughnutChart.Update();
@@ -115,6 +111,7 @@ namespace ProjectManagement
             {
                 lblTop.Text = "Top 5 Field";
                 groups = FieldDAO.TopField();
+                //groups = ProjectDAO.GetTopField(this.listProjects);
             } 
             else
             {
@@ -139,31 +136,20 @@ namespace ProjectManagement
         {
             var allMonths = Enumerable.Range(1, 12);
             int selectedYear = (int)gComboBoxSelectYear.SelectedItem;
-            var projectGroupedByMonth = allMonths
-                .GroupJoin(this.listTheses,
-                           month => month,
-                           project => project.CreatedAt.Month,
-                           (month, theses) => new
-                           {
-                               Month = month,
-                               Count = theses.Where(project => project.CreatedAt.Year == selectedYear).Count()
-                           })
-                .Select(result => new
-                {
-                    result.Month,
-                    result.Count
-                });
-            CultureInfo culture = CultureInfo.InvariantCulture;
-            DateTimeFormatInfo dtfi = culture.DateTimeFormat;
-            string monthName;
+            var filterProjects = this.listProjects
+                                .Where(project => project.CreatedAt.Year == selectedYear)
+                                .ToList();
+            var projectGroupedByMonth = ProjectDAO.GroupedByMonth(filterProjects);
+
             this.gSplineDataset.DataPoints.Clear();
             this.gBarDataset.DataPoints.Clear();
             this.gMixedBarAndSplineChart.Datasets.Clear();
             foreach (var group in projectGroupedByMonth)
             {
-                monthName = dtfi.GetMonthName(group.Month);
-                this.gSplineDataset.DataPoints.Add(monthName, group.Count);
-                this.gBarDataset.DataPoints.Add(monthName, group.Count);
+                string monthName = group.Key;
+                int count = group.Value;
+                this.gSplineDataset.DataPoints.Add(monthName, count);
+                this.gBarDataset.DataPoints.Add(monthName, count);
             }
             this.gMixedBarAndSplineChart.Datasets.Add(gBarDataset);
             this.gMixedBarAndSplineChart.Datasets.Add(gSplineDataset);

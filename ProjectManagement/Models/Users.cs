@@ -180,18 +180,16 @@ namespace ProjectManagement.Models
 
         public bool CheckFullName()
         {
-            return this.fullName != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.fullName, "FullName");
         }
         public bool CheckCitizenCode()
         {
-            return this.citizenCode != string.Empty
-                    && UserDAO.CheckNonExist(DBTableNames.User, "citizencode", this.citizenCode);
+            return DAOUtils.CheckIsNotEmpty(this.citizenCode, "CitizenCode")
+                    && DAOUtils.CheckNonExist("Users", "citizencode", this.citizenCode);
         }
         public bool CheckBirthday()
         {
-            TimeSpan difference = DateTime.Now - this.dateOfBirth;
-            int age = (int)(difference.TotalDays / 365.25);
-            return age >= 18;
+            return DAOUtils.CheckIsValidAge(this.dateOfBirth, "DateOfBirth");
         }
         public bool CheckGender()
         {
@@ -199,18 +197,18 @@ namespace ProjectManagement.Models
         }
         public bool CheckEmail()
         {
-            return this.email != string.Empty
-                    && UserDAO.CheckNonExist(DBTableNames.User, "email", this.email);
+            return DAOUtils.CheckIsNotEmpty(this.email, "Email")
+                    && DAOUtils.CheckNonExist("Users", "email", this.email);
         }
         public bool CheckPhoneNumber()
         {
-            return this.phoneNumber != string.Empty && this.phoneNumber.All(char.IsDigit)
-                    && UserDAO.CheckNonExist(DBTableNames.User, "phoneNumber", this.phoneNumber);
+            return DAOUtils.CheckIsNotEmpty(this.phoneNumber, "PhoneNumber") && this.phoneNumber.All(char.IsDigit)
+                    && DAOUtils.CheckNonExist("Users", "phoneNumber", this.phoneNumber);
         }
         public bool CheckUserName()
         {
-            return this.userName != string.Empty
-                    && UserDAO.CheckNonExist(DBTableNames.User, "userName", this.userName);
+            return DAOUtils.CheckIsNotEmpty(this.userName, "UserName")
+                   && DAOUtils.CheckNonExist("Users", "userName", this.userName);
         }
         public bool CheckRole()
         {
@@ -218,19 +216,19 @@ namespace ProjectManagement.Models
         }
         public bool CheckWorkCode()
         {
-            return this.workCode != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.workCode, "WorkCode");
         }
         public bool CheckUniversity()
         {
-            return this.university != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.university, "University");
         }
         public bool CheckFaculty()
         {
-            return this.faculty != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.faculty, "Faculty");
         }
         public bool CheckPassWord(string confirmPassword)
         {
-            return this.password != string.Empty && this.password == confirmPassword;
+            return DAOUtils.CheckIsNotEmpty(this.password, "Password") && this.password == confirmPassword;
         }
 
         #endregion

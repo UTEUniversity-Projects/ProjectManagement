@@ -129,7 +129,7 @@ namespace ProjectManagement
             gTextBoxDescription.Clear();
             gTextBoxLocation.Clear();
             gTextBoxLink.Clear();
-            gDateTimePickerStart.Value = DateTime.Now;
+            gDateTimePickerStart.Value = DateTime.Now.AddMinutes(1);
             lblCre.Hide();
         }
         private bool CheckInformationValid()

@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
-
+using ProjectManagement.Database;
+using System.Data;
+using System.Data.SqlClient;
+using ProjectManagement.DAOs;
 namespace ProjectManagement.Models
 {
     public class Meeting
@@ -123,19 +126,19 @@ namespace ProjectManagement.Models
 
         public bool CheckTitle()
         {
-            return this.title != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.Title, "Title");
         }
         public bool CheckDescription()
         {
-            return this.description != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.Description, "Description");
         }
         public bool CheckStart()
         {
-            return this.startAt >= DateTime.Now;
+            return DAOUtils.CheckStartDate(this.StartAt, "StartAt");
         }
         public bool CheckLocation()
         {
-            return this.location != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.Location, "Location");
         }
 
         #endregion

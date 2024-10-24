@@ -13,8 +13,8 @@ namespace ProjectManagement.Database
 
         public static DataTable SQLExecuteQuery(string sqlStr, List<SqlParameter> parameters, string typeExecution)
         {
-            DataTable dataTable = new DataTable();
             SqlConnection connection = DBConnection.GetConnection();
+            DataTable dataTable = new DataTable();
 
             try
             {

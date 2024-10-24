@@ -166,6 +166,19 @@ namespace ProjectManagement.DAOs
             }
         }
 
+        public static void UpdateTeamStatus(string teamId, ETeamStatus status)
+        {
+            string sqlStr = "EXEC PROC_UpdateTeamStatus @TeamId, @Status";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@TeamId", teamId),
+                new SqlParameter("@Status", EnumUtil.GetDisplayName(status))
+            };
+
+            DBExecution.SQLExecuteNonQuery(sqlStr, parameters, string.Empty);
+        }
+
         public static void Delete(string teamId)
         {
             string sqlStr = "EXEC PROC_DeleteTeam @TeamId";

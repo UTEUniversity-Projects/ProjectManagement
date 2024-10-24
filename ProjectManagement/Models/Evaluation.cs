@@ -1,6 +1,7 @@
 ﻿using ProjectManagement.Process;
 using ProjectManagement.Enums;
 using ProjectManagement.Utils;
+using ProjectManagement.DAOs;
 
 namespace ProjectManagement.Models
 {
@@ -116,15 +117,15 @@ namespace ProjectManagement.Models
 
         public bool CheckContent()
         {
-            return this.content != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.content, "content");
         }
         public bool CheckCompletionRate()
         {
-            return this.completionRate >= 0.0D && this.completionRate <= 100.0D;
+            return DAOUtils.CheckIsValidInRange(this.completionRate, 0.0D, 100.0D, "completion rate");
         }
         public bool CheckScore()
         {
-            return this.score >= 0.0D && this.score <= 10.0D;
+            return DAOUtils.CheckIsValidInRange(this.score, 0.0D, 10.0D, "score");
         }
 
         #endregion

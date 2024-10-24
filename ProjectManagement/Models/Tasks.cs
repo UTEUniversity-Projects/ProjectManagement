@@ -1,4 +1,5 @@
-﻿using ProjectManagement.Enums;
+﻿using ProjectManagement.DAOs;
+using ProjectManagement.Enums;
 using ProjectManagement.Utils;
 
 namespace ProjectManagement.Models
@@ -125,23 +126,23 @@ namespace ProjectManagement.Models
 
         public bool CheckTitle()
         {
-            return this.title != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.title, "Title");
         }
         public bool CheckDescription()
         {
-            return this.description != string.Empty;
+            return DAOUtils.CheckIsNotEmpty(this.description, "Description");
         }
         public bool CheckProgress()
         {
-            return this.progress >= 0 && this.progress <= 100;
+            return DAOUtils.CheckIsValidInRange(this.progress, 0, 100, "Progress");
         }
         public bool CheckStart()
         {
-            return this.startAt >= DateTime.Now;
+            return DAOUtils.CheckStartDate(this.StartAt, "StartAt");
         }
         public bool CheckEnd()
         {
-            return this.startAt < this.endAt;
+            return DAOUtils.CheckEndDate(this.StartAt, this.EndAt, "EndAt");
         }
 
         #endregion

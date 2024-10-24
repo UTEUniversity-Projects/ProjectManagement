@@ -226,50 +226,19 @@ namespace ProjectManagement
         #endregion
 
         #region MIXED BAR AND SPLINE CHART
-        IEnumerable<object> GetContributionForTeacher(int selectedYear)
+        Dictionary<string, int> GetContributionForTeacher(int selectedYear)
         {
-            List<Project> listTheses = ProjectDAO.SelectListRoleLecture(this.user.UserId)
-                                     .Where(project => project.CreatedAt.Year == selectedYear)
-                                     .ToList();
-
-            this.totalContributions = listTheses.Count;
-            var allMonths = Enumerable.Range(1, 12);
-            var contributions = allMonths
-            .GroupJoin(listTheses,
-                       month => month,
-                       project => project.CreatedAt.Month,
-                       (month, evaluation) => new
-                       {
-                           Month = month,
-                           Count = evaluation.Count(),
-                       })
-            .Select(result => new
-            {
-                result.Month,
-                result.Count
-            });
+            List<Project> listProjects = ProjectDAO.SelectByLectureAndYear(this.user.UserId, selectedYear);
+            totalContributions = listProjects.Count;
+            var contributions = ProjectDAO.GroupedByMonth(listProjects);
             return contributions;
         }
 
-        IEnumerable<object> GetContributionForStudent(int selectedYear)
+        Dictionary<string, int> GetContributionForStudent(int selectedYear)
         {
-            List<Evaluation> listEvaluations = EvaluationDAO.SelectListByUser(this.user.UserId);
-            this.totalContributions = listEvaluations.Count;
-            var allMonths = Enumerable.Range(1, 12);
-            var contributions = allMonths
-            .GroupJoin(listEvaluations,
-                       month => month,
-                       evaluation => evaluation.CreatedAt.Month,
-                       (month, evaluation) => new
-                       {
-                           Month = month,
-                           Count = evaluation.Where(project => project.CreatedAt.Year == selectedYear).Count()
-                       })
-            .Select(result => new
-            {
-                result.Month,
-                result.Count
-            });
+            List<Evaluation> listEvaluations = EvaluationDAO.SelectListByUserAndYear(this.user.UserId, selectedYear);
+            totalContributions = listEvaluations.Count;
+            var contributions = EvaluationDAO.GroupByMonth(listEvaluations);
             return contributions;
         }
 
@@ -277,19 +246,22 @@ namespace ProjectManagement
         {
             int selectedYear = (int)gComboBoxSelectYear.SelectedItem;
 
-            var contributions = user.Role == EUserRole.LECTURE ? GetContributionForTeacher(selectedYear) : GetContributionForStudent(selectedYear);
-
-            CultureInfo culture = CultureInfo.InvariantCulture;
-            DateTimeFormatInfo dtfi = culture.DateTimeFormat;
-            string monthName;
+            Dictionary<string, int> contributions;
+            if (user.Role == EUserRole.LECTURE)
+            {
+                contributions = GetContributionForTeacher(selectedYear);
+            }
+            else
+            {
+                contributions = GetContributionForStudent(selectedYear);
+            }
             this.gBarDataset.DataPoints.Clear();
             this.gBarChart.Datasets.Clear();
             foreach (var group in contributions)
             {
-                var month = (int)group.GetType().GetProperty("Month").GetValue(group, null);
-                var count = (int)group.GetType().GetProperty("Count").GetValue(group, null);
+                string monthName = group.Key;
+                int count = group.Value;
 
-                monthName = dtfi.GetMonthName(month);
                 this.gBarDataset.DataPoints.Add(monthName, count);
             }
             this.gBarChart.Datasets.Add(gBarDataset);
