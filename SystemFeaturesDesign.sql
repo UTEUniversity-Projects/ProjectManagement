@@ -514,6 +514,7 @@ CREATE PROCEDURE PROC_UpdateProject
 )
 AS
 BEGIN
+	DELETE FROM ProjectTechnology WHERE projectId = @ProjectId;
     UPDATE Project
     SET instructorId = @InstructorId,
         topic = @Topic,
@@ -959,6 +960,8 @@ CREATE PROCEDURE PROC_DeleteTaskByTaskId
 )
 AS
 BEGIN
+	DELETE FROM Evaluation WHERE taskId = @TaskId;
+	DELETE FROM Comment WHERE taskId = @TaskId;
     SET NOCOUNT ON;
     DELETE FROM Task
     WHERE taskId = @TaskId;
