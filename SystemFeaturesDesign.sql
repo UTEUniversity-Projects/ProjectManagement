@@ -1,6 +1,86 @@
-﻿-- CREATE VIEWS
+﻿-- CREATE TRIGGERS
+-- 1. TRIG_TeamRegisterdProject
+CREATE TRIGGER TRIG_TeamRegisterdProject
+ON Team
+AFTER INSERT
+AS
+BEGIN
+    UPDATE Project
+    SET status = 'Registered'
+    WHERE projectId IN (SELECT projectId FROM inserted);
+END
+GO
 
--- CREATE TRIGGERS
+-- 2. TRIG_DeleteProject
+CREATE TRIGGER TRIG_DeleteProject
+ON Project
+INSTEAD OF DELETE
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM deleted WHERE status = 'Processing')
+    BEGIN
+        RAISERROR('You cannot delete a project that is in progress', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+    ELSE
+    BEGIN
+        DELETE FROM Project
+        WHERE projectId IN (SELECT projectId FROM deleted);
+    END
+END
+GO
+
+
+-- CREATE VIEWS
+-- 1. VIEW_CanRegisterdProject
+CREATE VIEW VIEW_CanRegisterdProject AS
+SELECT P.projectId, P.instructorId, P.topic, P.description, P.feature, P.requirement, P.maxMember, P.status, P.createdAt, P.createdBy, P.fieldId
+FROM Project P
+WHERE P.status IN ('Published', 'Registered')
+AND NOT EXISTS (
+    SELECT 1 
+    FROM JoinTeam JT 
+    INNER JOIN Team T ON JT.teamId = T.teamId
+    WHERE T.projectId = P.projectId
+);
+GO
+
+-- 2. VIEW_TaskTeam
+CREATE VIEW VIEW_TaskTeam AS
+SELECT T.taskId, T.title, T.description, T.projectId, TM.teamId, TM.teamName
+FROM Task T
+INNER JOIN Team TM ON T.projectId = TM.projectId;
+GO
+
+-- 3. VIEW_MeetingTeam
+CREATE VIEW VIEW_MeetingTeam AS
+SELECT M.meetingId, M.title, M.description, M.startAt, M.location, M.link, M.projectId, TM.teamId, TM.teamName
+FROM Meeting M
+INNER JOIN Team TM ON M.projectId = TM.projectId;
+GO
+
+-- 4. VIEW_TaskStudent
+CREATE VIEW VIEW_TaskStudent AS
+SELECT TS.taskId, TS.studentId, U.fullName, U.email, U.phoneNumber
+FROM TaskStudent TS
+INNER JOIN Users U ON TS.studentId = U.userId;
+GO
+
+-- 5. VIEW_StudentEvaluation
+CREATE VIEW VIEW_StudentEvaluation AS
+SELECT E.evaluationId, E.studentId, U.fullName, U.email, E.taskId, E.completionRate, E.score, E.evaluated, E.content
+FROM Evaluation E
+INNER JOIN Users U ON E.studentId = U.userId;
+GO
+
+-- 6. VIEW_FieldTechnology
+CREATE VIEW VIEW_FieldTechnology AS
+SELECT F.fieldId, F.name AS FieldName, T.technologyId, T.name AS TechnologyName
+FROM FieldTechnology FT
+INNER JOIN Field F ON FT.fieldId = F.fieldId
+INNER JOIN Technology T ON FT.technologyId = T.technologyId;
+GO
+
 
 -- GENERAL FUNCTION
 -- 1. FUNC_IsNotEmpty

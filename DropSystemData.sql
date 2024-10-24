@@ -1,3 +1,7 @@
+-- DROP all triggers
+DROP TRIGGER TRIG_TeamRegisterdProject
+DROP TRIGGER TRIG_DeleteProject
+
 -- DROP all tables
 DROP TABLE FieldTechnology;
 DROP TABLE FavoriteProject;
@@ -20,6 +24,12 @@ DROP TABLE Field;
 DROP TABLE Users;
 
 -- DROP all views
+DROP VIEW VIEW_CanRegisterdProject;
+DROP VIEW VIEW_TaskTeam;
+DROP VIEW VIEW_MeetingTeam;
+DROP VIEW VIEW_TaskStudent;
+DROP VIEW VIEW_StudentEvaluation;
+DROP VIEW VIEW_FieldTechnology;
 DROP VIEW VIEW_TaskByStudent;
 DROP VIEW VIEW_TasksByProject;
 DROP VIEW VIEW_TasksByTeam;
