@@ -306,8 +306,6 @@ namespace ProjectManagement.DAOs
         
         public static void Update(Project project, List<Technology> technologies)
         {
-            DBExecution.Delete(DBTableNames.ProjectTechnology, "projectId", project.ProjectId);
-
             string sqlStr = "EXEC PROC_UpdateProject @ProjectId, @InstructorId, @Topic, @Description, @Feature, @Requirement, @MaxMember, @Status, @CreatedAt, @CreatedBy, @FieldId";
 
             List<SqlParameter> parameters = new List<SqlParameter>

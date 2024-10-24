@@ -212,8 +212,8 @@ namespace ProjectManagement.DAOs
         }
         public static void Delete(string taskId)
         {
-            DBExecution.Delete(DBTableNames.Evaluation, "taskId", taskId);
-            DBExecution.Delete(DBTableNames.Comment, "taskId", taskId);
+            //DBExecution.Delete(DBTableNames.Evaluation, "taskId", taskId);
+            //DBExecution.Delete(DBTableNames.Comment, "taskId", taskId);
 
             DeleteTaskStudentByTaskId(taskId);
             DeleteFavoriteTaskByTaskId(taskId);
